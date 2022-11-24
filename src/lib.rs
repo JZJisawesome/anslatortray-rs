@@ -55,16 +55,35 @@ pub fn translate_word(english_word: &str) -> String {
     let first_char: char = iterator.next().unwrap();
 
     if is_vowel(first_char) {
-        return english_word.to_string().push_str(VOWEL_START_STYLE);
+        let mut pig_latin_string = english_word.to_string();
+        pig_latin_string.push_str(VOWEL_START_STYLE);
+        return pig_latin_string;
     }
+
+    //TODO what if there are no vowels
+
+    let mut starting_part_of_word: String = first_char.to_string();
+    for letter in iterator {
+        if is_vowel(letter) {
+            break;
+        } else {
+            starting_part_of_word.push(letter);
+        }
+    }
+
+    let mut pig_latin_string: String = "".to_string();
+    for letter in iterator {
+
+    }
+    pig_latin_string.push_str(&starting_part_of_word);
 
     todo!();
 }
 
 ///Returns true if the paramter is a letter and a vowel, and false otherwise
 pub fn is_vowel(letter: char) -> bool {
-    match letter {
-        'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O' | 'U' => { return true; }
+    match letter.to_ascii_lowercase() {
+        'a' | 'e' | 'i' | 'o' | 'u' => { return true; }
         _ => { return false; }
     }
 }
