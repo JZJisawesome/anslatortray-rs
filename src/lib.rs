@@ -34,9 +34,13 @@
 //!
 //!THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-const VOWEL_START_STYLE: &str = "way";//TODO make this configurable via a Cargo feature
+///The suffix appended to a word the starts with a vowel instead of the usual "ay"
+///
+///Commonly this is either "way" or "yay". I prefer the former, but you can choose
+///between the two by specifying the feature "way" or "yay" respectively in Cargo.
+pub const VOWEL_START_STYLE: &str = "way";//TODO make this configurable via a Cargo feature
 
-///Translates a multi-word string into Pig Latin!
+///Translates a multi-word string (including punctuation) into Pig Latin!
 pub fn translate(english: &str) -> String {
     if english.is_empty() {
         return "".to_string();
@@ -46,6 +50,38 @@ pub fn translate(english: &str) -> String {
 }
 
 ///Translates a single word string into Pig Latin!
+///
+///Must only contain letters; no punctuation or spaces.
+///
+///Also requires at minimum one vowel, and must be non-empty.
+///
+///If all of these are satasfied, then this returns Some(String) containing the translated word.
+///Otherwise it returns None
+///
+///# Examples
+///
+///```
+///assert_eq!(anslatortray::translate_word("Hello").unwrap(), "Ellohay".to_string());
+///assert_eq!(anslatortray::translate_word("World").unwrap(), "Orldway".to_string());
+///assert_eq!(anslatortray::translate_word("This").unwrap(), "Isthay".to_string());
+///assert_eq!(anslatortray::translate_word("is").unwrap(), "is".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word("a").unwrap(), "a".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word("test").unwrap(), "esttay".to_string());
+///assert_eq!(anslatortray::translate_word("of").unwrap(), "of".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word("the").unwrap(), "ethay".to_string());
+///assert_eq!(anslatortray::translate_word("function").unwrap(), "unctionfay".to_string());
+///assert_eq!(anslatortray::translate_word("translate").unwrap(), "anslatetray".to_string());
+///assert_eq!(anslatortray::translate_word("word").unwrap(), "ordway".to_string());
+///assert_eq!(anslatortray::translate_word("I").unwrap(), "I".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word("Love").unwrap(), "Ovelay".to_string());
+///assert_eq!(anslatortray::translate_word("Pig").unwrap(), "Igpay".to_string());
+///assert_eq!(anslatortray::translate_word("Latin").unwrap(), "Atinlay".to_string());
+///assert!(matches!(anslatortray::translate_word("bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"), None));//No vowels
+///assert!(matches!(anslatortray::translate_word(""), None));//No letters at all
+///assert!(matches!(anslatortray::translate_word("Multiple Words"), None));
+///assert!(matches!(anslatortray::translate_word("wordwithpunctuation!"), None));
+///assert!(matches!(anslatortray::translate_word(" "), None));//Single space/punctuation
+///```
 pub fn translate_word(english_word: &str) -> Option<String> {
     if english_word.is_empty() {
         return None;
@@ -54,7 +90,11 @@ pub fn translate_word(english_word: &str) -> Option<String> {
     let mut iterator = english_word.chars();
     let first_char: char = iterator.next().unwrap();
 
-    if is_vowel(first_char) {
+    if !first_char.is_alphabetic() {
+        return None;
+    }
+
+    if is_vowel(first_char).unwrap() {
         let mut pig_latin_string = english_word.to_string();
         pig_latin_string.push_str(VOWEL_START_STYLE);
         return Some(pig_latin_string);
@@ -73,7 +113,7 @@ pub fn translate_word(english_word: &str) -> Option<String> {
         if vowel_encountered {
             pig_latin_string.push(letter);
         } else {
-            if is_vowel(letter) {
+            if is_vowel(letter).unwrap() {
                 if first_char_was_upper {
                     pig_latin_string.push(letter.to_ascii_uppercase())
                 } else {
@@ -96,11 +136,34 @@ pub fn translate_word(english_word: &str) -> Option<String> {
     return Some(pig_latin_string);
 }
 
-///Returns true if the paramter is a letter and a vowel, and false otherwise
-pub fn is_vowel(letter: char) -> bool {
+///Returns whether a letter is a vowel or not.
+///
+///If the parameter is a letter, returns Some(true) if it is a vowel, and Some(false) otherwise.
+///If the parameter isn't a letter, it will return None
+///
+///# Examples
+///
+///```
+///for letter in "aeiouAEIOU".chars() {
+///    assert!(anslatortray::is_vowel(letter).unwrap());
+///}
+///
+///for letter in "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ".chars() {
+///    assert!(!anslatortray::is_vowel(letter).unwrap());
+///}
+///
+///for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,".chars() {
+///    assert!(matches!(anslatortray::is_vowel(not_letter), None));
+///}
+///```
+pub fn is_vowel(letter: char) -> Option<bool> {
+    if !letter.is_alphabetic() {
+        return None;
+    }
+
     match letter.to_ascii_lowercase() {
-        'a' | 'e' | 'i' | 'o' | 'u' => { return true; }
-        _ => { return false; }
+        'a' | 'e' | 'i' | 'o' | 'u' => { return Some(true); }
+        _ => { return Some(false); }
     }
 }
 
@@ -111,11 +174,15 @@ mod tests {
     #[test]
     fn test_is_vowel() {
         for letter in "aeiouAEIOU".chars() {
-            assert!(is_vowel(letter));
+            assert!(is_vowel(letter).unwrap());
         }
 
         for letter in "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ".chars() {
-            assert!(!is_vowel(letter));
+            assert!(!is_vowel(letter).unwrap());
+        }
+
+        for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,".chars() {
+            assert!(matches!(is_vowel(not_letter), None));
         }
     }
 
@@ -140,5 +207,6 @@ mod tests {
         assert!(matches!(translate_word(""), None));//No letters at all
         assert!(matches!(translate_word("Multiple Words"), None));
         assert!(matches!(translate_word("wordwithpunctuation!"), None));
+        assert!(matches!(translate_word(" "), None));//Single space/punctuation
     }
 }
