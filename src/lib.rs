@@ -41,48 +41,90 @@
 pub const VOWEL_START_STYLE: &str = "way";//TODO make this configurable via a Cargo feature
 
 ///Translates a multi-word string (including punctuation) into Pig Latin!
-pub fn translate(english: &str) -> String {
+///
+///Does not handle some edge cases however.
+///Use this over [`anslatortray::translate()`] only if you really need a ton of speed
+///
+///# Examples
+///
+///```
+///assert_eq!(anslatortray::translate_dumb("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///assert_eq!(anslatortray::translate_dumb("This library can translate any English text. It can even handle multiple sentences!"),
+///    if anslatortray::VOWEL_START_STYLE == "way" { "Isthay ibrarylay ancay anslatetray anyway Englishway exttay. Itway ancay evenway andlehay ultiplemay entencessay!" }
+///    else if anslatortray::VOWEL_START_STYLE == "yay" { "Isthay ibrarylay ancay anslatetray anyyay Englishyay exttay. Ityay ancay evenyay andlehay ultiplemay entencessay!" }
+///    else { panic!(); }
+///);
+///```
+pub fn translate_dumb(english: &str) -> String {
     if english.is_empty() {
         return "".to_string();
     }
 
-    todo!();
+    let mut pig_latin_string: String = "".to_string();
+    let mut current_word: String = "".to_string();
+    let mut in_word: bool = false;
+
+    for character in english.chars() {
+        if in_word {
+            if character.is_alphabetic() {
+                current_word.push(character);
+            } else {
+                in_word = false;
+                pig_latin_string.push_str(translate_word_dumb(current_word.as_str()).unwrap().as_str());
+                pig_latin_string.push(character);
+            }
+        } else {
+            if character.is_alphabetic() {
+                in_word = true;
+                current_word = character.to_string();
+            } else {
+                pig_latin_string.push(character);
+            }
+        }
+    }
+
+    return pig_latin_string;
 }
 
 ///Translates a single word string into Pig Latin!
 ///
 ///Must only contain letters; no punctuation or spaces.
-///
 ///Also requires at minimum one vowel, and must be non-empty.
 ///
 ///If all of these are satasfied, then this returns Some(String) containing the translated word.
 ///Otherwise it returns None
 ///
+//Use this over [`anslatortray::translate_word()`] if you really need a ton of speed
+///
 ///# Examples
 ///
 ///```
-///assert_eq!(anslatortray::translate_word("Hello").unwrap(), "Ellohay".to_string());
-///assert_eq!(anslatortray::translate_word("World").unwrap(), "Orldway".to_string());
-///assert_eq!(anslatortray::translate_word("This").unwrap(), "Isthay".to_string());
-///assert_eq!(anslatortray::translate_word("is").unwrap(), "is".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
-///assert_eq!(anslatortray::translate_word("a").unwrap(), "a".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
-///assert_eq!(anslatortray::translate_word("test").unwrap(), "esttay".to_string());
-///assert_eq!(anslatortray::translate_word("of").unwrap(), "of".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
-///assert_eq!(anslatortray::translate_word("the").unwrap(), "ethay".to_string());
-///assert_eq!(anslatortray::translate_word("function").unwrap(), "unctionfay".to_string());
-///assert_eq!(anslatortray::translate_word("translate").unwrap(), "anslatetray".to_string());
-///assert_eq!(anslatortray::translate_word("word").unwrap(), "ordway".to_string());
-///assert_eq!(anslatortray::translate_word("I").unwrap(), "I".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
-///assert_eq!(anslatortray::translate_word("Love").unwrap(), "Ovelay".to_string());
-///assert_eq!(anslatortray::translate_word("Pig").unwrap(), "Igpay".to_string());
-///assert_eq!(anslatortray::translate_word("Latin").unwrap(), "Atinlay".to_string());
-///assert!(matches!(anslatortray::translate_word("bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"), None));//No vowels
-///assert!(matches!(anslatortray::translate_word(""), None));//No letters at all
-///assert!(matches!(anslatortray::translate_word("Multiple Words"), None));
-///assert!(matches!(anslatortray::translate_word("wordwithpunctuation!"), None));
-///assert!(matches!(anslatortray::translate_word(" "), None));//Single space/punctuation
+///assert_eq!(anslatortray::translate_word_dumb("Hello").unwrap(), "Ellohay".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("World").unwrap(), "Orldway".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("This").unwrap(), "Isthay".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("is").unwrap(), "is".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word_dumb("a").unwrap(), "a".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word_dumb("test").unwrap(), "esttay".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("of").unwrap(), "of".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word_dumb("the").unwrap(), "ethay".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("function").unwrap(), "unctionfay".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("translate").unwrap(), "anslatetray".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("word").unwrap(), "ordway".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("I").unwrap(), "I".to_string() + &anslatortray::VOWEL_START_STYLE.to_string());
+///assert_eq!(anslatortray::translate_word_dumb("Love").unwrap(), "Ovelay".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("Pig").unwrap(), "Igpay".to_string());
+///assert_eq!(anslatortray::translate_word_dumb("Latin").unwrap(), "Atinlay".to_string());
+///assert!(matches!(anslatortray::translate_word_dumb("bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"), None));//No vowels
+///assert!(matches!(anslatortray::translate_word_dumb(""), None));//No letters at all
+///assert!(matches!(anslatortray::translate_word_dumb("Multiple Words"), None));
+///assert!(matches!(anslatortray::translate_word_dumb("wordwithpunctuation!"), None));
+///assert!(matches!(anslatortray::translate_word_dumb(" "), None));//Single space/punctuation/symbol
+///assert!(matches!(anslatortray::translate_word_dumb(" !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n"), None));//Lots of symbols
+///assert!(matches!(anslatortray::translate_word_dumb("You're"), None));//Does not handle contractions
+///assert!(matches!(anslatortray::translate_word_dumb("Try"), None));//Does not consider y to be a vowel, ever
 ///```
-pub fn translate_word(english_word: &str) -> Option<String> {
+pub fn translate_word_dumb(english_word: &str) -> Option<String> {
     if english_word.is_empty() {
         return None;
     }
@@ -104,20 +146,20 @@ pub fn translate_word(english_word: &str) -> Option<String> {
 
     let mut vowel_encountered: bool = false;
     let mut starting_part_of_word: String = first_char.to_ascii_lowercase().to_string();
-    let mut pig_latin_string: String = "".to_string();
+    let mut pig_latin_word: String = "".to_string();
     for letter in iterator {
         if !letter.is_alphabetic() {
             return None;
         }
 
         if vowel_encountered {
-            pig_latin_string.push(letter);
+            pig_latin_word.push(letter);
         } else {
             if is_vowel(letter).unwrap() {
                 if first_char_was_upper {
-                    pig_latin_string.push(letter.to_ascii_uppercase())
+                    pig_latin_word.push(letter.to_ascii_uppercase())
                 } else {
-                    pig_latin_string.push(letter.to_ascii_lowercase())
+                    pig_latin_word.push(letter.to_ascii_lowercase())
                 }
                 vowel_encountered = true;
             } else {
@@ -130,10 +172,10 @@ pub fn translate_word(english_word: &str) -> Option<String> {
         return None;
     }
 
-    pig_latin_string.push_str(&starting_part_of_word);
-    pig_latin_string.push_str("ay");
+    pig_latin_word.push_str(&starting_part_of_word);
+    pig_latin_word.push_str("ay");
 
-    return Some(pig_latin_string);
+    return Some(pig_latin_word);
 }
 
 ///Returns whether a letter is a vowel or not.
@@ -172,6 +214,60 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_translate_dumb() {
+        assert_eq!(translate_dumb("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+
+        assert_eq!(translate_dumb("This library can translate any English text. It can even handle multiple sentences!"),
+            if VOWEL_START_STYLE == "way" { "Isthay ibrarylay ancay anslatetray anyway Englishway exttay. Itway ancay evenway andlehay ultiplemay entencessay!" }
+            else if VOWEL_START_STYLE == "yay" { "Isthay ibrarylay ancay anslatetray anyyay Englishyay exttay. Ityay ancay evenyay andlehay ultiplemay entencessay!" }
+            else { panic!(); }
+        );
+    }
+
+    #[test]
+    fn test_translate() {
+        todo!();
+        /*assert_eq!(translate("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+            if VOWEL_START_STYLE == "way" { "Etlay's ytray omesya edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!" }
+            else if VOWEL_START_STYLE == "yay" { "Etlay's ytray omesya edgeway asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allway atthay orksway!" }
+            else { panic!(); }
+        );
+        assert_eq!(translate("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"),
+            if VOWEL_START_STYLE == "way" { "Atwhay ifway away ordway ashay onay owelvay, ikelay isthay: bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ" }
+            else if VOWEL_START_STYLE == "yay" { "Atwhay ifyay ayay ordway ashay onay owelvay, ikelay isthay: bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ" }
+            else { panic!(); }
+        );
+        */
+    }
+
+    #[test]
+    fn test_translate_word_dumb() {
+        assert_eq!(translate_word_dumb("Hello").unwrap(), "Ellohay");
+        assert_eq!(translate_word_dumb("World").unwrap(), "Orldway");
+        assert_eq!(translate_word_dumb("This").unwrap(), "Isthay");
+        assert_eq!(translate_word_dumb("is").unwrap(), "is".to_string() + &VOWEL_START_STYLE.to_string());
+        assert_eq!(translate_word_dumb("a").unwrap(), "a".to_string() + &VOWEL_START_STYLE.to_string());
+        assert_eq!(translate_word_dumb("test").unwrap(), "esttay".to_string());
+        assert_eq!(translate_word_dumb("of").unwrap(), "of".to_string() + &VOWEL_START_STYLE.to_string());
+        assert_eq!(translate_word_dumb("the").unwrap(), "ethay");
+        assert_eq!(translate_word_dumb("function").unwrap(), "unctionfay");
+        assert_eq!(translate_word_dumb("translate").unwrap(), "anslatetray");
+        assert_eq!(translate_word_dumb("word").unwrap(), "ordway");
+        assert_eq!(translate_word_dumb("I").unwrap(), "I".to_string() + &VOWEL_START_STYLE.to_string());
+        assert_eq!(translate_word_dumb("Love").unwrap(), "Ovelay");
+        assert_eq!(translate_word_dumb("Pig").unwrap(), "Igpay");
+        assert_eq!(translate_word_dumb("Latin").unwrap(), "Atinlay");
+        assert!(matches!(translate_word_dumb("bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"), None));//No vowels
+        assert!(matches!(translate_word_dumb(""), None));//No letters at all
+        assert!(matches!(translate_word_dumb("Multiple Words"), None));
+        assert!(matches!(translate_word_dumb("wordwithpunctuation!"), None));
+        assert!(matches!(translate_word_dumb(" "), None));//Single space/punctuation
+        assert!(matches!(translate_word_dumb(" !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n"), None));//Lots of symbols
+        assert!(matches!(translate_word_dumb("You're"), None));//Does not handle contractions
+        assert!(matches!(translate_word_dumb("Try"), None));//Does not consider y to be a vowel, ever
+    }
+
+    #[test]
     fn test_is_vowel() {
         for letter in "aeiouAEIOU".chars() {
             assert!(is_vowel(letter).unwrap());
@@ -181,32 +277,8 @@ mod tests {
             assert!(!is_vowel(letter).unwrap());
         }
 
-        for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,".chars() {
+        for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n".chars() {
             assert!(matches!(is_vowel(not_letter), None));
         }
-    }
-
-    #[test]
-    fn test_translate_word() {
-        assert_eq!(translate_word("Hello").unwrap(), "Ellohay".to_string());
-        assert_eq!(translate_word("World").unwrap(), "Orldway".to_string());
-        assert_eq!(translate_word("This").unwrap(), "Isthay".to_string());
-        assert_eq!(translate_word("is").unwrap(), "is".to_string() + &VOWEL_START_STYLE.to_string());
-        assert_eq!(translate_word("a").unwrap(), "a".to_string() + &VOWEL_START_STYLE.to_string());
-        assert_eq!(translate_word("test").unwrap(), "esttay".to_string());
-        assert_eq!(translate_word("of").unwrap(), "of".to_string() + &VOWEL_START_STYLE.to_string());
-        assert_eq!(translate_word("the").unwrap(), "ethay".to_string());
-        assert_eq!(translate_word("function").unwrap(), "unctionfay".to_string());
-        assert_eq!(translate_word("translate").unwrap(), "anslatetray".to_string());
-        assert_eq!(translate_word("word").unwrap(), "ordway".to_string());
-        assert_eq!(translate_word("I").unwrap(), "I".to_string() + &VOWEL_START_STYLE.to_string());
-        assert_eq!(translate_word("Love").unwrap(), "Ovelay".to_string());
-        assert_eq!(translate_word("Pig").unwrap(), "Igpay".to_string());
-        assert_eq!(translate_word("Latin").unwrap(), "Atinlay".to_string());
-        assert!(matches!(translate_word("bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"), None));//No vowels
-        assert!(matches!(translate_word(""), None));//No letters at all
-        assert!(matches!(translate_word("Multiple Words"), None));
-        assert!(matches!(translate_word("wordwithpunctuation!"), None));
-        assert!(matches!(translate_word(" "), None));//Single space/punctuation
     }
 }
