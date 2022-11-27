@@ -16,6 +16,18 @@ categories = ["text-processing", "command-line-utilities", "localization"]
 default = []
 nightly-features = []
 
+[lib]
+name = "anslatortray"
+path = "src/lib.rs"
+
+[[bin]]
+name = "anslatetray"
+path = "src/anslatetray.rs"
+
+[[bin]]
+name = "anslatetray-file"
+path = "src/anslatetray-file.rs"
+
 #[features]
 #default = ["default_style_way"]
 #default_style_way = []
