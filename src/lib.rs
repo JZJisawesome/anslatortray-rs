@@ -45,9 +45,11 @@
 //!
 //!THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+/* Functions */
+
 ///Translates a multi-word string (including punctuation) into Pig Latin!
 ///
-///Uses the default suffix and special_case_suffix, "ay" and "way" respectively.
+///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_word_with_style()`].
 ///
 ///Equivalent to [`translate_way()`].
 ///
@@ -73,15 +75,14 @@
 ///assert_eq!(translate("Cool, so the heuristics make pretty good guesses with what they're fed!"),
 ///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
 ///);
-///
 ///```
 pub fn translate(english: &str) -> String {
     return translate_way(english);
 }
 
-///Translates a multi-word string (including punctuation) into Pig Latin!
+///Translates a multi-word string (including punctuation) into Pig Latin (way-style)!
 ///
-///Uses the suffix and special_case_suffix "ay" and "way" respectively.
+///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_word_with_style()`].
 ///
 ///# Examples
 ///
@@ -105,18 +106,52 @@ pub fn translate(english: &str) -> String {
 ///assert_eq!(translate_way("Cool, so the heuristics make pretty good guesses with what they're fed!"),
 ///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
 ///);
-///
 ///```
 pub fn translate_way(english: &str) -> String {
     return translate_with_style(english, "ay", "way");
 }
 
-///TODO description
+///Translates a multi-word string (including punctuation) into Pig Latin (yay-style)!
+///
+///Uses the suffix and special_case_suffix "ay" and "yay" respectively when calling [`translate_word_with_style()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_yay;
+///
+///assert_eq!(translate_yay("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///assert_eq!(translate_yay("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Isthay ibrarylay ancay anslatetray anyyay Englishyay exttay. Ityay ancay evenyay andlehay ultiplemay entencessay!"
+///);
+///
+///assert_eq!(translate_yay("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlay's ytray omesay edgeyay asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allyay atthay orksway!"
+///);
+///
+///assert_eq!(translate_yay("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
+///    "Atwhay ifyay ayay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay"
+///);
+///
+///assert_eq!(translate_yay("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
+///);
+///```
 pub fn translate_yay(english: &str) -> String {
     return translate_with_style(english, "ay", "yay");
 }
 
-///TODO description
+///Translates a multi-word string (including punctuation) into a custom-styled play language!
+///
+///Pass the string you wish to translate, the suffix you wish to have appended to most words, and the suffix
+///you wish to have appended in various special-cases (such as when a word is only one letter or starts with a vowel).
+///
+///# Examples
+///
+///```
+/////TODO
+///```
 pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english.is_empty() {
         return "".to_string();
@@ -140,7 +175,7 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
 ///It generally does a pretty good job with valid english words and contractions,
 ///and leaves symbols and spaces mostly unchanged.
 ///
-///Uses the default suffix and special_case_suffix, "ay" and "way" respectively.
+///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_word_with_style()`].
 ///
 ///Equivalent to [`translate_word_way()`].
 ///
@@ -188,18 +223,121 @@ pub fn translate_word(english_word: &str) -> String {
     return translate_word_way(english_word);
 }
 
-///TODO description
+///Translates a single word or contraction string into Pig Latin (way-style)!
+///
+///Can have leading and trailing punctuation or whitespace.
+///It generally does a pretty good job with valid english words and contractions,
+///and leaves symbols and spaces mostly unchanged.
+///
+///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_word_with_style()`].
+///
+///This is a helper function used by the [`translate()`] family of functions, but
+///it is publically exposed as potential users may find this useful.
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_word_way;
+///
+///assert_eq!(translate_word_way("Hello"), "Ellohay");
+///assert_eq!(translate_word_way("World!"), "Orldway!");
+///
+///assert_eq!(translate_word_way("This"), "Isthay");
+///assert_eq!(translate_word_way("is"), "isway");
+///assert_eq!(translate_word_way("a"), "away");
+///assert_eq!(translate_word_way("test"), "esttay");
+///assert_eq!(translate_word_way("of"), "ofway");
+///assert_eq!(translate_word_way("the"), "ethay");
+///assert_eq!(translate_word_way("function"), "unctionfay");
+///assert_eq!(translate_word_way("translate_"), "anslatetray_");
+///assert_eq!(translate_word_way("word."), "ordway.");
+///
+///assert_eq!(translate_word_way("I"), "Iway");
+///assert_eq!(translate_word_way("Love"), "Ovelay");
+///assert_eq!(translate_word_way("Pig"), "Igpay");
+///assert_eq!(translate_word_way("Latin!"), "Atinlay!");
+///
+///assert_eq!(translate_word_way("You"), "Ouyay");//Y isn't a vowel here
+///assert_eq!(translate_word_way("should"), "ouldshay");
+///assert_eq!(translate_word_way("try"), "ytray");//Y is a vowel here
+///assert_eq!(translate_word_way("yougurt,"), "ougurtyay,");//Y isn't a vowel here
+///assert_eq!(translate_word_way("it's"), "itway's");//Contraction
+///assert_eq!(translate_word_way("quite"), "uiteqay");//Awful to pronounce, but correct
+///assert_eq!(translate_word_way("nice!"), "icenay!");
+///
+///assert_eq!(translate_word_way(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+///assert_eq!(translate_word_way(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}ordway|\":>?~`\\][';/.,\t\n");//Symbols around a word
+///assert_eq!(translate_word_way("12345678"), "12345678");//A number
+///assert_eq!(translate_word_way("100 pizzas"), "100 izzaspay");//A number before a word
+///assert_eq!(translate_word_way("over 9000"), "overway 9000");//A number after a word
+///```
 pub fn translate_word_way(english_word: &str) -> String {
     return translate_word_with_style(english_word, "ay", "way");
 }
 
-///TODO description
+///Translates a single word or contraction string into Pig Latin (yay-style)!
+///
+///Can have leading and trailing punctuation or whitespace.
+///It generally does a pretty good job with valid english words and contractions,
+///and leaves symbols and spaces mostly unchanged.
+///
+///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_word_with_style()`].
+///
+///This is a helper function used by the [`translate()`] family of functions, but
+///it is publically exposed as potential users may find this useful.
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_word_yay;
+///
+///assert_eq!(translate_word_yay("Hello"), "Ellohay");
+///assert_eq!(translate_word_yay("World!"), "Orldway!");
+///
+///assert_eq!(translate_word_yay("This"), "Isthay");
+///assert_eq!(translate_word_yay("is"), "isyay");
+///assert_eq!(translate_word_yay("a"), "ayay");
+///assert_eq!(translate_word_yay("test"), "esttay");
+///assert_eq!(translate_word_yay("of"), "ofyay");
+///assert_eq!(translate_word_yay("the"), "ethay");
+///assert_eq!(translate_word_yay("function"), "unctionfay");
+///assert_eq!(translate_word_yay("translate_"), "anslatetray_");
+///assert_eq!(translate_word_yay("word."), "ordway.");
+///
+///assert_eq!(translate_word_yay("I"), "Iyay");
+///assert_eq!(translate_word_yay("Love"), "Ovelay");
+///assert_eq!(translate_word_yay("Pig"), "Igpay");
+///assert_eq!(translate_word_yay("Latin!"), "Atinlay!");
+///
+///assert_eq!(translate_word_yay("You"), "Ouyay");//Y isn't a vowel here
+///assert_eq!(translate_word_yay("should"), "ouldshay");
+///assert_eq!(translate_word_yay("try"), "ytray");//Y is a vowel here
+///assert_eq!(translate_word_yay("yougurt,"), "ougurtyay,");//Y isn't a vowel here
+///assert_eq!(translate_word_yay("it's"), "ityay's");//Contraction
+///assert_eq!(translate_word_yay("quite"), "uiteqay");//Awful to pronounce, but correct
+///assert_eq!(translate_word_yay("nice!"), "icenay!");
+///
+///assert_eq!(translate_word_yay(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+///assert_eq!(translate_word_yay(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}ordway|\":>?~`\\][';/.,\t\n");//Symbols around a word
+///assert_eq!(translate_word_yay("12345678"), "12345678");//A number
+///assert_eq!(translate_word_yay("100 pizzas"), "100 izzaspay");//A number before a word
+///assert_eq!(translate_word_yay("over 9000"), "overyay 9000");//A number after a word
+///```
 pub fn translate_word_yay(english_word: &str) -> String {
     return translate_word_with_style(english_word, "ay", "yay");
 }
 
-///TODO description
-fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
+///Translates a single word or contraction string into a custom-styled play language!
+///
+///Pass the word you wish to translate, the suffix you wish to have appended to most words, and the suffix
+///you wish to have appended in various special-cases (such as when a word is only one letter or starts with a vowel).
+///
+///# Examples
+///
+///```
+/////TODO
+///```
+pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english_word.is_empty() {
         return "".to_string();
     }
@@ -371,6 +509,8 @@ pub fn is_y(letter: char) -> Option<bool> {
 
     return Some(letter.to_ascii_lowercase() == 'y');
 }
+
+/* Tests */
 
 #[cfg(test)]
 mod tests {
