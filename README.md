@@ -13,6 +13,8 @@ The function handles edge cases quite well (words without vowels, one-letter wor
 
 If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
 
+Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
+
 # Library Examples
 
 Try compiling this example code:
@@ -81,6 +83,8 @@ This is quite fast, but it could be faster. Both the speed and the quality of tr
 <a href="https://git.jekel.ca/JZJ/anslatortray-rs">Click here to visit the Anslatortray for Rust Git Repository!</a>.
 
 You can also visit the <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> mirrors to leave issues!
+
+Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
 
 Anslatortray for Rust is a spiritual sucessor of my original <a href="https://git.jekel.ca/JZJ/anslatortray">Anslatortray</a> (for C++).
 

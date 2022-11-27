@@ -230,8 +230,42 @@ pub fn translate_word_ferb(english_word: &str) -> String {
 ///# Examples
 ///
 ///```
-/////TODO
-/////NOTE that this function used in an standalone fashion is not currently tested, and is thus considered experimental
+///use anslatortray::translate_word_with_style;
+///
+///let suffix = "ancy";
+///let special_case_suffix = "fancy";
+///
+///assert_eq!(translate_word_with_style("Hello", suffix, special_case_suffix), "Ellohancy");
+///assert_eq!(translate_word_with_style("World!", suffix, special_case_suffix), "Orldwancy!");
+///
+///assert_eq!(translate_word_with_style("This", suffix, special_case_suffix), "Isthancy");
+///assert_eq!(translate_word_with_style("is", suffix, special_case_suffix), "isfancy");
+///assert_eq!(translate_word_with_style("a", suffix, special_case_suffix), "afancy");
+///assert_eq!(translate_word_with_style("test", suffix, special_case_suffix), "esttancy");
+///assert_eq!(translate_word_with_style("of", suffix, special_case_suffix), "offancy");
+///assert_eq!(translate_word_with_style("the", suffix, special_case_suffix), "ethancy");
+///assert_eq!(translate_word_with_style("function", suffix, special_case_suffix), "unctionfancy");
+///assert_eq!(translate_word_with_style("translate_", suffix, special_case_suffix), "anslatetrancy_");
+///assert_eq!(translate_word_with_style("word.", suffix, special_case_suffix), "ordwancy.");
+///
+///assert_eq!(translate_word_with_style("I", suffix, special_case_suffix), "Ifancy");
+///assert_eq!(translate_word_with_style("Love", suffix, special_case_suffix), "Ovelancy");
+///assert_eq!(translate_word_with_style("Pig", suffix, special_case_suffix), "Igpancy");
+///assert_eq!(translate_word_with_style("Latin!", suffix, special_case_suffix), "Atinlancy!");
+///
+///assert_eq!(translate_word_with_style("You", suffix, special_case_suffix), "Ouyancy");//Y isn't a vowel here
+///assert_eq!(translate_word_with_style("should", suffix, special_case_suffix), "ouldshancy");
+///assert_eq!(translate_word_with_style("try", suffix, special_case_suffix), "ytrancy");//Y is a vowel here
+///assert_eq!(translate_word_with_style("yougurt,", suffix, special_case_suffix), "ougurtyancy,");//Y isn't a vowel here
+///assert_eq!(translate_word_with_style("it's", suffix, special_case_suffix), "itfancy's");//Contraction
+///assert_eq!(translate_word_with_style("quite", suffix, special_case_suffix), "uiteqancy");//Awful to pronounce, but correct
+///assert_eq!(translate_word_with_style("nice!", suffix, special_case_suffix), "icenancy!");
+///
+///assert_eq!(translate_word_with_style(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n", suffix, special_case_suffix), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+///assert_eq!(translate_word_with_style(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n", suffix, special_case_suffix), " !@#$%^&*()_+={}ordwancy|\":>?~`\\][';/.,\t\n");//Symbols around a word
+///assert_eq!(translate_word_with_style("12345678", suffix, special_case_suffix), "12345678");//A number
+///assert_eq!(translate_word_with_style("100 pizzas", suffix, special_case_suffix), "100 izzaspancy");//A number before a word
+///assert_eq!(translate_word_with_style("over 9000", suffix, special_case_suffix), "overfancy 9000");//A number after a word
 ///```
 pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english_word.is_empty() {
@@ -450,6 +484,44 @@ mod tests {
         assert_eq!(translate_word_ferb("12345678"), "12345678");//A number
         assert_eq!(translate_word_ferb("100 pizzas"), "100 izzasperb");//A number before a word
         assert_eq!(translate_word_ferb("over 9000"), "overferb 9000");//A number after a word
+    }
+
+    #[test]
+    fn test_translate_word_with_style() {
+        let suffix = "ancy";
+        let special_case_suffix = "fancy";
+
+        assert_eq!(translate_word_with_style("Hello", suffix, special_case_suffix), "Elloh".to_string() + suffix);
+        assert_eq!(translate_word_with_style("World!", suffix, special_case_suffix), "Orldw".to_string() + suffix + "!");
+
+        assert_eq!(translate_word_with_style("This", suffix, special_case_suffix), "Isth".to_string() + suffix);
+        assert_eq!(translate_word_with_style("is", suffix, special_case_suffix), "is".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style("a", suffix, special_case_suffix), "a".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style("test", suffix, special_case_suffix), "estt".to_string() + suffix);
+        assert_eq!(translate_word_with_style("of", suffix, special_case_suffix), "of".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style("the", suffix, special_case_suffix), "eth".to_string() + suffix);
+        assert_eq!(translate_word_with_style("function", suffix, special_case_suffix), "unctionf".to_string() + suffix);
+        assert_eq!(translate_word_with_style("translate_", suffix, special_case_suffix), "anslatetr".to_string() + suffix + "_");
+        assert_eq!(translate_word_with_style("word.", suffix, special_case_suffix), "ordw".to_string() + suffix + ".");
+
+        assert_eq!(translate_word_with_style("I", suffix, special_case_suffix), "I".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style("Love", suffix, special_case_suffix), "Ovel".to_string() + suffix);
+        assert_eq!(translate_word_with_style("Pig", suffix, special_case_suffix), "Igp".to_string() + suffix);
+        assert_eq!(translate_word_with_style("Latin!", suffix, special_case_suffix), "Atinl".to_string() + suffix + "!");
+
+        assert_eq!(translate_word_with_style("You", suffix, special_case_suffix), "Ouy".to_string() + suffix);//Y isn't a vowel here
+        assert_eq!(translate_word_with_style("should", suffix, special_case_suffix), "ouldsh".to_string() + suffix);
+        assert_eq!(translate_word_with_style("try", suffix, special_case_suffix), "ytr".to_string() + suffix);//Y is a vowel here
+        assert_eq!(translate_word_with_style("yougurt,", suffix, special_case_suffix), "ougurty".to_string() + suffix + ",");//Y isn't a vowel here
+        assert_eq!(translate_word_with_style("it's", suffix, special_case_suffix), "it".to_string() + special_case_suffix + "'s");//Contraction
+        assert_eq!(translate_word_with_style("quite", suffix, special_case_suffix), "uiteq".to_string() + suffix);//Awful to pronounce, but correct
+        assert_eq!(translate_word_with_style("nice!", suffix, special_case_suffix), "icen".to_string() + suffix + "!");
+
+        assert_eq!(translate_word_with_style(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n", suffix, special_case_suffix), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+        assert_eq!(translate_word_with_style(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n", suffix, special_case_suffix), " !@#$%^&*()_+={}ordw".to_string() + suffix + "|\":>?~`\\][';/.,\t\n");//Symbols around a word
+        assert_eq!(translate_word_with_style("12345678", suffix, special_case_suffix), "12345678");//A number
+        assert_eq!(translate_word_with_style("100 pizzas", suffix, special_case_suffix), "100 izzasp".to_string() + suffix);//A number before a word
+        assert_eq!(translate_word_with_style("over 9000", suffix, special_case_suffix), "over".to_string() + special_case_suffix + " 9000");//A number after a word
     }
 }
 
