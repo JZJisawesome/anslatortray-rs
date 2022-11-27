@@ -12,6 +12,7 @@ edition = "2021"
 keywords = ["pig", "latin", "text", "translate", "translator"]
 categories = ["text-processing", "command-line-utilities", "localization"]
 default-run = "anslatetray"
+documentation = "https://docs.rs/anslatortray/latest/anslatortray/"
 
 [features]
 default = []

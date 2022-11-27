@@ -40,6 +40,9 @@ use crate::translate_words::translate_word_with_style;
 ///assert_eq!(translate("Cool, so the heuristics make pretty good guesses with what they're fed!"),
 ///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
 ///);
+///
+///assert_eq!(translate("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
 ///```
 pub fn translate(english: &str) -> String {
     return translate_way(english);
@@ -102,6 +105,9 @@ pub fn translate_way(english: &str) -> String {
 ///assert_eq!(translate_yay("Cool, so the heuristics make pretty good guesses with what they're fed!"),
 ///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
 ///);
+///
+///assert_eq!(translate_yay("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate_yay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
 ///```
 pub fn translate_yay(english: &str) -> String {
     return translate_with_style(english, "ay", "yay");
@@ -131,6 +137,9 @@ pub fn translate_yay(english: &str) -> String {
 ///assert_eq!(translate_ferb("Cool, so the heuristics make pretty good guesses with what they're fed!"),
 ///    "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
 ///);
+///
+///assert_eq!(translate_ferb("Hello-world"), "Elloherb-orldwerb");
+///assert_eq!(translate_ferb("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
 ///```
 pub fn translate_ferb(english: &str) -> String {
     return translate_with_style(english, "erb", "ferb");
@@ -151,11 +160,31 @@ pub fn translate_ferb(english: &str) -> String {
 ///assert_eq!(translate_with_style("Hello world from the coolest Pig Latin translator!", suffix, special_case_suffix),
 ///    "Ellohancy orldwancy omfrancy ethancy oolestcancy Igpancy Atinlancy anslatortrancy!"
 ///);
+///
 ///assert_eq!(translate_with_style("This library can translate any English text. It can even handle multiple sentences!", suffix, special_case_suffix),
 ///    "Isthancy ibrarylancy ancancy anslatetrancy anyfancy Englishfancy exttancy. Itfancy ancancy evenfancy andlehancy ultiplemancy entencessancy!"
 ///);
-/////TODO
-/////NOTE that this function used in an standalone fashion is not currently tested, and is thus considered experimental
+///
+///assert_eq!(translate_with_style("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", suffix, special_case_suffix),
+///    "Etl".to_string() + suffix + "'s ytr" + suffix + " omes" + suffix + " edge" + special_case_suffix + " asesc" + suffix + ". Atth" + suffix + " is" + special_case_suffix + " a" +
+///    special_case_suffix + " ontractionc" + suffix + ", as" + special_case_suffix + " ellw" + suffix + " as" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix +
+///    " erewh" + suffix + " eth" + suffix + " only" + special_case_suffix + " owelv" + suffix + " is" + special_case_suffix + " y" + special_case_suffix + ". Eatn" + suffix + ", all" +
+///    special_case_suffix + " atth" + suffix + " orksw" + suffix + "!"
+///);
+///
+///assert_eq!(translate_with_style("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ", suffix, special_case_suffix),
+///    "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ" + suffix
+///);
+///
+///assert_eq!(translate_with_style("Cool, so the heuristics make pretty good guesses with what they're fed!", suffix, special_case_suffix),
+///    "Oolc".to_string() + suffix + ", os" + suffix + " eth" + suffix + " euristicsh" + suffix + " akem" + suffix + " ettypr" + suffix + " oodg" + suffix + " uessesg" + suffix + " ithw" + suffix + " atwh" + suffix + " eyth" + suffix + "'re edf" + suffix + "!"
+///);
+///
+///assert_eq!(translate_with_style("Hello-world", suffix, special_case_suffix), "Elloh".to_string() + suffix + "-orldw" + suffix);
+///
+///assert_eq!(translate_with_style("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix),
+///    "Yphensh".to_string() + suffix + "-are" + special_case_suffix + "-ifficultd" + suffix + "-aren" + special_case_suffix + "'t-eyth" + suffix + "?"
+///);
 ///```
 pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english.is_empty() {
@@ -282,6 +311,9 @@ mod tests {
         assert_eq!(translate_ferb("Cool, so the heuristics make pretty good guesses with what they're fed!"),
             "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
         );
+
+        assert_eq!(translate_ferb("Hello-world"), "Elloherb-orldwerb");
+        assert_eq!(translate_ferb("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
     }
 
     #[test]
@@ -327,7 +359,10 @@ mod tests {
             );
 
             assert_eq!(translate_with_style("Hello-world", suffix, special_case_suffix), "Elloh".to_string() + suffix + "-orldw" + suffix);
-            //assert_eq!(translate_with_style("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
+
+            assert_eq!(translate_with_style("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix),
+                "Yphensh".to_string() + suffix + "-are" + special_case_suffix + "-ifficultd" + suffix + "-aren" + special_case_suffix + "'t-eyth" + suffix + "?"
+            );
         }
     }
 }
