@@ -15,11 +15,15 @@ If you have suggestions for how the project could be improved, please visit the 
 
 Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
 
+# Building and Installation
+
+See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
+
 # Library Examples
 
 Try compiling this example code:
 
-```
+```rust
 use anslatortray::translate;
 
 //Prints "Ellohay orldway omfray ethay Anslatortray orfay Ustray!"
@@ -28,7 +32,7 @@ println!("{}", translate("Hello world from the Translator for Rust!"));
 
 Anslatortray also supports using the "yay" suffix instead in special cases if you prefer that:
 
-```
+```rust
 use anslatortray::translate_yay;
 
 //Prints "Utbay Iyay eferpray ethay ayyay-ylestay igpay atinlay!"
@@ -37,7 +41,7 @@ println!("{}", translate_yay("But I prefer the yay-style pig latin!"));
 
 It also supports Ferb Latin from Phineas and Ferb:
 
-```
+```rust
 use anslatortray::translate_ferb;
 
 //Prints "Erewherb's Erryperb?"
@@ -131,7 +135,7 @@ As always, if you find a shortcoming with the library's behaviour, please submit
 
 You can also visit the <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> mirrors to leave issues!
 
-Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
+Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/> and the wiki at <https://git.jekel.ca/JZJ/anslatortray-rs/wiki>.
 
 Anslatortray for Rust is a spiritual sucessor of my original <a href="https://git.jekel.ca/JZJ/anslatortray">Anslatortray</a> (for C++).
 

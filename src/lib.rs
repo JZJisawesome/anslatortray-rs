@@ -18,6 +18,10 @@
 //!
 //!Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
 //!
+//!# Building and Installation
+//!
+//!See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
+//!
 //!# Library Examples
 //!
 //!Try compiling this example code:
@@ -133,7 +137,7 @@
 //!
 //!You can also visit the <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> mirrors to leave issues!
 //!
-//!Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
+//!Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/> and the wiki at <https://git.jekel.ca/JZJ/anslatortray-rs/wiki>.
 //!
 //!Anslatortray for Rust is a spiritual sucessor of my original <a href="https://git.jekel.ca/JZJ/anslatortray">Anslatortray</a> (for C++).
 //!
