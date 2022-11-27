@@ -11,10 +11,10 @@
 //!
 //!The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily.
 //!
-//!You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to [`anslatortray::translate()`].
+//!You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to [`translate()`].
 //!The function handles edge cases quite well (words without vowels, one-letter words, contractions, etc.), though there is always room for improvement.
 //!
-//!If you have suggestions for how the project could be improved, please visit https://git.jekel.ca/JZJ/anslatortray-rs/issues or contact me directly :)
+//!If you have suggestions for how the project could be improved, please visit <a href="https://git.jekel.ca/JZJ/anslatortray-rs/issues">the repository's issues page</a> or contact me directly :)
 //!
 //!# Examples
 //!
@@ -44,9 +44,6 @@
 //!THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ///Translates a multi-word string (including punctuation) into Pig Latin!
-///
-///Please send feedback by submitting an issue to at https://git.jekel.ca/JZJ/anslatortray-rs/issues
-///if you find a shortcoming of this function or a case it does not do so well with.
 ///
 ///# Examples
 ///
@@ -99,7 +96,7 @@ pub fn translate(english: &str) -> String {
 ///
 ///You can also choose from more exotic endings, like "werb" or "yerb" for Ferb latin, though
 ///you'll have to modify this file (src/lib.rs) to change this manually. This includes changes
-///to the normal suffix in [`anslatortray::translate_word()`] and updates to the tests.
+///to the normal suffix in [`translate_word()`] and updates to the tests.
 ///
 ///If you'd like to see another ending available as a Cargo feature, contact me and I'll implement it
 pub const VOWEL_START_STYLE: &str = "yay";//TODO make this configurable via a Cargo feature
@@ -110,11 +107,8 @@ pub const VOWEL_START_STYLE: &str = "yay";//TODO make this configurable via a Ca
 ///It generally does a pretty good job with valid english words and contractions,
 ///and leaves symbols and spaces mostly unchanged.
 ///
-///This is a helper function used by [`anslatortray::translate()`], but
+///This is a helper function used by [`translate()`], but
 ///it is publically exposed as potential users may find this useful.
-///
-///Please send feedback by submitting an issue to at https://git.jekel.ca/JZJ/anslatortray-rs/issues
-///if you find a shortcoming of this function or a case it does not do so well with.
 ///
 ///# Examples
 ///
@@ -266,11 +260,8 @@ pub fn translate_word(english_word: &str) -> String {
 ///If the parameter is a letter, returns Some(true) if it is a vowel, and Some(false) otherwise.
 ///If the parameter isn't a letter, it will return None
 ///
-///This is a helper function used by [`anslatortray::translate_word()`], but
+///This is a helper function used by [`translate_word()`], but
 ///it is publically exposed as potential users may find this useful.
-///
-///Please send feedback by submitting an issue to at https://git.jekel.ca/JZJ/anslatortray-rs/issues
-///if you find a shortcoming of this function or a case it does not do so well with.
 ///
 ///# Examples
 ///
@@ -303,11 +294,8 @@ pub fn is_vowel(letter: char) -> Option<bool> {
 ///If the parameter is a letter, returns Some(true) if it is y, and Some(false) otherwise.
 ///If the parameter isn't a letter, it will return None
 ///
-///This is a helper function used by [`anslatortray::translate_word()`], but
+///This is a helper function used by [`translate_word()`], but
 ///it is publically exposed as potential users may find this useful.
-///
-///Please send feedback by submitting an issue to at https://git.jekel.ca/JZJ/anslatortray-rs/issues
-///if you find a shortcoming of this function or a case it does not do so well with.
 ///
 ///# Examples
 ///
