@@ -8,7 +8,7 @@ Essentially, the word is reorganized in an effort to hide its true meaning, whic
 
 The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily.
 
-You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to `translate()`.
+You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to `anslatortray::translate()`.
 The function handles edge cases quite well (words without vowels, one-letter words, contractions, etc.), though there is always room for improvement.
 
 If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
@@ -44,7 +44,7 @@ use anslatortray::translate_ferb;
 println!("{}", translate_ferb("Where's Perry?"));
 ```
 
-If none of these suit your needs, you can also choose your own suffixes with [`translate_with_style()`]
+If none of these suit your needs, you can also choose your own suffixes with `anslatortray::translate_with_style()`
 
 # Included Programs and Examples
 
