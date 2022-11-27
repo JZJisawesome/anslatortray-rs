@@ -193,13 +193,13 @@ pub fn translate_ferb(english: &str) -> String {
 ///```
 pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english.is_empty() {
-        return "".to_string();
+        return String::new();
     }
 
     //TODO perhaps make this multithreaded?
 
-    let mut pig_latin_string: String = "".to_string();
-    let mut current_word: String = "".to_string();
+    let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+    let mut current_word = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations
     let mut in_word: bool = false;
 
     for character in english.chars().peekable() {
@@ -219,7 +219,8 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
             if character.is_alphabetic() {
                 //If we see a letter, we are in a word, so save the character for now so we can translate the word later
                 in_word = true;
-                current_word = character.to_string();
+                current_word.truncate(0);//Faster than creating a new string
+                current_word.push(character);
             } else {
                 //Otherwise copy symbols and whitespace as-is
                 pig_latin_string.push(character);

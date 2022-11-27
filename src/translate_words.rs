@@ -274,10 +274,10 @@ pub fn translate_word_ferb(english_word: &str) -> String {
 ///```
 pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english_word.is_empty() {
-        return "".to_string();
+        return String::new();
     }
 
-    let mut pig_latin_word: String = "".to_string();
+    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2
     let mut iterator = english_word.chars().peekable();
 
     //Copy leading symbols/whitespace until the first letter
@@ -304,7 +304,7 @@ pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_
         is_vowel(first_letter).unwrap()//Not including y
         || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { true }//Non-alphabetic character after the first letter, or the word ends after the first letter
     };
-    let mut starting_consonants: String = "".to_string();
+    let mut starting_consonants = String::with_capacity(english_word.len() * 2);
 
     if first_letter_was_vowel {
         pig_latin_word.push(first_letter);
