@@ -46,7 +46,7 @@ println!("{}", translate_ferb("Where's Perry?"));
 
 If none of these suit your needs, you can also choose your own suffixes with `anslatortray::translate_with_style()`
 
-# Included Programs and Examples
+# Included Programs Example Usage
 
 ## anslatetray
 

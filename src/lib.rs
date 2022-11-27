@@ -49,7 +49,7 @@
 //!
 //!If none of these suit your needs, you can also choose your own suffixes with [`translate_with_style()`]
 //!
-//!# Included Programs and Examples
+//!# Included Programs Example Usage
 //!
 //!## anslatetray
 //!
@@ -81,14 +81,7 @@
 //!
 //!# Performance
 //!
-//!On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the translate() function can process one word every 5.195 microseconds on average.
-//!I tested this by feeding the words_alpha.txt file from <https://github.com/dwyl/english-words> to anslatetray-file 10 times, calculating the average runtime,
-//!and dividing by 370105 (the number of words in the file). The times do not including loading from and writing to the disk.
-//!
-//!```text
-//!> for run in {1..10}; do anslatetray-file words_alpha.txt words_alpha_pig_latin.txt; done
-//!
-//!On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the translate() function can process one word every 156.886 nanoseconds on average.
+//!On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the [`translate()`] function can process one word every 156.886 nanoseconds on average.
 //!I tested this by feeding the words_alpha.txt file from <https://github.com/dwyl/english-words> to anslatetray-file 10 times, calculating the average runtime,
 //!and dividing by 370105 (the number of words in the file). The times do not including loading from and writing to the disk.
 //!

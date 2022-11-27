@@ -297,7 +297,7 @@ pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_
     //However, if any word is only one letter long, this takes priority and the word is treated like a vowel
     let first_letter_was_vowel: bool = {
         is_vowel(first_letter).unwrap()//Not including y
-        || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { false }//Non-alphabetic character or word ends after the first letter
+        || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { true }//Non-alphabetic character after the first letter, or the word ends after the first letter
     };
     let mut starting_consonants: String = "".to_string();
 
