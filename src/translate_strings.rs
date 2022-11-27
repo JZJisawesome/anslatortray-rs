@@ -144,6 +144,16 @@ pub fn translate_ferb(english: &str) -> String {
 ///# Examples
 ///
 ///```
+///use anslatortray::translate_with_style;
+///
+///let suffix = "ancy";
+///let special_case_suffix = "fancy";
+///assert_eq!(translate_with_style("Hello world from the coolest Pig Latin translator!", suffix, special_case_suffix),
+///    "Ellohancy orldwancy omfrancy ethancy oolestcancy Igpancy Atinlancy anslatortrancy!"
+///);
+///assert_eq!(translate_with_style("This library can translate any English text. It can even handle multiple sentences!", suffix, special_case_suffix),
+///    "Isthancy ibrarylancy ancancy anslatetrancy anyfancy Englishfancy exttancy. Itfancy ancancy evenfancy andlehancy ultiplemancy entencessancy!"
+///);
 /////TODO
 /////NOTE that this function used in an standalone fashion is not currently tested, and is thus considered experimental
 ///```
@@ -237,6 +247,32 @@ mod tests {
             "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
         );
     }
+
+    #[test]
+    fn test_translate_with_style() {
+        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+
+        for pair in suffix_special_case_suffix_pairs {
+            let suffix = pair.0;
+            let special_case_suffix = pair.1;
+
+            assert_eq!(translate_with_style("Hello world from the coolest Pig Latin translator!", suffix, special_case_suffix),
+                "Elloh".to_string() + suffix + " orldw" + suffix + " omfr" + suffix + " eth" + suffix + " oolestc" + suffix + " Igp" + suffix + " Atinl" + suffix + " anslatortr" + suffix + "!"
+            );
+
+            assert_eq!(translate_with_style("This library can translate any English text. It can even handle multiple sentences!", suffix, special_case_suffix),
+                "Isth".to_string() + suffix + " ibraryl" + suffix + " anc" + suffix + " anslatetr" + suffix + " any" + special_case_suffix + " English" + special_case_suffix + " extt" + suffix +
+                ". It" + special_case_suffix + " anc" + suffix + " even" + special_case_suffix + " andleh" + suffix + " ultiplem" + suffix + " entencess" + suffix + "!"
+            );
+        }
+    }
+
+    //TODO
+    /*
+    #[test]
+    fn test_translate_with_style_edgecases() {
+    }
+    */
 }
 
 /* Benches */
