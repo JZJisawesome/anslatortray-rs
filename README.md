@@ -6,7 +6,7 @@ A simple Rust library to translate from English to Pig Latin!
 
 Essentially, the word is reorganized in an effort to hide its true meaning, which can be lots of fun!
 
-The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily.
+The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily. It is incredibly fast (see the Performance section below) and requires no dependencies!
 
 You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to `anslatortray::translate()`.
 The function handles edge cases quite well (words without vowels, one-letter words, contractions, etc.), though there is always room for improvement.
@@ -71,32 +71,51 @@ Error: expected two arguments, the input file to be translated and the file to o
 > anslatetray-file input_but_no_output_file_specified.txt
 Error: expected two arguments, the input file to be translated and the file to output the translated text to
 > anslatetray-file words_alpha.txt words_alpha_pig_latin.txt
-Sucessful: took 62204293ns to translate
+Sucessful: took 90144337ns to translate
 ```
 
 The last example uses words_alpha.txt from <https://github.com/dwyl/english-words>. See below for more information.
 
 # Performance
 
-On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the translate() function can process one word every 156.886 nanoseconds on average.
+On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the `translate()` function can process one word every 227.462 nanoseconds on average.
 I tested this by feeding the words_alpha.txt file from <https://github.com/dwyl/english-words> to anslatetray-file 10 times, calculating the average runtime,
 and dividing by 370105 (the number of words in the file). The times do not including loading from and writing to the disk.
 
+Note that raw calls to `translate_word()` would be faster, but `translate()` has to be smart enough to preserve symbols and whitespace surrounding each word, while still accounting for contractions and other edge-cases.
+
 ```
 > for run in {1..10}; do anslatetray-file words_alpha.txt words_alpha_pig_latin.txt; done
-Sucessful: took 62204293ns to translate
-Sucessful: took 62058042ns to translate
-Sucessful: took 61924286ns to translate
-Sucessful: took 61322023ns to translate
-Sucessful: took 55860108ns to translate
-Sucessful: took 56094747ns to translate
-Sucessful: took 55327630ns to translate
-Sucessful: took 55683902ns to translate
-Sucessful: took 54908469ns to translate
-Sucessful: took 55269018ns to translate
+Sucessful: took 90144337ns to translate
+Sucessful: took 82581222ns to translate
+Sucessful: took 82803035ns to translate
+Sucessful: took 80643452ns to translate
+Sucessful: took 80542962ns to translate
+Sucessful: took 81848295ns to translate
+Sucessful: took 81600103ns to translate
+Sucessful: took 86463460ns to translate
+Sucessful: took 87399299ns to translate
+Sucessful: took 87821022ns to translate
 ```
 
-This is quite fast, but it could be faster :). Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
+There are also some benchmarks built into the library that you can run to easily check the performance of it on your system:
+
+```
+> cargo bench --features nightly-features
+[...]
+test translate_strings::benches::translate_ferb_lorem_ipsum            ... bench:      11,284 ns/iter (+/- 331)
+test translate_strings::benches::translate_ferb_project_description    ... bench:       1,852 ns/iter (+/- 28)
+test translate_strings::benches::translate_lorem_ipsum                 ... bench:      11,033 ns/iter (+/- 284)
+test translate_strings::benches::translate_project_description         ... bench:       1,848 ns/iter (+/- 61)
+test translate_strings::benches::translate_yay_lorem_ipsum             ... bench:      10,968 ns/iter (+/- 263)
+test translate_strings::benches::translate_yay_project_description     ... bench:       1,809 ns/iter (+/- 40)
+test translate_words::benches::translate_word_ferb_the_word_translator ... bench:         120 ns/iter (+/- 3)
+test translate_words::benches::translate_word_the_word_translator      ... bench:         126 ns/iter (+/- 7)
+test translate_words::benches::translate_word_yay_the_word_translator  ... bench:         121 ns/iter (+/- 6)
+[...]
+```
+
+Anslatortray is quite fast, but it could be faster :). Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
 
 # Useful Links
 
