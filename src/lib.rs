@@ -31,6 +31,15 @@
 //!
 //!None other than the standard libraries!
 //!
+//!
+//!# Performance
+//!
+//!On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the translate() function can process one word every 5.195 microseconds on average.
+//!I tested this by feeding the words_alpha.txt file from <https://github.com/dwyl/english-words> to anslatetray-file 10 times, calculating the average runtime,
+//!and dividing by 370105 (the number of words in the file). The times do not including loading from and writing to the disk.
+//!
+//!This is quite fast, but it could be faster. Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
+//!
 //!# Useful Links
 //!<a href="https://git.jekel.ca/JZJ/anslatortray-rs">Click here to visit the Anslatortray for Rust Git Repository!</a>.
 //!

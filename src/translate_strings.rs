@@ -117,6 +117,7 @@ pub fn translate_yay(english: &str) -> String {
 ///use anslatortray::translate_ferb;
 ///
 /////TODO
+/////NOTE that this function is not currently tested, and is thus considered experimental
 ///```
 pub fn translate_ferb(english: &str) -> String {
     return translate_with_style(english, "erb", "ferb");

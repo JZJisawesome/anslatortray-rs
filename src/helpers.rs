@@ -13,7 +13,7 @@
 ///If the parameter is a letter, returns Some(true) if it is a vowel, and Some(false) otherwise.
 ///If the parameter isn't a letter, it will return None
 ///
-///This is a helper function used by [`translate_word()`], but
+///This is a helper function used by [`translate_word()`](crate::translate_word), but
 ///it is publically exposed as potential users may find this useful.
 ///
 ///# Examples
@@ -47,7 +47,7 @@ pub fn is_vowel(letter: char) -> Option<bool> {
 ///If the parameter is a letter, returns Some(true) if it is y, and Some(false) otherwise.
 ///If the parameter isn't a letter, it will return None
 ///
-///This is a helper function used by [`translate_word()`], but
+///This is a helper function used by [`translate_word()`](crate::translate_word), but
 ///it is publically exposed as potential users may find this useful.
 ///
 ///# Examples

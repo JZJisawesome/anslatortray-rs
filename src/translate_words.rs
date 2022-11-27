@@ -22,7 +22,7 @@ use crate::helpers::{is_vowel, is_y};
 ///
 ///Equivalent to [`translate_word_way()`].
 ///
-///This is a helper function used by the [`translate()`] family of functions, but
+///This is a helper function used by the [`translate()`](crate::translate) family of functions, but
 ///it is publically exposed as potential users may find this useful.
 ///
 ///# Examples
@@ -74,7 +74,7 @@ pub fn translate_word(english_word: &str) -> String {
 ///
 ///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_word_with_style()`].
 ///
-///This is a helper function used by the [`translate()`] family of functions, but
+///This is a helper function used by the [`translate()`](crate::translate) family of functions, but
 ///it is publically exposed as potential users may find this useful.
 ///
 ///# Examples
@@ -126,7 +126,7 @@ pub fn translate_word_way(english_word: &str) -> String {
 ///
 ///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_word_with_style()`].
 ///
-///This is a helper function used by the [`translate()`] family of functions, but
+///This is a helper function used by the [`translate()`](crate::translate) family of functions, but
 ///it is publically exposed as potential users may find this useful.
 ///
 ///# Examples
@@ -178,7 +178,7 @@ pub fn translate_word_yay(english_word: &str) -> String {
 ///
 ///Uses the suffix and special_case_suffix "erb" and "ferb" respectively when calling [`translate_word_with_style()`].
 ///
-///This is a helper function used by the [`translate()`] family of functions, but
+///This is a helper function used by the [`translate()`](crate::translate) family of functions, but
 ///it is publically exposed as potential users may find this useful.
 ///
 ///# Examples
@@ -187,6 +187,7 @@ pub fn translate_word_yay(english_word: &str) -> String {
 ///use anslatortray::translate_word_ferb;
 ///
 /////TODO
+/////NOTE that this function is not currently tested, and is thus considered experimental
 ///```
 pub fn translate_word_ferb(english_word: &str) -> String {
     return translate_word_with_style(english_word, "erb", "ferb");
