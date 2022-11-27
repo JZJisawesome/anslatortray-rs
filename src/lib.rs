@@ -151,6 +151,7 @@ pub fn translate_yay(english: &str) -> String {
 ///
 ///```
 /////TODO
+/////NOTE that this function used in an standalone fashion is not currently tested, and is thus considered experimental
 ///```
 pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english.is_empty() {
@@ -336,6 +337,7 @@ pub fn translate_word_yay(english_word: &str) -> String {
 ///
 ///```
 /////TODO
+/////NOTE that this function used in an standalone fashion is not currently tested, and is thus considered experimental
 ///```
 pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
     if english_word.is_empty() {
