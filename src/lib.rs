@@ -101,7 +101,7 @@ pub fn translate(english: &str) -> String {
 ///to the normal suffix in [`translate_word()`] and updates to the tests.
 ///
 ///If you'd like to see another ending available as a Cargo feature, contact me and I'll implement it
-pub const VOWEL_START_STYLE: &str = "yay";//TODO make this configurable via a Cargo feature
+pub const VOWEL_START_STYLE: &str = "way";//TODO make this configurable via a Cargo feature
 
 ///Translates a single word or contraction string into Pig Latin!
 ///
@@ -143,8 +143,8 @@ pub const VOWEL_START_STYLE: &str = "yay";//TODO make this configurable via a Ca
 ///assert_eq!(translate_word("quite"), "uiteqay");//Awful to pronounce, but correct
 ///assert_eq!(translate_word("nice!"), "icenay!");
 ///
-///assert_eq!(translate_word(" !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n");//Lots of symbols
-///assert_eq!(translate_word(" !@#$%^&*()_+{}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+{}ordway|\":>?~`\\][';/.,\t\n");//Symbols around a word
+///assert_eq!(translate_word(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+///assert_eq!(translate_word(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}ordway|\":>?~`\\][';/.,\t\n");//Symbols around a word
 ///assert_eq!(translate_word("12345678"), "12345678");//A number
 ///assert_eq!(translate_word("100 pizzas"), "100 izzaspay");//A number before a word
 ///assert_eq!(translate_word("over 9000"), "over".to_string() + &VOWEL_START_STYLE.to_string() + " 9000");//A number after a word
@@ -276,7 +276,7 @@ pub fn translate_word(english_word: &str) -> String {
 ///    assert!(!anslatortray::is_vowel(letter).unwrap());
 ///}
 ///
-///for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,".chars() {
+///for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,".chars() {
 ///    assert!(matches!(anslatortray::is_vowel(not_letter), None));
 ///}
 ///```
@@ -310,7 +310,7 @@ pub fn is_vowel(letter: char) -> Option<bool> {
 ///    assert!(!anslatortray::is_y(letter).unwrap());
 ///}
 ///
-///for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n".chars() {
+///for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".chars() {
 ///    assert!(matches!(anslatortray::is_y(not_letter), None));
 ///}
 ///```
@@ -382,8 +382,8 @@ mod tests {
         assert_eq!(translate_word("quite"), "uiteqay");//Awful to pronounce, but correct
         assert_eq!(translate_word("nice!"), "icenay!");
 
-        assert_eq!(translate_word(" !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n");//Lots of symbols
-        assert_eq!(translate_word(" !@#$%^&*()_+{}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+{}ordway|\":>?~`\\][';/.,\t\n");//Symbols around a word
+        assert_eq!(translate_word(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+        assert_eq!(translate_word(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}ordway|\":>?~`\\][';/.,\t\n");//Symbols around a word
         assert_eq!(translate_word("12345678"), "12345678");//A number
         assert_eq!(translate_word("100 pizzas"), "100 izzaspay");//A number before a word
         assert_eq!(translate_word("over 9000"), "over".to_string() + &VOWEL_START_STYLE.to_string() + " 9000");//A number after a word
@@ -399,7 +399,7 @@ mod tests {
             assert!(!is_vowel(letter).unwrap());
         }
 
-        for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n".chars() {
+        for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".chars() {
             assert!(matches!(is_vowel(not_letter), None));
         }
     }
@@ -414,7 +414,7 @@ mod tests {
             assert!(!is_y(letter).unwrap());
         }
 
-        for not_letter in " !@#$%^&*()_+{}|\":>?~`\\][';/.,\t\n".chars() {
+        for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".chars() {
             assert!(matches!(is_y(not_letter), None));
         }
     }

@@ -12,6 +12,7 @@ edition = "2021"
 keywords = ["pig", "latin", "text", "translate", "translator"]
 categories = ["text-processing", "command-line-utilities", "localization"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+#[features]
+#default = ["style_way"]
+#style_way = []
+#style_yay = []
