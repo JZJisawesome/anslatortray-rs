@@ -13,7 +13,7 @@ The function handles edge cases quite well (words without vowels, one-letter wor
 
 If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
 
-# Examples
+# Library Examples
 
 Try compiling this example code:
 
@@ -24,11 +24,55 @@ use anslatortray::translate;
 println!("{}", translate("Hello world from the Translator for Rust!"));
 ```
 
+# Included Programs and Examples
+
+## anslatetray
+
+Translates command line arguments passed to it
+
+```
+> anslatetray
+Error: expected at least one string to translate
+> anslatetray Hello World!
+Ellohay Orldway!
+> anslatetray A simple Rust library to translate from English to Pig Latin!
+Away implesay Ustray ibrarylay otay anslatetray omfray Englishway otay Igpay Atinlay!
+```
+
+## anslatetray-file
+
+Translates an input file and writes the results to an output file
+
+```
+> anslatetray-file
+Error: expected two arguments, the input file to be translated and the file to output the translated text to
+> anslatetray-file input.txt
+Error: expected two arguments, the input file to be translated and the file to output the translated text to
+> anslatetray-file words_alpha.txt words_alpha_pig_latin.txt
+Sucessful: took 2135440079ns to translate
+```
+
+The last example uses words_alpha.txt from <https://github.com/dwyl/english-words>. See below for more information.
+
 # Performance
 
 On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the translate() function can process one word every 5.195 microseconds on average.
 I tested this by feeding the words_alpha.txt file from <https://github.com/dwyl/english-words> to anslatetray-file 10 times, calculating the average runtime,
 and dividing by 370105 (the number of words in the file). The times do not including loading from and writing to the disk.
+
+```
+> for run in {1..10}; do anslatetray-file words_alpha.txt words_alpha_pig_latin.txt; done
+Sucessful: took 2118641571ns to translate
+Sucessful: took 2107652277ns to translate
+Sucessful: took 2112420235ns to translate
+Sucessful: took 2117837807ns to translate
+Sucessful: took 2115814983ns to translate
+Sucessful: took 2116324807ns to translate
+Sucessful: took 2121425152ns to translate
+Sucessful: took 2115151687ns to translate
+Sucessful: took 2103425264ns to translate
+Sucessful: took 2105139954ns to translate
+```
 
 This is quite fast, but it could be faster. Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
 
