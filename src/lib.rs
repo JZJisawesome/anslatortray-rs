@@ -20,7 +20,7 @@
 //!
 //!Try compiling this example code:
 //!
-//!```text
+//!```
 //!use anslatortray::translate;
 //!
 //!//Prints "Ellohay orldway omfray ethay Anslatortray orfay Ustray!"

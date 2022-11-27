@@ -32,7 +32,7 @@ fn main() {
     let start_time = std::time::Instant::now();
     let translated_file_contents = translate(&file_contents);
     let time_to_translate = start_time.elapsed();
-    std::fs::write(output_file, &translated_file_contents);
+    std::fs::write(output_file, &translated_file_contents).unwrap();
 
     eprintln!("Sucessful: took {}ns to translate", time_to_translate.as_nanos());
 }

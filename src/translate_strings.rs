@@ -116,8 +116,21 @@ pub fn translate_yay(english: &str) -> String {
 ///```
 ///use anslatortray::translate_ferb;
 ///
-/////TODO
-/////NOTE that this function is not currently tested, and is thus considered experimental
+///assert_eq!(translate_ferb("Hello world from the coolest Ferb Latin translator!"), "Elloherb orldwerb omfrerb etherb oolestcerb Erbferb Atinlerb anslatortrerb!");
+///
+///assert_eq!(translate_ferb("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Istherb ibrarylerb ancerb anslatetrerb anyferb Englishferb extterb. Itferb ancerb evenferb andleherb ultiplemerb entencesserb!"
+///);
+///
+///assert_eq!(translate_ferb("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlerb's ytrerb omeserb edgeferb asescerb. Attherb isferb aferb ontractioncerb, asferb ellwerb asferb aferb ordwerb erewherb etherb onlyferb owelverb isferb yferb. Eatnerb, allferb attherb orkswerb!"
+///);
+///assert_eq!(translate_ferb("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
+///    "Atwherb ifferb aferb ordwerb asherb onerb owelsverb, ikelerb istherb: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZerb"
+///);
+///assert_eq!(translate_ferb("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
+///);
 ///```
 pub fn translate_ferb(english: &str) -> String {
     return translate_with_style(english, "erb", "ferb");
@@ -200,6 +213,28 @@ mod tests {
         );
         assert_eq!(translate_yay("Cool, so the heuristics make pretty good guesses with what they're fed!"),
             "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
+        );
+    }
+
+    #[test]
+    fn test_translate_ferb() {
+        assert_eq!(translate_ferb("Hello world from the coolest Ferb Latin translator!"), "Elloherb orldwerb omfrerb etherb oolestcerb Erbferb Atinlerb anslatortrerb!");
+
+        assert_eq!(translate_ferb("This library can translate any English text. It can even handle multiple sentences!"),
+            "Istherb ibrarylerb ancerb anslatetrerb anyferb Englishferb extterb. Itferb ancerb evenferb andleherb ultiplemerb entencesserb!"
+        );
+    }
+
+    #[test]
+    fn test_translate_ferb_edgecases() {
+        assert_eq!(translate_ferb("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+            "Etlerb's ytrerb omeserb edgeferb asescerb. Attherb isferb aferb ontractioncerb, asferb ellwerb asferb aferb ordwerb erewherb etherb onlyferb owelverb isferb yferb. Eatnerb, allferb attherb orkswerb!"
+        );
+        assert_eq!(translate_ferb("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
+            "Atwherb ifferb aferb ordwerb asherb onerb owelsverb, ikelerb istherb: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZerb"
+        );
+        assert_eq!(translate_ferb("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+            "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
         );
     }
 }
