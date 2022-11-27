@@ -113,6 +113,11 @@ pub fn translate_yay(english: &str) -> String {
     return translate_with_style(english, "ay", "yay");
 }
 
+///TODO description, tests, and examples
+fn translate_hay(english: &str) -> String {
+    return translate_with_style(english, "ay", "hay");
+}
+
 ///Translates a multi-word string (including punctuation) into Ferb Latin!
 ///
 ///Uses the suffix and special_case_suffix "erb" and "ferb" respectively when calling [`translate_word_with_style()`].
@@ -263,6 +268,14 @@ mod tests {
     }
 
     #[test]
+    fn test_translate_and_translate_way_uppercase() {
+        assert_eq!(translate("HELLO WORLD!"), "ELLOHAY ORLDWAY!");
+        assert_eq!(translate("ISN't THIS COOL?"), "ISNWAY't ISTHAY OOLCAY?");//The case of the second part of a contraction should match the original
+        assert_eq!(translate("What ABOUT a MIX?"), "Atwhay ABOUTWAY away IXMAY?");
+        assert_eq!(translate("Luke, I am your father!"), "Ukelay, Iway amway ouryay atherfay!");//We don't want to capitalize single-letter words
+    }
+
+    #[test]
     fn test_translate_yay() {
         assert_eq!(translate_yay("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
 
@@ -290,6 +303,14 @@ mod tests {
     }
 
     #[test]
+    fn test_translate_yay_uppercase() {
+        assert_eq!(translate_yay("HELLO WORLD!"), "ELLOHAY ORLDWAY!");
+        assert_eq!(translate_yay("ISN't THIS COOL?"), "ISNYAY't ISTHAY OOLCAY?");//The case of the second part of a contraction should match the original
+        assert_eq!(translate_yay("What ABOUT a MIX?"), "Atwhay ABOUTYAY ayay IXMAY?");
+        assert_eq!(translate_yay("Luke, I am your father!"), "Ukelay, Iyay amyay ouryay atherfay!");//We don't want to capitalize single-letter words
+    }
+
+    #[test]
     fn test_translate_ferb() {
         assert_eq!(translate_ferb("Hello world from the coolest Ferb Latin translator!"), "Elloherb orldwerb omfrerb etherb oolestcerb Erbferb Atinlerb anslatortrerb!");
 
@@ -314,6 +335,14 @@ mod tests {
 
         assert_eq!(translate_ferb("Hello-world"), "Elloherb-orldwerb");
         assert_eq!(translate_ferb("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
+    }
+
+    #[test]
+    fn test_translate_ferb_uppercase() {
+        assert_eq!(translate_ferb("HELLO WORLD!"), "ELLOHERB ORLDWERB!");
+        assert_eq!(translate_ferb("ISN't THIS COOL?"), "ISNFERB't ISTHERB OOLCERB?");
+        assert_eq!(translate_ferb("What ABOUT a MIX?"), "Atwherb ABOUTFERB aferb IXMERB?");
+        assert_eq!(translate_ferb("Luke, I am your father!"), "Ukelerb, Iferb amferb ouryerb atherferb!");//We don't want to capitalize single-letter words
     }
 
     #[test]
@@ -365,6 +394,14 @@ mod tests {
             );
         }
     }
+
+    //TODO
+    /*
+    #[test]
+    fn test_translate_with_style_uppercase() {
+
+    }
+    */
 }
 
 /* Benches */

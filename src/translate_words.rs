@@ -170,6 +170,11 @@ pub fn translate_word_yay(english_word: &str) -> String {
     return translate_word_with_style(english_word, "ay", "yay");
 }
 
+///TODO description, tests, and examples
+fn translate_word_hay(english_word: &str) -> String {
+    return translate_word_with_style(english_word, "ay", "hay");
+}
+
 ///Translates a single word or contraction string into Ferb Latin!
 ///
 ///Can have leading and trailing punctuation or whitespace.
