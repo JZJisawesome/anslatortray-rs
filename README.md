@@ -11,7 +11,7 @@ The Anslatortray library can help out by converting any English text into Pig La
 You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to `translate()`.
 The function handles edge cases quite well (words without vowels, one-letter words, contractions, etc.), though there is always room for improvement.
 
-If you have suggestions for how the project could be improved, please visit <a href="https://git.jekel.ca/JZJ/anslatortray-rs/issues">the repository's issues page</a> or contact me directly :)
+If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
 
 # Examples
 
@@ -27,6 +27,8 @@ println!("{}", translate("Hello world from the Translator for Rust!"));
 # Useful Links
 
 <a href="https://git.jekel.ca/JZJ/anslatortray-rs">Click here to visit the Anslatortray for Rust Git Repository!</a>.
+
+You can also visit the <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> mirrors to leave issues!
 
 Anslatortray for Rust is a spiritual sucessor of my original <a href="https://git.jekel.ca/JZJ/anslatortray">Anslatortray</a> (for C++).
 
