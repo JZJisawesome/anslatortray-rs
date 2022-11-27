@@ -166,9 +166,11 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
 
     let mut pig_latin_string: String = "".to_string();
 
+    //TODO hyphens are a problem
+
     let mut first_iteration: bool = true;
     for word in english.split(&[' ', '\t', '\n']) {
-        if !first_iteration { pig_latin_string.push(' '); }//Seperate words by spaces regardless of how they were seperated before
+        if !first_iteration { pig_latin_string.push(' '); }//Seperate words by spaces regardless of how they were seperated before//TODO this could be done better
         pig_latin_string.push_str(translate_word_with_style(word, suffix, special_case_suffix).as_str());
         first_iteration = false;
     }
@@ -202,6 +204,8 @@ mod tests {
         assert_eq!(translate("Cool, so the heuristics make pretty good guesses with what they're fed!"),
             "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
         );
+        assert_eq!(translate("Hello-world"), "Ellohay-orldway");
+        assert_eq!(translate("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
     }
 
     #[test]
@@ -224,6 +228,8 @@ mod tests {
         assert_eq!(translate_yay("Cool, so the heuristics make pretty good guesses with what they're fed!"),
             "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
         );
+        assert_eq!(translate_yay("Hello-world"), "Ellohay-orldway");
+        assert_eq!(translate_yay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
     }
 
     #[test]
@@ -267,12 +273,14 @@ mod tests {
         }
     }
 
-    //TODO
-    /*
     #[test]
     fn test_translate_with_style_edgecases() {
+        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+
+        for pair in suffix_special_case_suffix_pairs {
+            //TODO
+        }
     }
-    */
 }
 
 /* Benches */

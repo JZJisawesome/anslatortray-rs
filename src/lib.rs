@@ -29,6 +29,26 @@
 //!println!("{}", translate("Hello world from the Translator for Rust!"));
 //!```
 //!
+//!Anslatortray also supports using the "yay" suffix instead in special cases if you prefer that:
+//!
+//!```
+//!use anslatortray::translate_yay;
+//!
+//!//Prints "Utbay Iyay eferpray ethay ayyay-ylestay igpay atinlay!"
+//!println!("{}", translate_yay("But I prefer the yay-style pig latin!"));
+//!```
+//!
+//!It also supports Ferb Latin from Phineas and Ferb:
+//!
+//!```
+//!use anslatortray::translate_ferb;
+//!
+//!//Prints "Erewherb's Erryperb?"
+//!println!("{}", translate_ferb("Where's Perry?"));
+//!```
+//!
+//!If none of these suit your needs, you can also choose your own suffixes with [`translate_with_style()`]
+//!
 //!# Included Programs and Examples
 //!
 //!## anslatetray
