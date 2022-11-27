@@ -74,7 +74,7 @@
 //!> anslatetray-file input_but_no_output_file_specified.txt
 //!Error: expected two arguments, the input file to be translated and the file to output the translated text to
 //!> anslatetray-file words_alpha.txt words_alpha_pig_latin.txt
-//!Sucessful: took 2135440079ns to translate
+//!Sucessful: took 62204293ns to translate
 //!```
 //!
 //!The last example uses words_alpha.txt from <https://github.com/dwyl/english-words>. See below for more information.
@@ -87,19 +87,26 @@
 //!
 //!```text
 //!> for run in {1..10}; do anslatetray-file words_alpha.txt words_alpha_pig_latin.txt; done
-//!Sucessful: took 2118641571ns to translate
-//!Sucessful: took 2107652277ns to translate
-//!Sucessful: took 2112420235ns to translate
-//!Sucessful: took 2117837807ns to translate
-//!Sucessful: took 2115814983ns to translate
-//!Sucessful: took 2116324807ns to translate
-//!Sucessful: took 2121425152ns to translate
-//!Sucessful: took 2115151687ns to translate
-//!Sucessful: took 2103425264ns to translate
-//!Sucessful: took 2105139954ns to translate
+//!
+//!On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the translate() function can process one word every 156.886 nanoseconds on average.
+//!I tested this by feeding the words_alpha.txt file from <https://github.com/dwyl/english-words> to anslatetray-file 10 times, calculating the average runtime,
+//!and dividing by 370105 (the number of words in the file). The times do not including loading from and writing to the disk.
+//!
+//!```text
+//!> for run in {1..10}; do anslatetray-file words_alpha.txt words_alpha_pig_latin.txt; done
+//!Sucessful: took 62204293ns to translate
+//!Sucessful: took 62058042ns to translate
+//!Sucessful: took 61924286ns to translate
+//!Sucessful: took 61322023ns to translate
+//!Sucessful: took 55860108ns to translate
+//!Sucessful: took 56094747ns to translate
+//!Sucessful: took 55327630ns to translate
+//!Sucessful: took 55683902ns to translate
+//!Sucessful: took 54908469ns to translate
+//!Sucessful: took 55269018ns to translate
 //!```
 //!
-//!This is quite fast, but it could be faster. Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
+//!This is quite fast, but it could be faster :). Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
 //!
 //!# Dependencies
 //!
