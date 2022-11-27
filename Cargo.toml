@@ -1,7 +1,16 @@
 [package]
 name = "anslatortray"
-version = "0.1.0"
+version = "0.1.1"
+description = "A simple Rust library to translate from English to Pig Latin!"
+authors = ["John Zacarias Jekel <john@jekel.ca>"]
+readme = "README.md"
+#homepage = ""
+repository = "https://git.jekel.ca/JZJ/anslatortray-rs"
+license = "MIT"
+license-file = "LICENSE"
 edition = "2021"
+keywords = ["pig", "latin", "text", "translate", "translator"]
+categories = ["text-processing", "command-line-utilities", "localization"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
