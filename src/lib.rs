@@ -160,37 +160,36 @@ fn translate_word(english_word: &str) -> String {
 
     //TODO what if first character is an apostrophe? (like 'cause)
     //TODO what if the word is all uppercase?
+    let first_letter_was_vowel: bool = is_vowel(first_letter).unwrap();//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+    let mut starting_consonants: String = "".to_string();
 
-    if is_vowel(first_letter).unwrap() {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+    if first_letter_was_vowel {
         pig_latin_word.push(first_letter);
-        todo!();//TODO need to handle contractions, as well as copy the rest of the word
-        pig_latin_word.push_str(VOWEL_START_STYLE);
-        return pig_latin_word;
-    }
+    } else {
+        let first_char_was_upper = first_letter.is_ascii_uppercase();
+        starting_consonants.push(first_letter.to_ascii_lowercase());
 
-    let first_char_was_upper = first_letter.is_ascii_uppercase();
-    let mut starting_consonants: String = first_letter.to_ascii_lowercase().to_string();
-
-    //Grab all of the starting consonants, and push the first vowel we enounter to pig_latin_word
-    loop {
-        match iterator.next() {
-            None => { return english_word.to_string(); },//The word has no vowels, so return it back unmodified
-            Some(character) => {
-                if character.is_alphabetic() {
-                    if is_vowel(character).unwrap() || is_y(character).unwrap() {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
-                        //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
-                        if first_char_was_upper {
-                            pig_latin_word.push(character.to_ascii_uppercase());
+        //Grab all of the starting consonants, and push the first vowel we enounter to pig_latin_word
+        loop {
+            match iterator.next() {
+                None => { break; },//The word has no vowels, but it is a herustic to pass it on so that ex. the acroynm binary code decimal or bcd becomes bcdway, etc.
+                Some(character) => {
+                    if character.is_alphabetic() {
+                        if is_vowel(character).unwrap() || is_y(character).unwrap() {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                            //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
+                            if first_char_was_upper {
+                                pig_latin_word.push(character.to_ascii_uppercase());
+                            } else {
+                                pig_latin_word.push(character.to_ascii_lowercase());
+                            }
+                            break;
                         } else {
-                            pig_latin_word.push(character.to_ascii_lowercase());
+                            starting_consonants.push(character);
                         }
-                        break;
-                    } else {
-                        starting_consonants.push(character);
+                        first_letter = character;//We found the first character of the word/contraction
+                    } else {//The word ended without vowels or we met an apostrophe
+                        break;//It is a herustic to pass it on so that ex. the letter y becomes yway, the word a becomes away, etc.
                     }
-                    first_letter = character;//We found the first character of the word/contraction
-                } else {//The word ended without vowels or we met an apostrophe
-                    return english_word.to_string();//Return it back unmodified
                 }
             }
         }
@@ -215,9 +214,13 @@ fn translate_word(english_word: &str) -> String {
         }
     }
 
-    //Copy starting consonants and add ay
-    pig_latin_word.push_str(&starting_consonants);
-    pig_latin_word.push_str("ay");
+    //Copy starting consonants and add ay, or add the VOWEL_START_STYLE depending on the circumstances
+    if first_letter_was_vowel || (starting_consonants == "") {//Words that start with vowels or that are only a single letter get the VOWEL_START_STYLE
+        pig_latin_word.push_str(VOWEL_START_STYLE);
+    } else {
+        pig_latin_word.push_str(&starting_consonants);
+        pig_latin_word.push_str("ay");
+    }
 
     //Re-add the trailing character we "accidentally" took in the previous loop (if we do in fact have one)
     if let Some(character) = trailing_character {
@@ -320,7 +323,7 @@ fn translate_word(english_word: &str) -> String {
 ///
 ///# Examples
 ///
-///```
+///```ignore
 ///for letter in "aeiouAEIOU".chars() {
 ///    assert!(anslatortray::is_vowel(letter).unwrap());
 ///}
@@ -351,7 +354,7 @@ fn is_vowel(letter: char) -> Option<bool> {
 ///
 ///# Examples
 ///
-///```
+///```ignore
 ///for letter in "yY".chars() {
 ///    assert!(anslatortray::is_y(letter).unwrap());
 ///}
