@@ -186,8 +186,37 @@ pub fn translate_word_yay(english_word: &str) -> String {
 ///```
 ///use anslatortray::translate_word_ferb;
 ///
-/////TODO
-/////NOTE that this function is not currently tested, and is thus considered experimental
+///assert_eq!(translate_word_ferb("Hello"), "Elloherb");
+///assert_eq!(translate_word_ferb("World!"), "Orldwerb!");
+///
+///assert_eq!(translate_word_ferb("This"), "Istherb");
+///assert_eq!(translate_word_ferb("is"), "isferb");
+///assert_eq!(translate_word_ferb("a"), "aferb");
+///assert_eq!(translate_word_ferb("test"), "estterb");
+///assert_eq!(translate_word_ferb("of"), "offerb");
+///assert_eq!(translate_word_ferb("the"), "etherb");
+///assert_eq!(translate_word_ferb("function"), "unctionferb");
+///assert_eq!(translate_word_ferb("translate_"), "anslatetrerb_");
+///assert_eq!(translate_word_ferb("word."), "ordwerb.");
+///
+///assert_eq!(translate_word_ferb("I"), "Iferb");
+///assert_eq!(translate_word_ferb("Love"), "Ovelerb");
+///assert_eq!(translate_word_ferb("Pig"), "Igperb");
+///assert_eq!(translate_word_ferb("Latin!"), "Atinlerb!");
+///
+///assert_eq!(translate_word_ferb("You"), "Ouyerb");//Y isn't a vowel here
+///assert_eq!(translate_word_ferb("should"), "ouldsherb");
+///assert_eq!(translate_word_ferb("try"), "ytrerb");//Y is a vowel here
+///assert_eq!(translate_word_ferb("yougurt,"), "ougurtyerb,");//Y isn't a vowel here
+///assert_eq!(translate_word_ferb("it's"), "itferb's");//Contraction
+///assert_eq!(translate_word_ferb("quite"), "uiteqerb");//Awful to pronounce, but correct
+///assert_eq!(translate_word_ferb("nice!"), "icenerb!");
+///
+///assert_eq!(translate_word_ferb(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+///assert_eq!(translate_word_ferb(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}ordwerb|\":>?~`\\][';/.,\t\n");//Symbols around a word
+///assert_eq!(translate_word_ferb("12345678"), "12345678");//A number
+///assert_eq!(translate_word_ferb("100 pizzas"), "100 izzasperb");//A number before a word
+///assert_eq!(translate_word_ferb("over 9000"), "overferb 9000");//A number after a word
 ///```
 pub fn translate_word_ferb(english_word: &str) -> String {
     return translate_word_with_style(english_word, "erb", "ferb");
@@ -386,6 +415,41 @@ mod tests {
         assert_eq!(translate_word_yay("12345678"), "12345678");//A number
         assert_eq!(translate_word_yay("100 pizzas"), "100 izzaspay");//A number before a word
         assert_eq!(translate_word_yay("over 9000"), "overyay 9000");//A number after a word
+    }
+
+    #[test]
+    fn test_translate_word_ferb() {
+        assert_eq!(translate_word_ferb("Hello"), "Elloherb");
+        assert_eq!(translate_word_ferb("World!"), "Orldwerb!");
+
+        assert_eq!(translate_word_ferb("This"), "Istherb");
+        assert_eq!(translate_word_ferb("is"), "isferb");
+        assert_eq!(translate_word_ferb("a"), "aferb");
+        assert_eq!(translate_word_ferb("test"), "estterb");
+        assert_eq!(translate_word_ferb("of"), "offerb");
+        assert_eq!(translate_word_ferb("the"), "etherb");
+        assert_eq!(translate_word_ferb("function"), "unctionferb");
+        assert_eq!(translate_word_ferb("translate_"), "anslatetrerb_");
+        assert_eq!(translate_word_ferb("word."), "ordwerb.");
+
+        assert_eq!(translate_word_ferb("I"), "Iferb");
+        assert_eq!(translate_word_ferb("Love"), "Ovelerb");
+        assert_eq!(translate_word_ferb("Pig"), "Igperb");
+        assert_eq!(translate_word_ferb("Latin!"), "Atinlerb!");
+
+        assert_eq!(translate_word_ferb("You"), "Ouyerb");//Y isn't a vowel here
+        assert_eq!(translate_word_ferb("should"), "ouldsherb");
+        assert_eq!(translate_word_ferb("try"), "ytrerb");//Y is a vowel here
+        assert_eq!(translate_word_ferb("yougurt,"), "ougurtyerb,");//Y isn't a vowel here
+        assert_eq!(translate_word_ferb("it's"), "itferb's");//Contraction
+        assert_eq!(translate_word_ferb("quite"), "uiteqerb");//Awful to pronounce, but correct
+        assert_eq!(translate_word_ferb("nice!"), "icenerb!");
+
+        assert_eq!(translate_word_ferb(" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n");//Lots of symbols
+        assert_eq!(translate_word_ferb(" !@#$%^&*()_+={}word|\":>?~`\\][';/.,\t\n"), " !@#$%^&*()_+={}ordwerb|\":>?~`\\][';/.,\t\n");//Symbols around a word
+        assert_eq!(translate_word_ferb("12345678"), "12345678");//A number
+        assert_eq!(translate_word_ferb("100 pizzas"), "100 izzasperb");//A number before a word
+        assert_eq!(translate_word_ferb("over 9000"), "overferb 9000");//A number after a word
     }
 }
 

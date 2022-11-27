@@ -46,7 +46,7 @@ Translates an input file and writes the results to an output file
 ```
 > anslatetray-file
 Error: expected two arguments, the input file to be translated and the file to output the translated text to
-> anslatetray-file input.txt
+> anslatetray-file input_but_no_output_file_specified.txt
 Error: expected two arguments, the input file to be translated and the file to output the translated text to
 > anslatetray-file words_alpha.txt words_alpha_pig_latin.txt
 Sucessful: took 2135440079ns to translate

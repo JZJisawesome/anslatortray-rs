@@ -11,6 +11,7 @@ license-file = "LICENSE"
 edition = "2021"
 keywords = ["pig", "latin", "text", "translate", "translator"]
 categories = ["text-processing", "command-line-utilities", "localization"]
+default-run = "anslatetray"
 
 [features]
 default = []
@@ -42,3 +43,11 @@ strip = true
 overflow-checks = false
 panic = "abort"
 lto = true
+
+[profile.release-with-debug]
+inherits = "release"
+strip = false
+overflow-checks = false
+panic = "abort"
+lto = false
+debug = true
