@@ -38,7 +38,7 @@
 ///
 ///Commonly this is either "way" or "yay". I prefer the former, but you can choose
 ///between the two by specifying the feature "way" or "yay" respectively in Cargo.
-pub const VOWEL_START_STYLE: &str = "way";//TODO make this configurable via a Cargo feature
+pub const VOWEL_START_STYLE: &str = "yay";//TODO make this configurable via a Cargo feature
 
 ///Translates a multi-word string (including punctuation) into Pig Latin!
 ///
@@ -140,10 +140,10 @@ fn translate_word(english_word: &str) -> String {
     }
 
     let mut pig_latin_word: String = "".to_string();
-    let mut iterator = english_word.chars();
+    let mut iterator = english_word.chars().peekable();
 
     //Copy leading symbols/whitespace until the first letter
-    let mut first_letter: char;
+    let first_letter: char;
     loop {
         match iterator.next() {
             None => { return english_word.to_string(); },//There are only symbols/whitespace in the word
@@ -158,9 +158,14 @@ fn translate_word(english_word: &str) -> String {
         }
     }
 
-    //TODO what if first character is an apostrophe? (like 'cause)
     //TODO what if the word is all uppercase?
-    let first_letter_was_vowel: bool = is_vowel(first_letter).unwrap();//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+
+    //As a herustic, we consider Y to be a vowel when it is not at the start of the word
+    //However, if any word is only one letter long, this takes priority and the word is treated like a vowel
+    let first_letter_was_vowel: bool = {
+        is_vowel(first_letter).unwrap()//Not including y
+        || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { false }//Non-alphabetic character or word ends after the first letter
+    };
     let mut starting_consonants: String = "".to_string();
 
     if first_letter_was_vowel {
@@ -186,7 +191,6 @@ fn translate_word(english_word: &str) -> String {
                         } else {
                             starting_consonants.push(character);
                         }
-                        first_letter = character;//We found the first character of the word/contraction
                     } else {//The word ended without vowels or we met an apostrophe
                         break;//It is a herustic to pass it on so that ex. the letter y becomes yway, the word a becomes away, etc.
                     }
@@ -215,7 +219,7 @@ fn translate_word(english_word: &str) -> String {
     }
 
     //Copy starting consonants and add ay, or add the VOWEL_START_STYLE depending on the circumstances
-    if first_letter_was_vowel || (starting_consonants == "") {//Words that start with vowels or that are only a single letter get the VOWEL_START_STYLE
+    if first_letter_was_vowel {
         pig_latin_word.push_str(VOWEL_START_STYLE);
     } else {
         pig_latin_word.push_str(&starting_consonants);
@@ -393,14 +397,17 @@ mod tests {
     #[test]
     fn test_translate_edgecases() {
         assert_eq!(translate("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
-            if VOWEL_START_STYLE == "way" { "Etlay's ytray omesya edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!" }
-            else if VOWEL_START_STYLE == "yay" { "Etlay's ytray omesya edgeway asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allway atthay orksway!" }
+            if VOWEL_START_STYLE == "way" { "Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!" }
+            else if VOWEL_START_STYLE == "yay" { "Etlay's ytray omesay edgeyay asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allyay atthay orksway!" }
             else { panic!(); }
         );
-        assert_eq!(translate("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"),
-            if VOWEL_START_STYLE == "way" { "Atwhay ifway away ordway ashay onay owelvay, ikelay isthay: bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ" }
-            else if VOWEL_START_STYLE == "yay" { "Atwhay ifyay ayay ordway ashay onay owelvay, ikelay isthay: bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ" }
+        assert_eq!(translate("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
+            if VOWEL_START_STYLE == "way" { "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay" }
+            else if VOWEL_START_STYLE == "yay" { "Atwhay ifyay ayay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay" }
             else { panic!(); }
+        );
+        assert_eq!(translate("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+            "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
         );
     }
 
