@@ -16,3 +16,13 @@ categories = ["text-processing", "command-line-utilities", "localization"]
 #default = ["default_style_way"]
 #default_style_way = []
 #default_style_yay = []
+
+[profile.dev]
+incremental = true
+
+[profile.release]
+codegen-units = 1
+strip = true
+overflow-checks = false
+panic = "abort"
+lto = true
