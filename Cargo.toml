@@ -1,6 +1,6 @@
 [package]
 name = "anslatortray"
-version = "0.1.1"
+version = "0.1.3"
 description = "A simple Rust library to translate from English to Pig Latin!"
 authors = ["John Zacarias Jekel <john@jekel.ca>"]
 readme = "README.md"
