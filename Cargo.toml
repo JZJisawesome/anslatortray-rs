@@ -12,6 +12,10 @@ edition = "2021"
 keywords = ["pig", "latin", "text", "translate", "translator"]
 categories = ["text-processing", "command-line-utilities", "localization"]
 
+[features]
+default = []
+nightly-features = []
+
 #[features]
 #default = ["default_style_way"]
 #default_style_way = []

@@ -185,3 +185,27 @@ mod tests {
         );
     }
 }
+
+/* Benches */
+
+#[cfg_attr(feature = "nightly-features", cfg(test))]
+#[cfg(feature = "nightly-features")]
+mod benches {
+    extern crate test;
+    use test::Bencher;
+    use super::*;
+
+    #[bench]
+    fn translate_project_description(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate("A simple Rust library to translate from English to Pig Latin!");
+        });
+    }
+
+    #[bench]
+    fn translate_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        });
+    }
+}

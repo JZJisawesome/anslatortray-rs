@@ -365,3 +365,20 @@ mod tests {
         assert_eq!(translate_word_yay("over 9000"), "overyay 9000");//A number after a word
     }
 }
+
+/* Benches */
+
+#[cfg_attr(feature = "nightly-features", cfg(test))]
+#[cfg(feature = "nightly-features")]
+mod benches {
+    extern crate test;
+    use test::Bencher;
+    use super::*;
+
+    #[bench]
+    fn translate_word_the_word_translator(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate_word("translator");
+        });
+    }
+}

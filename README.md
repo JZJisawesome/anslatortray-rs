@@ -32,6 +32,10 @@ You can also visit the <a href="https://github.com/JZJisawesome/anslatortray-rs/
 
 Anslatortray for Rust is a spiritual sucessor of my original <a href="https://git.jekel.ca/JZJ/anslatortray">Anslatortray</a> (for C++).
 
+# Dependencies
+
+None other than the standard libraries!
+
 # Anslatortray Code and Documentation Licence
 
 MIT License
