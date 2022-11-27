@@ -107,6 +107,21 @@ pub fn translate_yay(english: &str) -> String {
     return translate_with_style(english, "ay", "yay");
 }
 
+///Translates a multi-word string (including punctuation) into Ferb Latin!
+///
+///Uses the suffix and special_case_suffix "erb" and "ferb" respectively when calling [`translate_word_with_style()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_ferb;
+///
+/////TODO
+///```
+pub fn translate_ferb(english: &str) -> String {
+    return translate_with_style(english, "erb", "ferb");
+}
+
 ///Translates a multi-word string (including punctuation) into a custom-styled play language!
 ///
 ///Pass the string you wish to translate, the suffix you wish to have appended to most words, and the suffix
@@ -122,6 +137,8 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
     if english.is_empty() {
         return "".to_string();
     }
+
+    //TODO perhaps make this multithreaded?
 
     let mut pig_latin_string: String = "".to_string();
 
@@ -203,9 +220,37 @@ mod benches {
     }
 
     #[bench]
+    fn translate_yay_project_description(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate_yay("A simple Rust library to translate from English to Pig Latin!");
+        });
+    }
+
+    #[bench]
+    fn translate_ferb_project_description(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate_ferb("A simple Rust library to translate from English to Pig Latin!");
+        });
+    }
+
+    #[bench]
     fn translate_lorem_ipsum(b: &mut Bencher) {
         b.iter(|| -> String {
             return translate("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        });
+    }
+
+    #[bench]
+    fn translate_yay_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate_yay("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        });
+    }
+
+    #[bench]
+    fn translate_ferb_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate_ferb("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
         });
     }
 }

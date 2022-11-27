@@ -170,6 +170,28 @@ pub fn translate_word_yay(english_word: &str) -> String {
     return translate_word_with_style(english_word, "ay", "yay");
 }
 
+///Translates a single word or contraction string into Ferb Latin!
+///
+///Can have leading and trailing punctuation or whitespace.
+///It generally does a pretty good job with valid english words and contractions,
+///and leaves symbols and spaces mostly unchanged.
+///
+///Uses the suffix and special_case_suffix "erb" and "ferb" respectively when calling [`translate_word_with_style()`].
+///
+///This is a helper function used by the [`translate()`] family of functions, but
+///it is publically exposed as potential users may find this useful.
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_word_ferb;
+///
+/////TODO
+///```
+pub fn translate_word_ferb(english_word: &str) -> String {
+    return translate_word_with_style(english_word, "erb", "ferb");
+}
+
 ///Translates a single word or contraction string into a custom-styled play language!
 ///
 ///Pass the word you wish to translate, the suffix you wish to have appended to most words, and the suffix
@@ -379,6 +401,20 @@ mod benches {
     fn translate_word_the_word_translator(b: &mut Bencher) {
         b.iter(|| -> String {
             return translate_word("translator");
+        });
+    }
+
+    #[bench]
+    fn translate_word_yay_the_word_translator(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate_word_yay("translator");
+        });
+    }
+
+    #[bench]
+    fn translate_word_ferb_the_word_translator(b: &mut Bencher) {
+        b.iter(|| -> String {
+            return translate_word_ferb("translator");
         });
     }
 }

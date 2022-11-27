@@ -60,5 +60,5 @@ mod translate_strings;
 mod translate_words;
 
 pub use helpers::{is_vowel, is_y};
-pub use translate_strings::{translate, translate_way, translate_yay, translate_with_style};
-pub use translate_words::{translate_word, translate_word_way, translate_word_yay, translate_word_with_style};
+pub use translate_strings::{translate, translate_way, translate_yay, translate_ferb, translate_with_style};
+pub use translate_words::{translate_word, translate_word_way, translate_word_yay, translate_word_ferb, translate_word_with_style};
