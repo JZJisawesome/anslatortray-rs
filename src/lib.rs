@@ -120,6 +120,14 @@
 //!
 //!Anslatortray is quite fast, but it could be faster :). Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
 //!
+//!# Edge Cases
+//!
+//!The English language is very inconsistent. Sentences begin with capitals, as do proper names, there are contractions, words-with-hyphens-in-between-them, and all sorts of punctuation!
+//!
+//!Thankfully, anslatortray's heuristics do pretty well in most common situations! Take a look at test cases in the code suffixed with _edgecases to see the sort of situations anslatortray does well in!
+//!
+//!As always, if you find a shortcoming with the library's behaviour, please submit an issue or contact me!
+//!
 //!# Useful Links
 //!<a href="https://git.jekel.ca/JZJ/anslatortray-rs">Click here to visit the Anslatortray for Rust Git Repository!</a>.
 //!
