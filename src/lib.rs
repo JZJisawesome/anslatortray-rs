@@ -157,6 +157,7 @@
 //!THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /* Nightly Features */
+
 //Only enabled if the relevant Cargo feature is
 #![cfg_attr(feature = "nightly-features", feature(test))]
 
@@ -166,6 +167,4 @@ mod helpers;
 mod translate_strings;
 mod translate_words;
 
-pub use helpers::{is_vowel, is_y};
 pub use translate_strings::{translate, translate_way, translate_yay, translate_ferb, translate_with_style};
-pub use translate_words::{translate_word, translate_word_way, translate_word_yay, translate_word_ferb, translate_word_with_style};

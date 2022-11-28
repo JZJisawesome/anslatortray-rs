@@ -8,30 +8,11 @@
 
 /* Functions */
 
-///Returns whether a letter is a vowel or not.
-///
-///If the parameter is a letter, returns Some(true) if it is a vowel, and Some(false) otherwise.
-///If the parameter isn't a letter, it will return None
-///
-///This is a helper function used by [`translate_word()`](crate::translate_word), but
-///it is publically exposed as potential users may find this useful.
-///
-///# Examples
-///
-///```
-///for letter in "aeiouAEIOU".chars() {
-///    assert!(anslatortray::is_vowel(letter).unwrap());
-///}
-///
-///for letter in "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ".chars() {
-///    assert!(!anslatortray::is_vowel(letter).unwrap());
-///}
-///
-///for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,".chars() {
-///    assert!(matches!(anslatortray::is_vowel(not_letter), None));
-///}
-///```
-pub fn is_vowel(letter: char) -> Option<bool> {
+//Returns whether a letter is a vowel or not.
+//
+//If the parameter is a letter, returns Some(true) if it is a vowel, and Some(false) otherwise.
+//If the parameter isn't a letter, it will return None
+pub(crate) fn is_vowel(letter: char) -> Option<bool> {
     if !letter.is_alphabetic() {
         return None;
     }
@@ -42,30 +23,12 @@ pub fn is_vowel(letter: char) -> Option<bool> {
     }
 }
 
-///Returns whether a letter is y or not.
-///
-///If the parameter is a letter, returns Some(true) if it is y, and Some(false) otherwise.
-///If the parameter isn't a letter, it will return None
-///
-///This is a helper function used by [`translate_word()`](crate::translate_word), but
-///it is publically exposed as potential users may find this useful.
-///
-///# Examples
-///
-///```
-///for letter in "yY".chars() {
-///    assert!(anslatortray::is_y(letter).unwrap());
-///}
-///
-///for letter in "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXZ".chars() {
-///    assert!(!anslatortray::is_y(letter).unwrap());
-///}
-///
-///for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".chars() {
-///    assert!(matches!(anslatortray::is_y(not_letter), None));
-///}
-///```
-pub fn is_y(letter: char) -> Option<bool> {
+//Returns whether a letter is y or not.
+//
+//If the parameter is a letter, returns Some(true) if it is y, and Some(false) otherwise.
+//If the parameter isn't a letter, it will return None
+//
+pub(crate) fn is_y(letter: char) -> Option<bool> {
     if !letter.is_alphabetic() {
         return None;
     }
