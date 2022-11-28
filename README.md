@@ -102,7 +102,7 @@ See <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Using-the-anslatortra
 
 Check out the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Performance">wiki page about Anslatortray's performance</a>!
 
-Spoiler: It can translate one word in under **140ns** on average in the default UTF-8 mode, and in under **100ns** on average in ASCII-only mode :)
+Spoiler: It can translate one word in under **129ns** on average in the default UTF-8 mode, and in under **94ns** on average in ASCII-only mode on my dated system :)
 
 # Useful Links
 

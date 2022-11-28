@@ -34,8 +34,8 @@ use crate::translate_words::translate_word_with_style_reuse_buffers_ascii;
 ///    "Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!"
 ///);
 ///
-///assert_eq!(translate("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
-///    "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay"
+///assert_eq!(translate("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
 ///);
 ///
 ///assert_eq!(translate("Cool, so the heuristics make pretty good guesses with what they're fed!"),
@@ -73,8 +73,8 @@ pub fn translate_ascii(english: &str) -> String {
 ///    "Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!"
 ///);
 ///
-///assert_eq!(translate_way("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
-///    "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay"
+///assert_eq!(translate_way("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
 ///);
 ///
 ///assert_eq!(translate_way("Cool, so the heuristics make pretty good guesses with what they're fed!"),
@@ -109,8 +109,8 @@ pub fn translate_way_ascii(english: &str) -> String {
 ///    "Etlay's ytray omesay edgeyay asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allyay atthay orksway!"
 ///);
 ///
-///assert_eq!(translate_yay("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
-///    "Atwhay ifyay ayay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay"
+///assert_eq!(translate_yay("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifyay ayay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
 ///);
 ///
 ///assert_eq!(translate_yay("Cool, so the heuristics make pretty good guesses with what they're fed!"),
@@ -157,8 +157,8 @@ pub fn translate_hay_ascii(english: &str) -> String {
 ///assert_eq!(translate_ferb("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
 ///    "Etlerb's ytrerb omeserb edgeferb asescerb. Attherb isferb aferb ontractioncerb, asferb ellwerb asferb aferb ordwerb erewherb etherb onlyferb owelverb isferb yferb. Eatnerb, allferb attherb orkswerb!"
 ///);
-///assert_eq!(translate_ferb("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
-///    "Atwherb ifferb aferb ordwerb asherb onerb owelsverb, ikelerb istherb: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZerb"
+///assert_eq!(translate_ferb("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwherb ifferb aferb ordwerb asherb onerb owelsverb, ikelerb istherb: bcdfghjklmnpqrstvwxzerb"
 ///);
 ///assert_eq!(translate_ferb("Cool, so the heuristics make pretty good guesses with what they're fed!"),
 ///    "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
@@ -205,8 +205,8 @@ pub fn translate_ferb_ascii(english: &str) -> String {
 ///    special_case_suffix + " atth" + suffix + " orksw" + suffix + "!"
 ///);
 ///
-///assert_eq!(translate_with_style("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ", suffix, special_case_suffix),
-///    "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ" + suffix
+///assert_eq!(translate_with_style("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", suffix, special_case_suffix),
+///    "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxz" + suffix
 ///);
 ///
 ///assert_eq!(translate_with_style("Cool, so the heuristics make pretty good guesses with what they're fed!", suffix, special_case_suffix),
@@ -505,8 +505,8 @@ mod tests {
                 special_case_suffix + " atth" + suffix + " orksw" + suffix + "!"
             );
 
-            assert_eq!(translate_with_style_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ", suffix, special_case_suffix),
-                "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ" + suffix
+            assert_eq!(translate_with_style_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", suffix, special_case_suffix),
+                "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxz" + suffix
             );
 
             assert_eq!(translate_with_style_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!", suffix, special_case_suffix),
