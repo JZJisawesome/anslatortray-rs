@@ -1,4 +1,4 @@
-# anslatortray-rs
+# Anslatortray for Rust
 
 A simple Rust library to translate from English to Pig Latin!
 
@@ -17,7 +17,7 @@ Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/a
 
 # Building and Installation
 
-If you wish to use the library in your crate, add anslatortray as a dependency and follow along with the examples below, or <a href="https://docs.rs/anslatortray/latest/anslatortray/">check out the documentation</a>.
+If you wish to use the library in your crate, add anslatortray as a dependency and follow along with the example below, or <a href="https://docs.rs/anslatortray/latest/anslatortray/">check out the documentation</a> for more.
 
 If you wish to use the `anslatortray` standalone binary, clone `https://git.jekel.ca/JZJ/anslatortray.git`, do `cargo build --release`, and you'll find the binary in the target/release directory.
 

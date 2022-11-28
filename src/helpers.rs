@@ -9,30 +9,16 @@
 /* Functions */
 
 //Returns whether a letter is a vowel or not.
-//
-//If the parameter is a letter, returns Some(true) if it is a vowel, and Some(false) otherwise.
-//If the parameter isn't a letter, it will return None
-pub(crate) fn is_vowel(letter: char) -> Option<bool> {
-    if !letter.is_alphabetic() {
-        return None;
-    }
-
+pub(crate) fn is_vowel(letter: char) -> bool {
     match letter.to_ascii_lowercase() {
-        'a' | 'e' | 'i' | 'o' | 'u' => { return Some(true); }
-        _ => { return Some(false); }
+        'a' | 'e' | 'i' | 'o' | 'u' => { return true; }
+        _ => { return false; }
     }
 }
 
 //Returns whether a letter is y or not.
-//
-//If the parameter is a letter, returns Some(true) if it is y, and Some(false) otherwise.
-//If the parameter isn't a letter, it will return None
-pub(crate) fn is_y(letter: char) -> Option<bool> {
-    if !letter.is_alphabetic() {
-        return None;
-    }
-
-    return Some(letter.to_ascii_lowercase() == 'y');
+pub(crate) fn is_y(letter: char) -> bool {
+    return letter.to_ascii_lowercase() == 'y';
 }
 
 //TODO testing
@@ -60,30 +46,30 @@ mod tests {
     #[test]
     fn test_is_vowel() {
         for letter in "aeiouAEIOU".chars() {
-            assert!(is_vowel(letter).unwrap());
+            assert!(is_vowel(letter));
         }
 
         for letter in "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ".chars() {
-            assert!(!is_vowel(letter).unwrap());
+            assert!(!is_vowel(letter));
         }
 
         for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".chars() {
-            assert!(matches!(is_vowel(not_letter), None));
+            assert!(!is_vowel(not_letter));
         }
     }
 
     #[test]
     fn test_is_y() {
         for letter in "yY".chars() {
-            assert!(is_y(letter).unwrap());
+            assert!(is_y(letter));
         }
 
         for letter in "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXZ".chars() {
-            assert!(!is_y(letter).unwrap());
+            assert!(!is_y(letter));
         }
 
         for not_letter in " !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".chars() {
-            assert!(matches!(is_y(not_letter), None));
+            assert!(!is_y(not_letter));
         }
     }
 }

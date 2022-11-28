@@ -38,7 +38,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
     //However, if any word is only one letter long, this takes priority and the word is treated like a vowel
     let first_letter_was_vowel: bool = {
-        is_vowel(first_letter).unwrap()//Not including y
+        is_vowel(first_letter)//Not including y
         || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { true }//Non-alphabetic character after the first letter, or the word ends after the first letter
     };
     starting_consonants.truncate(0);
@@ -55,7 +55,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
                 None => { break; },//The word has no vowels, but it is a herustic to pass it on so that ex. the acroynm binary code decimal or bcd becomes bcdway, etc.
                 Some(character) => {
                     if character.is_alphabetic() {
-                        if is_vowel(character).unwrap() || is_y(character).unwrap() {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                        if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
                             //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
                             if first_char_was_upper {
                                 buffer_to_append_to.push(character.to_ascii_uppercase());
