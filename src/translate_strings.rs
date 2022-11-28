@@ -9,13 +9,13 @@
 /* Imports */
 
 use crate::translate_words::translate_word_with_style_reuse_buffers;
-use crate::translate_words::translate_word_with_style_reuse_buffers_utf8_safe;
+use crate::translate_words::translate_word_with_style_reuse_buffers_ascii;
 
 /* Functions */
 
 ///Translates a multi-word string (including punctuation) into Pig Latin!
 ///
-///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_word_with_style()`].
+///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_with_style()`].
 ///
 ///Equivalent to [`translate_way()`].
 ///
@@ -50,13 +50,13 @@ pub fn translate(english: &str) -> String {
 }
 
 ///TODO description, tests, and examples
-pub fn translate_utf8_safe(english: &str) -> String {
-    return translate_way_utf8_safe(english);
+pub fn translate_ascii(english: &str) -> String {
+    return translate_way_ascii(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (way-style)!
 ///
-///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_word_with_style()`].
+///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_with_style()`].
 ///
 ///# Examples
 ///
@@ -86,13 +86,13 @@ pub fn translate_way(english: &str) -> String {
 }
 
 ///TODO description, tests, and examples
-pub fn translate_way_utf8_safe(english: &str) -> String {
-    return translate_with_style_utf8_safe(english, "ay", "way");
+pub fn translate_way_ascii(english: &str) -> String {
+    return translate_with_style_ascii(english, "ay", "way");
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (yay-style)!
 ///
-///Uses the suffix and special_case_suffix "ay" and "yay" respectively when calling [`translate_word_with_style()`].
+///Uses the suffix and special_case_suffix "ay" and "yay" respectively when calling [`translate_with_style()`].
 ///
 ///# Examples
 ///
@@ -125,8 +125,8 @@ pub fn translate_yay(english: &str) -> String {
 }
 
 ///TODO description, tests, and examples
-pub fn translate_yay_utf8_safe(english: &str) -> String {
-    return translate_with_style_utf8_safe(english, "ay", "yay");
+pub fn translate_yay_ascii(english: &str) -> String {
+    return translate_with_style_ascii(english, "ay", "yay");
 }
 
 ///TODO description, tests, and examples
@@ -135,13 +135,13 @@ pub fn translate_hay(english: &str) -> String {
 }
 
 ///TODO description, tests, and examples
-pub fn translate_hay_utf8_safe(english: &str) -> String {
-    return translate_with_style_utf8_safe(english, "ay", "hay");
+pub fn translate_hay_ascii(english: &str) -> String {
+    return translate_with_style_ascii(english, "ay", "hay");
 }
 
 ///Translates a multi-word string (including punctuation) into Ferb Latin!
 ///
-///Uses the suffix and special_case_suffix "erb" and "ferb" respectively when calling [`translate_word_with_style()`].
+///Uses the suffix and special_case_suffix "erb" and "ferb" respectively when calling [`translate_with_style()`].
 ///
 ///# Examples
 ///
@@ -172,8 +172,8 @@ pub fn translate_ferb(english: &str) -> String {
 }
 
 ///TODO description, tests, and examples
-pub fn translate_ferb_utf8_safe(english: &str) -> String {
-    return translate_with_style_utf8_safe(english, "erb", "ferb");
+pub fn translate_ferb_ascii(english: &str) -> String {
+    return translate_with_style_ascii(english, "erb", "ferb");
 }
 
 ///Translates a multi-word string (including punctuation) into a custom-styled play language!
@@ -222,6 +222,52 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
         return String::new();
     }
 
+    let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+    let mut current_word = String::with_capacity(64);//Longer than all English words to avoid unneeded allocations (plus leaving room for leading and trailing extra characters)
+    let mut in_word: bool = false;
+
+    //Buffers for improved performance (avoid repeated heap allocations)
+    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+    for character in english.chars().peekable() {
+        if in_word {
+            if character.is_alphabetic() || (character == '\'') {
+                //Save the character to translate once the word ends; we also keep apostrophes so that translate_word_with_style can handle contractions
+                current_word.push(character);
+            } else {
+                //The word ended, so translate the chararacters we've saved up until this point!
+                in_word = false;
+                translate_word_with_style_reuse_buffers(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+
+                //Append the symbol/whitespace we just got after the translated word
+                pig_latin_string.push(character);
+            }
+        } else {//We are not currently in a word
+            if character.is_alphabetic() {
+                //If we see a letter, we are in a word, so save the character for now so we can translate the word later
+                in_word = true;
+                current_word.truncate(0);//Faster than creating a new string
+                current_word.push(character);
+            } else {
+                //Otherwise copy symbols and whitespace as-is
+                pig_latin_string.push(character);
+            }
+        }
+    }
+    //If we ended on a word, we translate it and push it to the end of the string
+    if in_word {
+        translate_word_with_style_reuse_buffers(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+    }
+
+    return pig_latin_string;
+}
+
+///TODO description, tests, and examples
+pub fn translate_with_style_ascii(english: &str, suffix: &str, special_case_suffix: &str) -> String {
+    if english.is_empty() {
+        return String::new();
+    }
+
     //TODO make more optimizations since we can assume the string is UTF8 safe
 
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
@@ -245,7 +291,7 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
                 //The word ended, so translate the word we've identified up until this point!
                 in_word = false;
                 let word_slice: &str = &english[current_word_start_index..current_word_end_index];
-                translate_word_with_style_reuse_buffers(word_slice, suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+                translate_word_with_style_reuse_buffers_ascii(word_slice, suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
 
                 //Append the symbol/whitespace we just got after the translated word
                 pig_latin_string.push(character);
@@ -270,53 +316,7 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
     //If we ended on a word, we translate it and push it to the end of the string
     if in_word {
         let word_slice: &str = &english[current_word_start_index..current_word_end_index];
-        translate_word_with_style_reuse_buffers(word_slice, suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
-    }
-
-    return pig_latin_string;
-}
-
-///TODO description, tests, and examples
-pub fn translate_with_style_utf8_safe(english: &str, suffix: &str, special_case_suffix: &str) -> String {
-    if english.is_empty() {
-        return String::new();
-    }
-
-    let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
-    let mut current_word = String::with_capacity(64);//Longer than all English words to avoid unneeded allocations (plus leaving room for leading and trailing extra characters)
-    let mut in_word: bool = false;
-
-    //Buffers for improved performance (avoid repeated heap allocations)
-    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
-
-    for character in english.chars().peekable() {
-        if in_word {
-            if character.is_alphabetic() || (character == '\'') {
-                //Save the character to translate once the word ends; we also keep apostrophes so that translate_word_with_style can handle contractions
-                current_word.push(character);
-            } else {
-                //The word ended, so translate the chararacters we've saved up until this point!
-                in_word = false;
-                translate_word_with_style_reuse_buffers_utf8_safe(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
-
-                //Append the symbol/whitespace we just got after the translated word
-                pig_latin_string.push(character);
-            }
-        } else {//We are not currently in a word
-            if character.is_alphabetic() {
-                //If we see a letter, we are in a word, so save the character for now so we can translate the word later
-                in_word = true;
-                current_word.truncate(0);//Faster than creating a new string
-                current_word.push(character);
-            } else {
-                //Otherwise copy symbols and whitespace as-is
-                pig_latin_string.push(character);
-            }
-        }
-    }
-    //If we ended on a word, we translate it and push it to the end of the string
-    if in_word {
-        translate_word_with_style_reuse_buffers_utf8_safe(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+        translate_word_with_style_reuse_buffers_ascii(word_slice, suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
     }
 
     return pig_latin_string;

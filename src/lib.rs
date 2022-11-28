@@ -167,4 +167,5 @@ mod helpers;
 mod translate_strings;
 mod translate_words;
 
-pub use translate_strings::*;
+pub use translate_strings::{translate, translate_way, translate_yay, translate_hay, translate_ferb, translate_with_style};
+pub use translate_strings::{translate_ascii, translate_way_ascii, translate_yay_ascii, translate_hay_ascii, translate_ferb_ascii, translate_with_style_ascii};
