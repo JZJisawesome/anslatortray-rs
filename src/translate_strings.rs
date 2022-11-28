@@ -234,6 +234,8 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
         special_case_suffix_upper.push(letter.to_ascii_uppercase());
     }
 
+    eprintln!("{} -> {}, {} -> {}", suffix_lower, suffix_upper, special_case_suffix_lower, special_case_suffix_upper);
+
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
     let mut current_word = String::with_capacity(64);//Longer than all English words to avoid unneeded allocations (plus leaving room for leading and trailing extra characters)
     let mut contraction_suffix = String::with_capacity(64);
@@ -468,19 +470,19 @@ mod tests {
             let suffix_upper = pair.2;
             let special_case_suffix_upper = pair.3;
 
-            assert_eq!(translate_with_style("HELLO WORLD!", suffix_lower, suffix_upper),
+            assert_eq!(translate_with_style("HELLO WORLD!", suffix_lower, special_case_suffix_lower),
                 "ELLOH".to_string() + suffix_upper + " ORLDW" + suffix_upper + "!"
             );
 
-            assert_eq!(translate_with_style("ISN't THIS COOL?", suffix_lower, suffix_upper),
+            assert_eq!(translate_with_style("ISN't THIS COOL?", suffix_lower, special_case_suffix_lower),
                 "ISN".to_string() + special_case_suffix_upper + "'t ISTH" + suffix_upper + " OOLC" + suffix_upper + "?"
             );
 
-            assert_eq!(translate_with_style("What ABOUT a MIX?", suffix_lower, suffix_upper),
+            assert_eq!(translate_with_style("What ABOUT a MIX?", suffix_lower, special_case_suffix_lower),
                 "Atwh".to_string() + suffix_lower + " ABOUT" + special_case_suffix_upper + " a" + special_case_suffix_lower + " IXM" + suffix_upper + "?"
             );
 
-            assert_eq!(translate_with_style("Luke, I am your father!", suffix_lower, suffix_upper),//We don't want to capitalize single-letter words
+            assert_eq!(translate_with_style("Luke, I am your father!", suffix_lower, special_case_suffix_lower),//We don't want to capitalize single-letter words
                 "Ukel".to_string() + suffix_lower + ", I" + special_case_suffix_lower+ " am" + special_case_suffix_lower + " oury" + suffix_lower + " atherf" + suffix_lower + "!"
             );
         }
@@ -559,19 +561,19 @@ mod tests {
             let suffix_upper = pair.2;
             let special_case_suffix_upper = pair.3;
 
-            assert_eq!(translate_with_style_ascii("HELLO WORLD!", suffix_lower, suffix_upper),
+            assert_eq!(translate_with_style_ascii("HELLO WORLD!", suffix_lower, special_case_suffix_lower),
                 "ELLOH".to_string() + suffix_upper + " ORLDW" + suffix_upper + "!"
             );
 
-            assert_eq!(translate_with_style_ascii("ISN't THIS COOL?", suffix_lower, suffix_upper),
+            assert_eq!(translate_with_style_ascii("ISN't THIS COOL?", suffix_lower, special_case_suffix_lower),
                 "ISN".to_string() + special_case_suffix_upper + "'t ISTH" + suffix_upper + " OOLC" + suffix_upper + "?"
             );
 
-            assert_eq!(translate_with_style_ascii("What ABOUT a MIX?", suffix_lower, suffix_upper),
+            assert_eq!(translate_with_style_ascii("What ABOUT a MIX?", suffix_lower, special_case_suffix_lower),
                 "Atwh".to_string() + suffix_lower + " ABOUT" + special_case_suffix_upper + " a" + special_case_suffix_lower + " IXM" + suffix_upper + "?"
             );
 
-            assert_eq!(translate_with_style_ascii("Luke, I am your father!", suffix_lower, suffix_upper),//We don't want to capitalize single-letter words
+            assert_eq!(translate_with_style_ascii("Luke, I am your father!", suffix_lower, special_case_suffix_lower),//We don't want to capitalize single-letter words
                 "Ukel".to_string() + suffix_lower + ", I" + special_case_suffix_lower+ " am" + special_case_suffix_lower + " oury" + suffix_lower + " atherf" + suffix_lower + "!"
             );
         }
