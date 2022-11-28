@@ -11,7 +11,7 @@ license = "MIT"
 edition = "2021"
 keywords = ["pig", "latin", "text", "translate", "translator"]
 categories = ["text-processing", "command-line-utilities", "localization"]
-default-run = "anslatetray"
+default-run = "anslatortray"
 documentation = "https://docs.rs/anslatortray/latest/anslatortray/"
 
 [features]
@@ -23,16 +23,8 @@ name = "anslatortray"
 path = "src/lib.rs"
 
 [[bin]]
-name = "anslatetray"
-path = "src/anslatetray.rs"
-
-[[bin]]
-name = "anslatetray-file"
-path = "src/anslatetray-file.rs"
-
-[[bin]]
-name = "anslatetray-interactive"
-path = "src/anslatetray-interactive.rs"
+name = "anslatortray"
+path = "src/anslatortray.rs"
 
 #[features]
 #default = ["default_style_way"]
