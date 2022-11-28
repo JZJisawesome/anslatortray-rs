@@ -587,45 +587,86 @@ mod benches {
     use test::Bencher;
     use super::*;
 
+    const PROJECT_DESCRIPTION: &str = "A simple Rust library to translate from English to Pig Latin!";
+    const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
     #[bench]
-    fn translate_project_description(b: &mut Bencher) {
-        b.iter(|| -> String {
-            return translate("A simple Rust library to translate from English to Pig Latin!");
-        });
+    fn way_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate(PROJECT_DESCRIPTION); });
     }
 
     #[bench]
-    fn translate_yay_project_description(b: &mut Bencher) {
-        b.iter(|| -> String {
-            return translate_yay("A simple Rust library to translate from English to Pig Latin!");
-        });
+    fn yay_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_yay(PROJECT_DESCRIPTION); });
     }
 
     #[bench]
-    fn translate_ferb_project_description(b: &mut Bencher) {
-        b.iter(|| -> String {
-            return translate_ferb("A simple Rust library to translate from English to Pig Latin!");
-        });
+    fn hay_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_hay(PROJECT_DESCRIPTION); });
     }
 
     #[bench]
-    fn translate_lorem_ipsum(b: &mut Bencher) {
-        b.iter(|| -> String {
-            return translate("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-        });
+    fn ferb_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_ferb(PROJECT_DESCRIPTION); });
     }
 
     #[bench]
-    fn translate_yay_lorem_ipsum(b: &mut Bencher) {
-        b.iter(|| -> String {
-            return translate_yay("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-        });
+    fn way_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate(LOREM_IPSUM); });
     }
 
     #[bench]
-    fn translate_ferb_lorem_ipsum(b: &mut Bencher) {
-        b.iter(|| -> String {
-            return translate_ferb("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-        });
+    fn yay_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_yay(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn hay_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_hay(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn ferb_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_ferb(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn ascii_way_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_ascii(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn ascii_yay_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_yay_ascii(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn ascii_hay_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_hay_ascii(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn ascii_ferb_project_description(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_ferb_ascii(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn ascii_way_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_ascii(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn ascii_yay_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_yay_ascii(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn ascii_hay_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_hay_ascii(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn ascii_ferb_lorem_ipsum(b: &mut Bencher) {
+        b.iter(|| -> String { return translate_ferb_ascii(LOREM_IPSUM); });
     }
 }
