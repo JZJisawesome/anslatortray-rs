@@ -197,11 +197,11 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
     }
 
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
-    let mut current_word = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations
+    let mut current_word = String::with_capacity(64);//Longer than all English words to avoid unneeded allocations (plus leaving room for leading and trailing extra characters)
     let mut in_word: bool = false;
 
     //Buffers for improved performance (avoid repeated heap allocations)
-    let mut starting_consonants_buffer = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations, times 2, plus the fact this isn't a whole word
+    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
     for character in english.chars().peekable() {
         if in_word {

@@ -273,8 +273,8 @@ pub fn translate_word_ferb(english_word: &str) -> String {
 ///assert_eq!(translate_word_with_style("over 9000", suffix, special_case_suffix), "overfancy 9000");//A number after a word
 ///```
 pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
-    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations, times 2
-    let mut starting_consonants_buffer = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations, times 2, plus the fact this isn't a whole word
+    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
     translate_word_with_style_reuse_buffers(english_word, suffix, special_case_suffix, &mut pig_latin_word, &mut starting_consonants_buffer);
     return pig_latin_word;
 }
