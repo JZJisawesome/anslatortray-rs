@@ -53,7 +53,7 @@ pub fn translate(english: &str) -> String {
 ///
 ///Faster than [`translate()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
-///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_with_style()`].
+///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_with_style_ascii()`].
 ///
 ///Equivalent to [`translate_way_ascii()`].
 ///
@@ -125,7 +125,7 @@ pub fn translate_way(english: &str) -> String {
 ///
 ///Faster than [`translate_way()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
-///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_with_style()`].
+///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_with_style_ascii()`].
 ///
 ///# Examples
 ///
@@ -195,7 +195,7 @@ pub fn translate_yay(english: &str) -> String {
 ///
 ///Faster than [`translate_yay()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
-///Uses the suffix and special_case_suffix "ay" and "yay" respectively when calling [`translate_with_style()`].
+///Uses the suffix and special_case_suffix "ay" and "yay" respectively when calling [`translate_with_style_ascii()`].
 ///
 ///# Examples
 ///
@@ -227,12 +227,72 @@ pub fn translate_yay_ascii(english: &str) -> String {
     return translate_with_style_ascii(english, "ay", "yay");
 }
 
-///TODO description, tests, and examples
+///Translates a multi-word string (including punctuation) into Pig Latin (hay-style)!
+///
+///Uses the suffix and special_case_suffix "ay" and "hay" respectively when calling [`translate_with_style()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_hay;
+///
+///assert_eq!(translate_hay("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///assert_eq!(translate_hay("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Isthay ibrarylay ancay anslatetray anyhay Englishhay exttay. Ithay ancay evenhay andlehay ultiplemay entencessay!"
+///);
+///
+///assert_eq!(translate_hay("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlay's ytray omesay edgehay asescay. Atthay ishay ahay ontractioncay, ashay ellway ashay ahay ordway erewhay ethay onlyhay owelvay ishay yhay. Eatnay, allhay atthay orksway!"
+///);
+///
+///assert_eq!(translate_hay("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifhay ahay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
+///);
+///
+///assert_eq!(translate_hay("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
+///);
+///
+///assert_eq!(translate_hay("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate_hay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-arehay-ifficultday-arenhay't-eythay?");
+///```
 pub fn translate_hay(english: &str) -> String {
     return translate_with_style(english, "ay", "hay");
 }
 
-///TODO description, tests, and examples
+///Translates a multi-word string (including punctuation) into Pig Latin (hay-style)!
+///
+///Faster than [`translate_hay()`], but requires that the string only contains ASCII characters or else it may panic.
+///
+///Uses the suffix and special_case_suffix "ay" and "hay" respectively when calling [`translate_with_style_ascii()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_hay_ascii;
+///
+///assert_eq!(translate_hay_ascii("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///assert_eq!(translate_hay_ascii("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Isthay ibrarylay ancay anslatetray anyhay Englishhay exttay. Ithay ancay evenhay andlehay ultiplemay entencessay!"
+///);
+///
+///assert_eq!(translate_hay_ascii("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlay's ytray omesay edgehay asescay. Atthay ishay ahay ontractioncay, ashay ellway ashay ahay ordway erewhay ethay onlyhay owelvay ishay yhay. Eatnay, allhay atthay orksway!"
+///);
+///
+///assert_eq!(translate_hay_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifhay ahay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
+///);
+///
+///assert_eq!(translate_hay_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
+///);
+///
+///assert_eq!(translate_hay_ascii("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate_hay_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-arehay-ifficultday-arenhay't-eythay?");
+///```
 pub fn translate_hay_ascii(english: &str) -> String {
     return translate_with_style_ascii(english, "ay", "hay");
 }
@@ -269,7 +329,36 @@ pub fn translate_ferb(english: &str) -> String {
     return translate_with_style(english, "erb", "ferb");
 }
 
-///TODO description, tests, and examples
+///Translates a multi-word string (including punctuation) into Ferb Latin!
+///
+///Faster than [`translate_hay()`], but requires that the string only contains ASCII characters or else it may panic.
+///
+///Uses the suffix and special_case_suffix "erb" and "ferb" respectively when calling [`translate_with_style_ascii()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_ferb_ascii;
+///
+///assert_eq!(translate_ferb_ascii("Hello world from the coolest Ferb Latin translator!"), "Elloherb orldwerb omfrerb etherb oolestcerb Erbferb Atinlerb anslatortrerb!");
+///
+///assert_eq!(translate_ferb_ascii("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Istherb ibrarylerb ancerb anslatetrerb anyferb Englishferb extterb. Itferb ancerb evenferb andleherb ultiplemerb entencesserb!"
+///);
+///
+///assert_eq!(translate_ferb_ascii("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlerb's ytrerb omeserb edgeferb asescerb. Attherb isferb aferb ontractioncerb, asferb ellwerb asferb aferb ordwerb erewherb etherb onlyferb owelverb isferb yferb. Eatnerb, allferb attherb orkswerb!"
+///);
+///assert_eq!(translate_ferb_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwherb ifferb aferb ordwerb asherb onerb owelsverb, ikelerb istherb: bcdfghjklmnpqrstvwxzerb"
+///);
+///assert_eq!(translate_ferb_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
+///);
+///
+///assert_eq!(translate_ferb_ascii("Hello-world"), "Elloherb-orldwerb");
+///assert_eq!(translate_ferb_ascii("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
+///```
 pub fn translate_ferb_ascii(english: &str) -> String {
     return translate_with_style_ascii(english, "erb", "ferb");
 }
@@ -394,7 +483,51 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
     return pig_latin_string;
 }
 
-///TODO description, tests, and examples
+///Translates a multi-word string (including punctuation) into a custom-styled play language!
+///
+///Faster than [`translate_with_style()`], but requires that the string only contains ASCII characters or else it may panic.
+///
+///Pass the string you wish to translate, the suffix you wish to have appended to most words, and the suffix
+///you wish to have appended in various special-cases (such as when a word is only one letter or starts with a vowel).
+///
+///NOTE: The suffixes must be entirely lower-case or weird results may occur.
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_with_style_ascii;
+///
+///let suffix = "ancy";
+///let special_case_suffix = "fancy";
+///assert_eq!(translate_with_style_ascii("Hello world from the coolest Pig Latin translator!", suffix, special_case_suffix),
+///    "Ellohancy orldwancy omfrancy ethancy oolestcancy Igpancy Atinlancy anslatortrancy!"
+///);
+///
+///assert_eq!(translate_with_style_ascii("This library can translate any English text. It can even handle multiple sentences!", suffix, special_case_suffix),
+///    "Isthancy ibrarylancy ancancy anslatetrancy anyfancy Englishfancy exttancy. Itfancy ancancy evenfancy andlehancy ultiplemancy entencessancy!"
+///);
+///
+///assert_eq!(translate_with_style_ascii("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", suffix, special_case_suffix),
+///    "Etl".to_string() + suffix + "'s ytr" + suffix + " omes" + suffix + " edge" + special_case_suffix + " asesc" + suffix + ". Atth" + suffix + " is" + special_case_suffix + " a" +
+///    special_case_suffix + " ontractionc" + suffix + ", as" + special_case_suffix + " ellw" + suffix + " as" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix +
+///    " erewh" + suffix + " eth" + suffix + " only" + special_case_suffix + " owelv" + suffix + " is" + special_case_suffix + " y" + special_case_suffix + ". Eatn" + suffix + ", all" +
+///    special_case_suffix + " atth" + suffix + " orksw" + suffix + "!"
+///);
+///
+///assert_eq!(translate_with_style_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", suffix, special_case_suffix),
+///    "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxz" + suffix
+///);
+///
+///assert_eq!(translate_with_style_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!", suffix, special_case_suffix),
+///    "Oolc".to_string() + suffix + ", os" + suffix + " eth" + suffix + " euristicsh" + suffix + " akem" + suffix + " ettypr" + suffix + " oodg" + suffix + " uessesg" + suffix + " ithw" + suffix + " atwh" + suffix + " eyth" + suffix + "'re edf" + suffix + "!"
+///);
+///
+///assert_eq!(translate_with_style_ascii("Hello-world", suffix, special_case_suffix), "Elloh".to_string() + suffix + "-orldw" + suffix);
+///
+///assert_eq!(translate_with_style_ascii("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix),
+///    "Yphensh".to_string() + suffix + "-are" + special_case_suffix + "-ifficultd" + suffix + "-aren" + special_case_suffix + "'t-eyth" + suffix + "?"
+///);
+///```
 pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
     if english.is_empty() {
         return String::new();
