@@ -82,14 +82,14 @@ fn interactive(args: &Vec<String>) {
     }
 
     eprintln!("Starting interactive mode!");
-    eprintln!("Type what you'd like to translate and then press enter, or press Ctrl+C to exit...");
+    eprintln!("Type what you'd like to translate and then press enter, or press Ctrl+C to exit...\n");
 
     let stdin = std::io::stdin();
     let mut line_buffer = String::new();
     loop {
         eprint!("anslatortray> ");
         stdin.read_line(&mut line_buffer).unwrap();
-        eprint!("{}", translate(&line_buffer));
+        eprintln!("{}", translate(&line_buffer));
     }
 }
 

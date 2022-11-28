@@ -9,7 +9,7 @@ Essentially, the word is reorganized in an effort to hide its true meaning, whic
 The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily. It is **incredibly fast** (see the Performance section below) and **requires no dependencies**!
 
 You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to `anslatortray::translate()`.
-The function handles edge cases quite well (words without vowels, one-letter words, contractions, etc.), though there is always room for improvement.
+The function handles edge cases quite well (words without vowels, one-letter words, contractions, ALL CAPS, etc.), though there is always room for improvement.
 
 If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
 
@@ -19,82 +19,90 @@ Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/a
 
 If you wish to use the library in your crate, add anslatortray as a dependency and follow along with the examples below, or <a href="https://docs.rs/anslatortray/latest/anslatortray/">check out the documentation</a>.
 
-If you wish to use the anslatortray standalone binary, clone `https://git.jekel.ca/JZJ/anslatortray.git`, do cargo build --release, and you'll find the binary in the target/release directory.
+If you wish to use the `anslatortray` standalone binary, clone `https://git.jekel.ca/JZJ/anslatortray.git`, do `cargo build --release`, and you'll find the binary in the target/release directory.
 
 See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
 
-# Library Examples
+# A Quick Example
 
-Try compiling this example code:
+After adding Anslatortray as a dependency in your crate, try compiling this example code:
 
 ```rust
 use anslatortray::translate;
 
-//Prints "Ellohay orldway omfray ethay Anslatortray orfay Ustray!"
-println!("{}", translate("Hello world from the Translator for Rust!"));
+fn main() {
+    //Prints "Ellohay orldway omfray ethay Anslatortray orfay Ustray!"
+    println!("{}", translate("Hello world from the Translator for Rust!"));
+}
 ```
 
-Anslatortray also supports using the "yay" suffix instead in special cases if you prefer that:
+<a href="https://docs.rs/anslatortray/latest/anslatortray/">Check out the documentation</a> for more examples!
 
-```rust
-use anslatortray::translate_yay;
+# anslatortray CLI Tool Usage
 
-//Prints "Utbay Iyay eferpray ethay ayyay-ylestay igpay atinlay!"
-println!("{}", translate_yay("But I prefer the yay-style pig latin!"));
-```
-
-It also supports Ferb Latin from Phineas and Ferb:
-
-```rust
-use anslatortray::translate_ferb;
-
-//Prints "Erewherb's Erryperb?"
-println!("{}", translate_ferb("Where's Perry?"));
-```
-
-If none of these suit your needs, you can also choose your own suffixes with `anslatortray::translate_with_style()`
-
-# anslatortray CLI Tool Example Usage
-
-There are several options supported by the `anslatortray` command
+There are several options supported by the `anslatortray` command:
 
 ```
-> anslatetray
-Error: expected at least one string to translate
-> anslatetray Hello World!
-Ellohay Orldway!
-> anslatetray A simple Rust library to translate from English to Pig Latin!
-Away implesay Ustray ibrarylay otay anslatetray omfray Englishway otay Igpay Atinlay!
+> anslatortray --help
+Anslatortray: frontend for the Anslatortray for Rust library
+
+Options:
+--help            Print this helpful text!
+--interactive     Start an interactive translation session
+--file            Translate a file (requires two arguments, the file to translate and the destination)
+--benchmark-file  Benchmark translating a file (requires two arguments, the file to translate and the number of iterations to perform)
+--translate-args  Translates all remaining arguments provided and outputs them to stdout
+--stdin-to-stdout Translates input from stdin directly to stdout
+
+Avehay away oodgay ayday!
 ```
 
-## anslatetray-file
-
-Translates an input file and writes the results to an output file
+You can start an interactive session by specifying --interactive (or no arguments at all):
 
 ```
-> anslatetray-file
-Error: expected two arguments, the input file to be translated and the file to output the translated text to
-> anslatetray-file input_but_no_output_file_specified.txt
-Error: expected two arguments, the input file to be translated and the file to output the translated text to
-> anslatetray-file words_alpha.txt words_alpha_pig_latin.txt
-Sucessful: took 90144337ns to translate
+> anslatortray --interactive
+Anslatortray: frontend for the Anslatortray for Rust library
+
+Starting interactive mode!
+Type what you'd like to translate and then press enter, or press Ctrl+C to exit...
+
+anslatortray> The fitness gram pacer test is a multi-stage areobic endurance test that...
+Ethay itnessfay amgray acerpay esttay isway away ultimay-agestay areobicway enduranceway esttay atthay...
+
+anslatortray> ^C
+>
 ```
 
-The last example uses words_alpha.txt from <https://github.com/dwyl/english-words>. See below for more information.
+You can also pipe text into the command for use in scripting:
+
+```
+> echo "Testing pipes" | anslatortray --stdin-to-stdout > test_pipes.txt
+Anslatortray: frontend for the Anslatortray for Rust library
+
+> cat test_pipes.txt
+Estingtay ipespay
+```
+
+If you'd like, you can even translate a text file:
+
+```
+> echo "Test file" > test_file.txt && cat test_file.txt
+Test file
+> anslatortray --file test_file.txt output_file.txt
+Anslatortray: frontend for the Anslatortray for Rust library
+
+Sucessful: took 3540ns to translate
+> cat output_file.txt
+Esttay ilefay
+```
+
+See <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Using-the-anslatortray-binary">this wiki page</a> for more!
 
 # Performance
 
 Check out the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Performance">wiki page about Anslatortray's performance</a>!
 
-Spoiler: It can translate one word in under 140ns on average in the default UTF-8 mode, and in under 100ns on average in ASCII-only mode :)
-
-# Edge Cases
-
-The English language is very inconsistent. Sentences begin with capitals, as do proper names, there are contractions, words-with-hyphens-in-between-them, and all sorts of punctuation!
-
-Thankfully, anslatortray's heuristics do pretty well in most common situations! Take a look at test cases in the code suffixed with _edgecases to see the sort of situations anslatortray does well in!
-
-As always, if you find a shortcoming with the library's behaviour, please submit an issue or contact me!
+Spoiler: It can translate one word in under **140ns** on average in the default UTF-8 mode, and in under **100ns** on average in ASCII-only mode :)
 
 # Useful Links
 

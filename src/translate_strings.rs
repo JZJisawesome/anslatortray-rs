@@ -459,7 +459,7 @@ mod tests {
         ];
     }
 
-        #[test]
+    #[test]
     fn test_translate_ferb_uppercase() {
         assert_eq!(translate_ferb("HELLO WORLD!"), "ELLOHERB ORLDWERB!");
         assert_eq!(translate_ferb("ISN't THIS COOL?"), "ISNFERB't ISTHERB OOLCERB?");
