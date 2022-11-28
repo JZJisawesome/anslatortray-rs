@@ -21,6 +21,12 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
         return;
     }
 
+    if english_word.len() == 1 {
+        buffer_to_append_to.push_str(english_word);
+        buffer_to_append_to.push_str(special_case_suffix_lower);
+        return;
+    }
+
     let mut iterator = english_word.chars().peekable();
 
     //Copy leading symbols/whitespace until the first letter
@@ -40,6 +46,9 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
         }
     }
 
+    //Check if the word is uppercase
+    let word_uppercase = word_is_uppercase(&english_word);
+
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
     //However, if any word is only one letter long, this takes priority and the word is treated like a vowel
     let first_letter_was_vowel: bool = {
@@ -52,7 +61,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
         buffer_to_append_to.push(first_letter);
     } else {
         let first_char_was_upper = first_letter.is_ascii_uppercase();
-        starting_consonants.push(first_letter.to_ascii_lowercase());
+        starting_consonants.push(if word_uppercase { first_letter } else { first_letter.to_ascii_lowercase() });
 
         //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
         loop {
@@ -100,10 +109,18 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
 
     //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
     if first_letter_was_vowel {
-        buffer_to_append_to.push_str(special_case_suffix_lower);
+        if word_uppercase {
+            buffer_to_append_to.push_str(special_case_suffix_upper);
+        } else {
+            buffer_to_append_to.push_str(special_case_suffix_lower);
+        }
     } else {
         buffer_to_append_to.push_str(&starting_consonants);
-        buffer_to_append_to.push_str(suffix_lower);
+        if word_uppercase {
+            buffer_to_append_to.push_str(suffix_upper);
+        } else {
+            buffer_to_append_to.push_str(suffix_lower);
+        }
     }
 
     //Re-add the trailing character we "accidentally" took in the previous loop (if we do in fact have one)

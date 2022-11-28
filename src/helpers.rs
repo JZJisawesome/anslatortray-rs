@@ -37,7 +37,13 @@ pub(crate) fn is_y(letter: char) -> Option<bool> {
 
 //TODO testing
 pub(crate) fn word_is_uppercase(english_word: &str) -> bool {
-    return false;//TODO
+    for letter in english_word.chars() {
+        if letter.is_ascii_lowercase() {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 //TODO testing
