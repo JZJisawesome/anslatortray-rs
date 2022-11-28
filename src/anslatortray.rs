@@ -67,7 +67,7 @@ fn help() {
     eprintln!("--help            Print this helpful text!");
     eprintln!("--interactive     Start an interactive translation session");
     eprintln!("--file            Translate a file (requires two arguments, the file to translate and the destination)");
-    eprintln!("--benchmark-file  Benchmark translating a file (requires a single argument: the file to translate)");
+    eprintln!("--benchmark-file  Benchmark translating a file (requires two arguments, the file to translate and the number of iterations to perform)");
     eprintln!("--translate-args  Translates all remaining arguments provided and outputs them to stdout");
     eprintln!("--stdin-to-stdout Translates input from stdin directly to stdout");
 
@@ -77,6 +77,7 @@ fn help() {
 fn interactive(args: &Vec<String>) {
     if args.len() != 0 {
         eprintln!("Error: didn't expect any arguments");
+        help();
         return;
     }
 
@@ -97,11 +98,11 @@ fn file(args: &Vec<String>) {
 
     if args.len() != 2 {
         eprintln!("Error: expected two arguments, two arguments, the file to translate and the destination");
+        help();
         return;
     }
 
     //TODO error handling
-    //TODO preserve file formatting better
 
     let input_file = &args[0];
     let output_file = &args[1];
@@ -116,12 +117,56 @@ fn file(args: &Vec<String>) {
 }
 
 fn benchmark_file(args: &Vec<String>) {
-    todo!();
+    eprintln!("Note: anslatortray --benchmark-file is highly experimental and has poor error handling. You have been warned.");
+
+    if args.len() != 2 {
+        eprintln!("Error: expected two arguments, the file to translate and the number of iterations to perform");
+        help();
+        return;
+    }
+
+    //TODO error handling
+
+    let input_file = &args[0];
+    let iterations = args[1].parse::<u128>().unwrap();//TODO error handling
+
+    let file_contents = std::fs::read_to_string(input_file).unwrap();
+
+    let mut total_duration_utf8 = std::time::Duration::new(0, 0);
+
+    for _ in 0..iterations {
+        let start_time = std::time::Instant::now();
+        let translated_file_contents = translate(&file_contents);
+        let time_to_translate = start_time.elapsed();
+
+        total_duration_utf8 += time_to_translate;
+        std::fs::write("/dev/null", &translated_file_contents).unwrap();//TODO avoid needing unix
+    }
+    eprintln!("Sucessful: UTF-8 translation took {}ns to translate on average over {} runs.", total_duration_utf8.as_nanos() / iterations, iterations);
+
+    for character in file_contents.chars() {
+        if !character.is_ascii() {
+            eprintln!("Not performing ASCII translation benchmarks as the file's contents are not entirely ASCII.");
+            return;
+        }
+    }
+
+    let mut total_duration_ascii = std::time::Duration::new(0, 0);
+
+    for _ in 0..iterations {
+        let start_time = std::time::Instant::now();
+        let translated_file_contents = translate_ascii(&file_contents);
+        let time_to_translate = start_time.elapsed();
+        total_duration_ascii += time_to_translate;
+        std::fs::write("/dev/null", &translated_file_contents).unwrap();//TODO avoid needing unix
+    }
+    eprintln!("Sucessful: ASCII translation took {}ns to translate on average over {} runs.", total_duration_ascii.as_nanos() / iterations, iterations);
 }
 
 fn translate_args(args: &Vec<String>) {
     if args.len() == 0 {
         eprintln!("Error: expected at least one string to translate");
+        help();
         return;
     }
 
@@ -137,6 +182,7 @@ fn stdin_to_stdout(args: &Vec<String>) {
 
     if args.len() != 0 {
         eprintln!("Error: didn't expect any arguments");
+        help();
         return;
     }
 
