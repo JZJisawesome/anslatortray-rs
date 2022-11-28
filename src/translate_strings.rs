@@ -236,16 +236,25 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
 
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
     let mut current_word = String::with_capacity(64);//Longer than all English words to avoid unneeded allocations (plus leaving room for leading and trailing extra characters)
+    let mut contraction_suffix = String::with_capacity(64);
     let mut in_word: bool = false;
+    let mut in_contraction_suffix: bool = false;
 
     //Buffers for improved performance (avoid repeated heap allocations)
     let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
     for character in english.chars().peekable() {
         if in_word {
-            if character.is_alphabetic() || (character == '\'') {
+            if character.is_alphabetic() {
                 //Save the character to translate once the word ends; we also keep apostrophes so that translate_word_with_style can handle contractions
-                current_word.push(character);
+                if in_contraction_suffix {
+                    contraction_suffix.push(character);
+                } else {
+                    current_word.push(character);
+                }
+            } else if character == '\'' {
+                in_contraction_suffix = true;
+                contraction_suffix.push(character);
             } else {
                 //The word ended, so translate the chararacters we've saved up until this point!
                 in_word = false;
@@ -254,6 +263,11 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
                     suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
                     &mut pig_latin_string, &mut starting_consonants_buffer
                 );
+
+                //Push the contraction
+                in_contraction_suffix = false;
+                pig_latin_string.push_str(&contraction_suffix);
+                contraction_suffix.truncate(0);//Faster than creating a new string
 
                 //Append the symbol/whitespace we just got after the translated word
                 pig_latin_string.push(character);
