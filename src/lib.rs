@@ -4,7 +4,6 @@
 //!
 //!A simple Rust library to translate from English to Pig Latin.
 //!
-//!
 //!<a href="https://en.wikipedia.org/wiki/Pig_Latin">Wikipedia's definition of Pig Latin</a> is "a language game or argot in which words in English are altered, usually by adding a fabricated suffix or by moving the onset or initial consonant or consonant cluster of a word to the end of the word and adding a vocalic syllable to create such a suffix."
 //!
 //!Essentially, the word is reorganized in an effort to hide its true meaning, which can be lots of fun!
@@ -21,6 +20,12 @@
 //!# Building and Installation
 //!
 //!See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
+//!
+//!Spoilers:
+//!
+//!If you wish to use the library in your crate, add anslatortray as a dependency and follow along with the examples below, or <a href="https://docs.rs/anslatortray/latest/anslatortray/">check out the documentation</a>.
+//!
+//!If you wish to use the anslatortray standalone binary, clone `https://git.jekel.ca/JZJ/anslatortray.git`, do cargo build --release, and you'll find the binary in the target/release directory.
 //!
 //!# Library Examples
 //!
@@ -85,44 +90,9 @@
 //!
 //!# Performance
 //!
-//!On my dated system with dual Intel(R) Xeon(R) E5-2670 v2 CPUs, the `translate()` function can process one word every 227.462 nanoseconds on average.
-//!I tested this by feeding the words_alpha.txt file from <https://github.com/dwyl/english-words> to anslatetray-file 10 times, calculating the average runtime,
-//!and dividing by 370105 (the number of words in the file). The times do not including loading from and writing to the disk.
+//!Check out the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Performance">wiki page about Anslatortray's performance</a>!
 //!
-//!Note that raw calls to `translate_word()` would be faster, but `translate()` has to be smart enough to preserve symbols and whitespace surrounding each word, while still accounting for contractions and other edge-cases.
-//!
-//!```text
-//!> for run in {1..10}; do anslatetray-file words_alpha.txt words_alpha_pig_latin.txt; done
-//!Sucessful: took 90144337ns to translate
-//!Sucessful: took 82581222ns to translate
-//!Sucessful: took 82803035ns to translate
-//!Sucessful: took 80643452ns to translate
-//!Sucessful: took 80542962ns to translate
-//!Sucessful: took 81848295ns to translate
-//!Sucessful: took 81600103ns to translate
-//!Sucessful: took 86463460ns to translate
-//!Sucessful: took 87399299ns to translate
-//!Sucessful: took 87821022ns to translate
-//!```
-//!
-//!There are also some benchmarks built into the library that you can run to easily check the performance of it on your system:
-//!
-//!```text
-//!> cargo bench --features nightly-features
-//![...]
-//!test translate_strings::benches::translate_ferb_lorem_ipsum            ... bench:      11,284 ns/iter (+/- 331)
-//!test translate_strings::benches::translate_ferb_project_description    ... bench:       1,852 ns/iter (+/- 28)
-//!test translate_strings::benches::translate_lorem_ipsum                 ... bench:      11,033 ns/iter (+/- 284)
-//!test translate_strings::benches::translate_project_description         ... bench:       1,848 ns/iter (+/- 61)
-//!test translate_strings::benches::translate_yay_lorem_ipsum             ... bench:      10,968 ns/iter (+/- 263)
-//!test translate_strings::benches::translate_yay_project_description     ... bench:       1,809 ns/iter (+/- 40)
-//!test translate_words::benches::translate_word_ferb_the_word_translator ... bench:         120 ns/iter (+/- 3)
-//!test translate_words::benches::translate_word_the_word_translator      ... bench:         126 ns/iter (+/- 7)
-//!test translate_words::benches::translate_word_yay_the_word_translator  ... bench:         121 ns/iter (+/- 6)
-//![...]
-//!```
-//!
-//!Anslatortray is quite fast, but it could be faster :). Both the speed and the quality of translation are priorities for me, and I'm working to improve them both!
+//!Spoiler: It can translate one word in under 200ns on average in the default UTF-8 mode, and in under 100ns on average in ASCII-only mode :)
 //!
 //!# Edge Cases
 //!
