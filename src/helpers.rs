@@ -76,4 +76,34 @@ mod tests {
             assert!(!is_y(not_letter));
         }
     }
+
+    #[test]
+    fn test_word_is_uppercase() {
+        assert!(word_is_uppercase("HELLO"));
+        assert!(word_is_uppercase("WORLD"));
+
+        assert!(word_is_uppercase("I"));
+        assert!(!word_is_uppercase("would"));
+        assert!(!word_is_uppercase("like"));
+        assert!(!word_is_uppercase("a"));
+        assert!(!word_is_uppercase("pizza"));
+
+        assert!(!word_is_uppercase("Sussus"));
+        assert!(!word_is_uppercase("Amogus"));
+    }
+
+    #[test]
+    fn test_word_is_uppercase_ascii() {
+        assert!(word_is_uppercase_ascii("HELLO"));
+        assert!(word_is_uppercase_ascii("WORLD"));
+
+        assert!(word_is_uppercase_ascii("I"));
+        assert!(!word_is_uppercase_ascii("would"));
+        assert!(!word_is_uppercase_ascii("like"));
+        assert!(!word_is_uppercase_ascii("a"));
+        assert!(!word_is_uppercase_ascii("pizza"));
+
+        assert!(!word_is_uppercase_ascii("Sussus"));
+        assert!(!word_is_uppercase_ascii("Amogus"));
+    }
 }
