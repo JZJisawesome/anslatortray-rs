@@ -302,6 +302,8 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
         return String::new();
     }
 
+    //TODO switch to fully operating on u8 slices/arrays/Vecs internally (converting from a string, then to a string at the end) in anslatortray 0.5.0
+
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
 
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
@@ -454,17 +456,39 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_uppercase() {
-        let suffix_special_case_suffix_pairs = [
-            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
+        let suffix_special_case_suffix_lower_upper_tuples = [
+            ("ay", "way", "AY", "WAY"), ("ay", "yay", "AY", "YAY"), ("ay", "hay", "AY", "HAY"), ("erb", "ferb", "ERB", "FERB"),
+            ("ancy", "fancy", "ANCY", "FANCY"), ("orange", "porange", "ORANGE", "PORANGE"),
+            ("anana", "banana", "ANANA", "BANANA"), ("atin", "latin", "ATIN", "LATIN"), ("ust", "rust", "UST", "RUST"),
         ];
+
+        for pair in suffix_special_case_suffix_lower_upper_tuples {
+            let suffix_lower = pair.0;
+            let special_case_suffix_lower = pair.1;
+            let suffix_upper = pair.2;
+            let special_case_suffix_upper = pair.3;
+
+            assert_eq!(translate_with_style("HELLO WORLD!", suffix_lower, suffix_upper),
+                "ELLOH".to_string() + suffix_upper + " ORLDW" + suffix_upper + "!"
+            );
+
+            assert_eq!(translate_with_style("ISN't THIS COOL?", suffix_lower, suffix_upper),
+                "ISN".to_string() + special_case_suffix_upper + "'t ISTH" + suffix_upper + " OOLC" + suffix_upper + "?"
+            );
+
+            assert_eq!(translate_with_style("What ABOUT a MIX?", suffix_lower, suffix_upper),
+                "Atwh".to_string() + suffix_lower + " ABOUT" + special_case_suffix_upper + " a" + special_case_suffix_lower + " IXM" + suffix_upper + "?"
+            );
+
+            assert_eq!(translate_with_style("Luke, I am your father!", suffix_lower, suffix_upper),//We don't want to capitalize single-letter words
+                "Ukel".to_string() + suffix_lower + ", I" + special_case_suffix_lower+ " am" + special_case_suffix_lower + " oury" + suffix_lower + " atherf" + suffix_lower + "!"
+            );
+        }
     }
 
     #[test]
     fn test_translate_ferb_uppercase() {
-        assert_eq!(translate_ferb("HELLO WORLD!"), "ELLOHERB ORLDWERB!");
-        assert_eq!(translate_ferb("ISN't THIS COOL?"), "ISNFERB't ISTHERB OOLCERB?");
-        assert_eq!(translate_ferb("What ABOUT a MIX?"), "Atwherb ABOUTFERB aferb IXMERB?");
-        assert_eq!(translate_ferb("Luke, I am your father!"), "Ukelerb, Iferb amferb ouryerb atherferb!");//We don't want to capitalize single-letter words
+
     }
 
     #[test]
@@ -517,6 +541,38 @@ mod tests {
 
             assert_eq!(translate_with_style_ascii("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix),
                 "Yphensh".to_string() + suffix + "-are" + special_case_suffix + "-ifficultd" + suffix + "-aren" + special_case_suffix + "'t-eyth" + suffix + "?"
+            );
+        }
+    }
+
+    #[test]
+    fn test_translate_with_style_ascii_uppercase() {
+        let suffix_special_case_suffix_lower_upper_tuples = [
+            ("ay", "way", "AY", "WAY"), ("ay", "yay", "AY", "YAY"), ("ay", "hay", "AY", "HAY"), ("erb", "ferb", "ERB", "FERB"),
+            ("ancy", "fancy", "ANCY", "FANCY"), ("orange", "porange", "ORANGE", "PORANGE"),
+            ("anana", "banana", "ANANA", "BANANA"), ("atin", "latin", "ATIN", "LATIN"), ("ust", "rust", "UST", "RUST"),
+        ];
+
+        for pair in suffix_special_case_suffix_lower_upper_tuples {
+            let suffix_lower = pair.0;
+            let special_case_suffix_lower = pair.1;
+            let suffix_upper = pair.2;
+            let special_case_suffix_upper = pair.3;
+
+            assert_eq!(translate_with_style_ascii("HELLO WORLD!", suffix_lower, suffix_upper),
+                "ELLOH".to_string() + suffix_upper + " ORLDW" + suffix_upper + "!"
+            );
+
+            assert_eq!(translate_with_style_ascii("ISN't THIS COOL?", suffix_lower, suffix_upper),
+                "ISN".to_string() + special_case_suffix_upper + "'t ISTH" + suffix_upper + " OOLC" + suffix_upper + "?"
+            );
+
+            assert_eq!(translate_with_style_ascii("What ABOUT a MIX?", suffix_lower, suffix_upper),
+                "Atwh".to_string() + suffix_lower + " ABOUT" + special_case_suffix_upper + " a" + special_case_suffix_lower + " IXM" + suffix_upper + "?"
+            );
+
+            assert_eq!(translate_with_style_ascii("Luke, I am your father!", suffix_lower, suffix_upper),//We don't want to capitalize single-letter words
+                "Ukel".to_string() + suffix_lower + ", I" + special_case_suffix_lower+ " am" + special_case_suffix_lower + " oury" + suffix_lower + " atherf" + suffix_lower + "!"
             );
         }
     }
