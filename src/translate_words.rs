@@ -8,11 +8,15 @@
 
 /* Imports */
 
-use crate::helpers::{is_vowel, is_y};
+use crate::helpers::{is_vowel, is_y, word_is_uppercase, word_is_uppercase_ascii};
 
 /* Functions */
 
-pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix: &str, special_case_suffix: &str, buffer_to_append_to: &mut String, starting_consonants: &mut String) {
+pub(crate) fn translate_word_with_style_reuse_buffers (
+    english_word: &str,
+    suffix_lower: &str, special_case_suffix_lower: &str, suffix_upper: &str, special_case_suffix_upper: &str,
+    buffer_to_append_to: &mut String, starting_consonants: &mut String
+) {
     if english_word.is_empty() {
         return;
     }
@@ -21,6 +25,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
 
     //Copy leading symbols/whitespace until the first letter
     let first_letter: char;
+    /*let first_letter: char = iterator.next().unwrap();*/
     loop {
         match iterator.next() {
             None => { return; },//There are only symbols/whitespace in the word
@@ -34,8 +39,6 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
             }
         }
     }
-
-    //TODO what if the word is all uppercase?
 
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
     //However, if any word is only one letter long, this takes priority and the word is treated like a vowel
@@ -97,10 +100,10 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
 
     //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
     if first_letter_was_vowel {
-        buffer_to_append_to.push_str(special_case_suffix);
+        buffer_to_append_to.push_str(special_case_suffix_lower);
     } else {
         buffer_to_append_to.push_str(&starting_consonants);
-        buffer_to_append_to.push_str(suffix);
+        buffer_to_append_to.push_str(suffix_lower);
     }
 
     //Re-add the trailing character we "accidentally" took in the previous loop (if we do in fact have one)
@@ -117,18 +120,39 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
     }
 }
 
-pub(crate) fn translate_word_with_style_reuse_buffers_ascii(english_word: &str, suffix: &str, special_case_suffix: &str, buffer_to_append_to: &mut String, starting_consonants: &mut String) {
+pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
+    english_word: &str,
+    suffix_lower: &str, special_case_suffix_lower: &str, suffix_upper: &str, special_case_suffix_upper: &str,
+    buffer_to_append_to: &mut String, starting_consonants: &mut String
+) {
     //TODO make optimizations since we can assume the string is UTF8 safe
-    translate_word_with_style_reuse_buffers(english_word, suffix, special_case_suffix, buffer_to_append_to, starting_consonants);
+    translate_word_with_style_reuse_buffers (
+        english_word,
+        suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
+        buffer_to_append_to, starting_consonants
+    );
 }
 
 /* Tests */
 
 #[cfg(test)]
-fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
+fn translate_word_with_style(english_word: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
+    let mut suffix_upper = String::with_capacity(suffix_lower.len());
+    for letter in suffix_lower.chars() {
+        suffix_upper.push(letter.to_ascii_uppercase());
+    }
+    let mut special_case_suffix_upper = String::with_capacity(special_case_suffix_lower.len());
+    for letter in special_case_suffix_lower.chars() {
+        special_case_suffix_upper.push(letter.to_ascii_uppercase());
+    }
+
     let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
     let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
-    translate_word_with_style_reuse_buffers(english_word, suffix, special_case_suffix, &mut pig_latin_word, &mut starting_consonants_buffer);
+    translate_word_with_style_reuse_buffers (
+        english_word,
+        suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+        &mut pig_latin_word, &mut starting_consonants_buffer
+    );
     return pig_latin_word;
 }
 

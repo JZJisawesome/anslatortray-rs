@@ -2,7 +2,7 @@
  * Copyright (C) 2022 John Jekel
  * See the LICENSE file at the root of the project for licensing info.
  *
- * Contains helper functions for translate_words.rs
+ * Contains helper functions
  *
 */
 
@@ -33,6 +33,16 @@ pub(crate) fn is_y(letter: char) -> Option<bool> {
     }
 
     return Some(letter.to_ascii_lowercase() == 'y');
+}
+
+//TODO testing
+pub(crate) fn word_is_uppercase(english_word: &str) -> bool {
+    return false;//TODO
+}
+
+//TODO testing
+pub(crate) fn word_is_uppercase_ascii(english_word: &str) -> bool {
+    return word_is_uppercase(english_word);
 }
 
 /* Tests */

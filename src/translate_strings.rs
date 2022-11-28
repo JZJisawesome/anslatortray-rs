@@ -181,6 +181,8 @@ pub fn translate_ferb_ascii(english: &str) -> String {
 ///Pass the string you wish to translate, the suffix you wish to have appended to most words, and the suffix
 ///you wish to have appended in various special-cases (such as when a word is only one letter or starts with a vowel).
 ///
+///NOTE: The suffixes must be entirely lower-case or weird results may occur.
+///
 ///# Examples
 ///
 ///```
@@ -217,9 +219,19 @@ pub fn translate_ferb_ascii(english: &str) -> String {
 ///    "Yphensh".to_string() + suffix + "-are" + special_case_suffix + "-ifficultd" + suffix + "-aren" + special_case_suffix + "'t-eyth" + suffix + "?"
 ///);
 ///```
-pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &str) -> String {
+pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
     if english.is_empty() {
         return String::new();
+    }
+
+    //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
+    let mut suffix_upper = String::with_capacity(suffix_lower.len());
+    for letter in suffix_lower.chars() {
+        suffix_upper.push(letter.to_ascii_uppercase());
+    }
+    let mut special_case_suffix_upper = String::with_capacity(special_case_suffix_lower.len());
+    for letter in special_case_suffix_lower.chars() {
+        special_case_suffix_upper.push(letter.to_ascii_uppercase());
     }
 
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
@@ -237,7 +249,11 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
             } else {
                 //The word ended, so translate the chararacters we've saved up until this point!
                 in_word = false;
-                translate_word_with_style_reuse_buffers(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+                translate_word_with_style_reuse_buffers (
+                    current_word.as_str(),
+                    suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+                    &mut pig_latin_string, &mut starting_consonants_buffer
+                );
 
                 //Append the symbol/whitespace we just got after the translated word
                 pig_latin_string.push(character);
@@ -256,16 +272,30 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
     }
     //If we ended on a word, we translate it and push it to the end of the string
     if in_word {
-        translate_word_with_style_reuse_buffers(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+        translate_word_with_style_reuse_buffers (
+            current_word.as_str(),
+            suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+            &mut pig_latin_string, &mut starting_consonants_buffer
+        );
     }
 
     return pig_latin_string;
 }
 
 ///TODO description, tests, and examples
-pub fn translate_with_style_ascii(english: &str, suffix: &str, special_case_suffix: &str) -> String {
+pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
     if english.is_empty() {
         return String::new();
+    }
+
+    //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
+    let mut suffix_upper = String::with_capacity(suffix_lower.len());
+    for letter in suffix_lower.chars() {
+        suffix_upper.push(letter.to_ascii_uppercase());
+    }
+    let mut special_case_suffix_upper = String::with_capacity(special_case_suffix_lower.len());
+    for letter in special_case_suffix_lower.chars() {
+        special_case_suffix_upper.push(letter.to_ascii_uppercase());
     }
 
     //TODO make more optimizations since we can assume the string is UTF8 safe
@@ -291,7 +321,11 @@ pub fn translate_with_style_ascii(english: &str, suffix: &str, special_case_suff
                 //The word ended, so translate the word we've identified up until this point!
                 in_word = false;
                 let word_slice: &str = &english[current_word_start_index..current_word_end_index];
-                translate_word_with_style_reuse_buffers_ascii(word_slice, suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+                translate_word_with_style_reuse_buffers_ascii (
+                    word_slice,
+                    suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+                    &mut pig_latin_string, &mut starting_consonants_buffer
+                );
 
                 //Append the symbol/whitespace we just got after the translated word
                 pig_latin_string.push(character);
@@ -316,7 +350,11 @@ pub fn translate_with_style_ascii(english: &str, suffix: &str, special_case_suff
     //If we ended on a word, we translate it and push it to the end of the string
     if in_word {
         let word_slice: &str = &english[current_word_start_index..current_word_end_index];
-        translate_word_with_style_reuse_buffers_ascii(word_slice, suffix, special_case_suffix, &mut pig_latin_string, &mut starting_consonants_buffer);
+        translate_word_with_style_reuse_buffers_ascii (
+            word_slice,
+            suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+            &mut pig_latin_string, &mut starting_consonants_buffer
+        );
     }
 
     return pig_latin_string;
