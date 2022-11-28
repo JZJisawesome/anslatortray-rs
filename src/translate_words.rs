@@ -12,13 +12,6 @@ use crate::helpers::{is_vowel, is_y};
 
 /* Functions */
 
-fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
-    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
-    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
-    translate_word_with_style_reuse_buffers(english_word, suffix, special_case_suffix, &mut pig_latin_word, &mut starting_consonants_buffer);
-    return pig_latin_word;
-}
-
 pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix: &str, special_case_suffix: &str, buffer_to_append_to: &mut String, starting_consonants: &mut String) {
     if english_word.is_empty() {
         return;
@@ -127,6 +120,14 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
 /* Tests */
 
 #[cfg(test)]
+fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
+    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+    translate_word_with_style_reuse_buffers(english_word, suffix, special_case_suffix, &mut pig_latin_word, &mut starting_consonants_buffer);
+    return pig_latin_word;
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -187,21 +188,21 @@ mod benches {
     #[bench]
     fn translate_word_the_word_translator(b: &mut Bencher) {
         b.iter(|| -> String {
-            return translate_word("translator");
+            return translate_word_with_style("translator", "ay", "way");
         });
     }
 
     #[bench]
     fn translate_word_yay_the_word_translator(b: &mut Bencher) {
         b.iter(|| -> String {
-            return translate_word_yay("translator");
+            return translate_word_with_style("translator", "ay", "yay");
         });
     }
 
     #[bench]
     fn translate_word_ferb_the_word_translator(b: &mut Bencher) {
         b.iter(|| -> String {
-            return translate_word_ferb("translator");
+            return translate_word_with_style("translator", "erb", "ferb");
         });
     }
 }
