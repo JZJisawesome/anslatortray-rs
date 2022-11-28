@@ -49,7 +49,40 @@ pub fn translate(english: &str) -> String {
     return translate_way(english);
 }
 
-///TODO description, tests, and examples
+///Translates a multi-word string (including punctuation) into Pig Latin!
+///
+///Faster than [`translate()`], but requires that the string only contains ASCII characters or else it may panic.
+///
+///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_with_style()`].
+///
+///Equivalent to [`translate_way_ascii()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_ascii;
+///
+///assert_eq!(translate_ascii("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///assert_eq!(translate_ascii("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Isthay ibrarylay ancay anslatetray anyway Englishway exttay. Itway ancay evenway andlehay ultiplemay entencessay!"
+///);
+///
+///assert_eq!(translate_ascii("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!"
+///);
+///
+///assert_eq!(translate_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
+///);
+///
+///assert_eq!(translate_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
+///);
+///
+///assert_eq!(translate_ascii("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
+///```
 pub fn translate_ascii(english: &str) -> String {
     return translate_way_ascii(english);
 }
@@ -80,12 +113,46 @@ pub fn translate_ascii(english: &str) -> String {
 ///assert_eq!(translate_way("Cool, so the heuristics make pretty good guesses with what they're fed!"),
 ///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
 ///);
+///
+///assert_eq!(translate_way("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate_way("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
 ///```
 pub fn translate_way(english: &str) -> String {
     return translate_with_style(english, "ay", "way");
 }
 
-///TODO description, tests, and examples
+///Translates a multi-word string (including punctuation) into Pig Latin (way-style)!
+///
+///Faster than [`translate_way()`], but requires that the string only contains ASCII characters or else it may panic.
+///
+///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_with_style()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_way_ascii;
+///
+///assert_eq!(translate_way_ascii("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///assert_eq!(translate_way_ascii("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Isthay ibrarylay ancay anslatetray anyway Englishway exttay. Itway ancay evenway andlehay ultiplemay entencessay!"
+///);
+///
+///assert_eq!(translate_way_ascii("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!"
+///);
+///
+///assert_eq!(translate_way_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
+///);
+///
+///assert_eq!(translate_way_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
+///);
+///
+///assert_eq!(translate_way_ascii("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate_way_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
+///```
 pub fn translate_way_ascii(english: &str) -> String {
     return translate_with_style_ascii(english, "ay", "way");
 }
@@ -124,7 +191,38 @@ pub fn translate_yay(english: &str) -> String {
     return translate_with_style(english, "ay", "yay");
 }
 
-///TODO description, tests, and examples
+///Translates a multi-word string (including punctuation) into Pig Latin (yay-style)!
+///
+///Faster than [`translate_yay()`], but requires that the string only contains ASCII characters or else it may panic.
+///
+///Uses the suffix and special_case_suffix "ay" and "yay" respectively when calling [`translate_with_style()`].
+///
+///# Examples
+///
+///```
+///use anslatortray::translate_yay_ascii;
+///
+///assert_eq!(translate_yay_ascii("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///assert_eq!(translate_yay_ascii("This library can translate any English text. It can even handle multiple sentences!"),
+///    "Isthay ibrarylay ancay anslatetray anyyay Englishyay exttay. Ityay ancay evenyay andlehay ultiplemay entencessay!"
+///);
+///
+///assert_eq!(translate_yay_ascii("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
+///    "Etlay's ytray omesay edgeyay asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allyay atthay orksway!"
+///);
+///
+///assert_eq!(translate_yay_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz"),
+///    "Atwhay ifyay ayay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay"
+///);
+///
+///assert_eq!(translate_yay_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!"),
+///    "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
+///);
+///
+///assert_eq!(translate_yay_ascii("Hello-world"), "Ellohay-orldway");
+///assert_eq!(translate_yay_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
+///```
 pub fn translate_yay_ascii(english: &str) -> String {
     return translate_with_style_ascii(english, "ay", "yay");
 }
