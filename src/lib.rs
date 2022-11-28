@@ -167,4 +167,4 @@ mod helpers;
 mod translate_strings;
 mod translate_words;
 
-pub use translate_strings::{translate, translate_way, translate_yay, translate_ferb, translate_with_style};
+pub use translate_strings::*;

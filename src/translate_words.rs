@@ -12,7 +12,13 @@ use crate::helpers::{is_vowel, is_y};
 
 /* Functions */
 
+
 pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix: &str, special_case_suffix: &str, buffer_to_append_to: &mut String, starting_consonants: &mut String) {
+    //TODO make optimizations since we can assume the string is UTF8 safe
+    translate_word_with_style_reuse_buffers_utf8_safe(english_word, suffix, special_case_suffix, buffer_to_append_to, starting_consonants);
+}
+
+pub(crate) fn translate_word_with_style_reuse_buffers_utf8_safe(english_word: &str, suffix: &str, special_case_suffix: &str, buffer_to_append_to: &mut String, starting_consonants: &mut String) {
     if english_word.is_empty() {
         return;
     }
