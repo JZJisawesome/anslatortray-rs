@@ -234,8 +234,6 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
         special_case_suffix_upper.push(letter.to_ascii_uppercase());
     }
 
-    eprintln!("{} -> {}, {} -> {}", suffix_lower, suffix_upper, special_case_suffix_lower, special_case_suffix_upper);
-
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
     let mut current_word = String::with_capacity(64);//Longer than all English words to avoid unneeded allocations (plus leaving room for leading and trailing extra characters)
     let mut contraction_suffix = String::with_capacity(64);

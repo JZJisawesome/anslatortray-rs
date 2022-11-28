@@ -90,6 +90,7 @@ fn interactive(args: &Vec<String>) {
         eprint!("anslatortray> ");
         stdin.read_line(&mut line_buffer).unwrap();
         eprintln!("{}", translate(&line_buffer));
+        line_buffer.truncate(0);
     }
 }
 
@@ -193,5 +194,6 @@ fn stdin_to_stdout(args: &Vec<String>) {
     while let Ok(bytes_read) = stdin.read_to_string(&mut buffer) {
         if bytes_read == 0 { return; }
         write!(stdout, "{}", translate(&buffer)).unwrap();//TODO do this more efficiently (avoid format string)
+        buffer.truncate(0);//TODO is this needed here?
     }
 }
