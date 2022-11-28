@@ -26,6 +26,10 @@ path = "src/lib.rs"
 name = "anslatortray"
 path = "src/anslatortray.rs"
 
+[[bin]]
+name = "anslatetray-benchmark-file"
+path = "src/anslatetray-benchmark-file.rs"
+
 #[features]
 #default = ["default_style_way"]
 #default_style_way = []

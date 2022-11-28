@@ -27,7 +27,6 @@ pub(crate) fn is_vowel(letter: char) -> Option<bool> {
 //
 //If the parameter is a letter, returns Some(true) if it is y, and Some(false) otherwise.
 //If the parameter isn't a letter, it will return None
-//
 pub(crate) fn is_y(letter: char) -> Option<bool> {
     if !letter.is_alphabetic() {
         return None;
