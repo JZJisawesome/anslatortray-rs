@@ -13,7 +13,7 @@ use anslatortray::translate;
 /* Functions */
 
 fn main() {
-    //eprintln!("Note: anslatetray-file is highly experimental and has poor error handling. You have been warned.");
+    eprintln!("Note: anslatetray-file is highly experimental and has poor error handling. You have been warned.");
 
     //Get all arguments after the executable's name
     let args: Vec<String> = std::env::args().collect();
@@ -23,7 +23,6 @@ fn main() {
     }
 
     //TODO error handling
-    //TODO preserve file formatting better
 
     let input_file = std::env::args().nth(1).unwrap();
     let output_file = std::env::args().nth(2).unwrap();

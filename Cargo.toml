@@ -34,6 +34,10 @@ path = "src/anslatetray-file.rs"
 name = "anslatetray-interactive"
 path = "src/anslatetray-interactive.rs"
 
+[[bin]]
+name = "anslatetray-benchmark-file"
+path = "src/anslatetray-benchmark-file.rs"
+
 #[features]
 #default = ["default_style_way"]
 #default_style_way = []
