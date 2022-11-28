@@ -302,6 +302,8 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
         return String::new();
     }
 
+    let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = String::with_capacity(suffix_lower.len());
     for letter in suffix_lower.chars() {
@@ -312,58 +314,74 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
         special_case_suffix_upper.push(letter.to_ascii_uppercase());
     }
 
-    //TODO make more optimizations since we can assume the string is UTF8 safe
-
-    let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+    //Flags used to remember if we're currently processing a word, contraction, contraction suffix or neither
     let mut in_word: bool = false;
+    let mut in_contraction_suffix: bool = false;
 
     //Buffer for improved performance (avoid repeated heap allocations)
     let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
     //Indexes for improved performance (avoid copying characters to use as the english_word argument for translate_word_with_style_reuse_buffers)
     //However, this assumes each character is one byte, so this only works with ASCII strings
-    let mut current_word_start_index: usize = 0;//Inclusive
-    let mut current_word_end_index: usize = 0;//Exclusive
+    let mut slice_start_index: usize = 0;//Inclusive
+    let mut slice_end_index: usize = 0;//Exclusive
 
-    for character in english.chars().peekable() {
+    for character in english.chars() {
         if in_word {
-            if character.is_alphabetic() || (character == '\'') {
-                //This character is part of the word, so increment the current_word_end_index
-                //We also keep apostrophes so that translate_word_with_style can handle contractions
-                current_word_end_index += 1;
+            if in_contraction_suffix {
+                if character.is_alphabetic() {
+                    //We never translate the contraction suffix of a word, so just copy remaining letters as-is
+                } else {
+                    //The contraction ended, and so too does the word
+                    //We still want to copy the non-letter to the output though
+                    in_contraction_suffix = false;
+                    in_word = false;
+                }
+
+                pig_latin_string.push(character);//Copy the character
+                slice_start_index += 1;//Keep the slice start index up to speed for later use
             } else {
-                //The word ended, so translate the word we've identified up until this point!
-                in_word = false;
-                let word_slice: &str = &english[current_word_start_index..current_word_end_index];
-                translate_word_with_style_reuse_buffers_ascii (
-                    word_slice,
-                    suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
-                    &mut pig_latin_string, &mut starting_consonants_buffer
-                );
+                if character.is_alphabetic() {
+                    //This character is part of the word, so increment the slice_end_index to include it in the slice
+                    slice_end_index += 1;
+                } else {
+                    //The word or first part of the contraction ended, so translate the word we've identified up until this point!
+                    let word_slice: &str = &english[slice_start_index..slice_end_index];
+                    translate_word_with_style_reuse_buffers_ascii (
+                        word_slice,
+                        suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+                        &mut pig_latin_string, &mut starting_consonants_buffer
+                    );
 
-                //Append the symbol/whitespace we just got after the translated word
-                pig_latin_string.push(character);
+                    //Bring the slice_start_index to the end since we've finished the word and need it ready for the next one
+                    slice_start_index = slice_end_index + 1;
 
-                //We are now looking for the next word.
-                //We just appended the symbol/whitespace we got from immediatly after the last word to the pig_latin_string,
-                //so the next word we need to check is the position of that symbol/whitespace (at the current_word_end_index) plus 1
-                current_word_start_index = current_word_end_index + 1;
+                    //Append the symbol/whitespace we just got after the translated word
+                    pig_latin_string.push(character);
+
+                    //If the symbol/whitespace we just got is an apostrophe, then this is a contraction suffix
+                    if character == '\'' {
+                        in_contraction_suffix = true;
+                    } else {
+                        in_word = false;//This wasn't a contraction, so we're done with the word
+                    }
+                }
             }
-        } else {//We are not currently in a word
+        } else {
             if character.is_alphabetic() {
-                //If we see a letter, we are in a word, so set the current_word_end_index to the character after the current_word_start_index
+                //If we see a letter, we are in a word, so set the slice_end_index to the character after the slice_start_index
                 in_word = true;
-                current_word_end_index = current_word_start_index + 1;
+                slice_end_index = slice_start_index + 1;
             } else {
                 //Otherwise copy symbols and whitespace as-is
                 pig_latin_string.push(character);
-                current_word_start_index += 1;
+                slice_start_index += 1;
             }
         }
     }
-    //If we ended on a word, we translate it and push it to the end of the string
-    if in_word {
-        let word_slice: &str = &english[current_word_start_index..current_word_end_index];
+    //If we ended on a word (but not on a contraction suffix), we translate it and push it to the end of the string
+    if in_word && !in_contraction_suffix {
+        let word_slice: &str = &english[slice_start_index..slice_end_index];
         translate_word_with_style_reuse_buffers_ascii (
             word_slice,
             suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
@@ -542,6 +560,56 @@ mod tests {
 
     }
     */
+
+    #[test]
+    fn test_translate_with_style_ascii() {
+        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+
+        for pair in suffix_special_case_suffix_pairs {
+            let suffix = pair.0;
+            let special_case_suffix = pair.1;
+
+            assert_eq!(translate_with_style_ascii("Hello world from the coolest Pig Latin translator!", suffix, special_case_suffix),
+                "Elloh".to_string() + suffix + " orldw" + suffix + " omfr" + suffix + " eth" + suffix + " oolestc" + suffix + " Igp" + suffix + " Atinl" + suffix + " anslatortr" + suffix + "!"
+            );
+
+            assert_eq!(translate_with_style_ascii("This library can translate any English text. It can even handle multiple sentences!", suffix, special_case_suffix),
+                "Isth".to_string() + suffix + " ibraryl" + suffix + " anc" + suffix + " anslatetr" + suffix + " any" + special_case_suffix + " English" + special_case_suffix + " extt" + suffix +
+                ". It" + special_case_suffix + " anc" + suffix + " even" + special_case_suffix + " andleh" + suffix + " ultiplem" + suffix + " entencess" + suffix + "!"
+            );
+        }
+    }
+
+    #[test]
+    fn test_translate_with_style_ascii_edgecases() {
+        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+
+        for pair in suffix_special_case_suffix_pairs {
+            let suffix = pair.0;
+            let special_case_suffix = pair.1;
+
+            assert_eq!(translate_with_style_ascii("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", suffix, special_case_suffix),
+                "Etl".to_string() + suffix + "'s ytr" + suffix + " omes" + suffix + " edge" + special_case_suffix + " asesc" + suffix + ". Atth" + suffix + " is" + special_case_suffix + " a" +
+                special_case_suffix + " ontractionc" + suffix + ", as" + special_case_suffix + " ellw" + suffix + " as" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix +
+                " erewh" + suffix + " eth" + suffix + " only" + special_case_suffix + " owelv" + suffix + " is" + special_case_suffix + " y" + special_case_suffix + ". Eatn" + suffix + ", all" +
+                special_case_suffix + " atth" + suffix + " orksw" + suffix + "!"
+            );
+
+            assert_eq!(translate_with_style_ascii("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ", suffix, special_case_suffix),
+                "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ" + suffix
+            );
+
+            assert_eq!(translate_with_style_ascii("Cool, so the heuristics make pretty good guesses with what they're fed!", suffix, special_case_suffix),
+                "Oolc".to_string() + suffix + ", os" + suffix + " eth" + suffix + " euristicsh" + suffix + " akem" + suffix + " ettypr" + suffix + " oodg" + suffix + " uessesg" + suffix + " ithw" + suffix + " atwh" + suffix + " eyth" + suffix + "'re edf" + suffix + "!"
+            );
+
+            assert_eq!(translate_with_style_ascii("Hello-world", suffix, special_case_suffix), "Elloh".to_string() + suffix + "-orldw" + suffix);
+
+            assert_eq!(translate_with_style_ascii("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix),
+                "Yphensh".to_string() + suffix + "-are" + special_case_suffix + "-ifficultd" + suffix + "-aren" + special_case_suffix + "'t-eyth" + suffix + "?"
+            );
+        }
+    }
 }
 
 /* Benches */
