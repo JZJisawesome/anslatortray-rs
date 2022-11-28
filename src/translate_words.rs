@@ -273,15 +273,13 @@ pub fn translate_word_ferb(english_word: &str) -> String {
 ///assert_eq!(translate_word_with_style("over 9000", suffix, special_case_suffix), "overfancy 9000");//A number after a word
 ///```
 pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
-    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2
-    let mut starting_consonants_buffer = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2, plus the fact this isn't a whole word
+    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations, times 2
+    let mut starting_consonants_buffer = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations, times 2, plus the fact this isn't a whole word
     translate_word_with_style_reuse_buffers(english_word, suffix, special_case_suffix, &mut pig_latin_word, &mut starting_consonants_buffer);
     return pig_latin_word;
 }
 
-pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix: &str, special_case_suffix: &str, pig_latin_word: &mut String, starting_consonants: &mut String) {
-    pig_latin_word.truncate(0);
-
+pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix: &str, special_case_suffix: &str, buffer_to_append_to: &mut String, starting_consonants: &mut String) {
     if english_word.is_empty() {
         return;
     }
@@ -292,13 +290,13 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
     let first_letter: char;
     loop {
         match iterator.next() {
-            None => { *pig_latin_word = english_word.to_string(); return; },//There are only symbols/whitespace in the word//TODO do this without creating a new string
+            None => { return; },//There are only symbols/whitespace in the word
             Some(character) => {
                 if character.is_alphabetic() {
                     first_letter = character;//We found the first character of the word/contraction
                     break;
                 } else {
-                    pig_latin_word.push(character);//Copy whitespace/symbol
+                    buffer_to_append_to.push(character);//Copy whitespace/symbol
                 }
             }
         }
@@ -315,12 +313,12 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
     starting_consonants.truncate(0);
 
     if first_letter_was_vowel {
-        pig_latin_word.push(first_letter);
+        buffer_to_append_to.push(first_letter);
     } else {
         let first_char_was_upper = first_letter.is_ascii_uppercase();
         starting_consonants.push(first_letter.to_ascii_lowercase());
 
-        //Grab all of the starting consonants, and push the first vowel we enounter to pig_latin_word
+        //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
         loop {
             match iterator.next() {
                 None => { break; },//The word has no vowels, but it is a herustic to pass it on so that ex. the acroynm binary code decimal or bcd becomes bcdway, etc.
@@ -329,9 +327,9 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
                         if is_vowel(character).unwrap() || is_y(character).unwrap() {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
                             //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
                             if first_char_was_upper {
-                                pig_latin_word.push(character.to_ascii_uppercase());
+                                buffer_to_append_to.push(character.to_ascii_uppercase());
                             } else {
-                                pig_latin_word.push(character.to_ascii_lowercase());
+                                buffer_to_append_to.push(character.to_ascii_lowercase());
                             }
                             break;
                         } else {
@@ -355,7 +353,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
             },//End of the word
             Some(character) => {
                 if character.is_alphabetic() {
-                    pig_latin_word.push(character);
+                    buffer_to_append_to.push(character);
                 } else {
                     trailing_character = Some(character);
                     break;
@@ -366,22 +364,22 @@ pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix
 
     //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
     if first_letter_was_vowel {
-        pig_latin_word.push_str(special_case_suffix);
+        buffer_to_append_to.push_str(special_case_suffix);
     } else {
-        pig_latin_word.push_str(&starting_consonants);
-        pig_latin_word.push_str(suffix);
+        buffer_to_append_to.push_str(&starting_consonants);
+        buffer_to_append_to.push_str(suffix);
     }
 
     //Re-add the trailing character we "accidentally" took in the previous loop (if we do in fact have one)
     if let Some(character) = trailing_character {
-        pig_latin_word.push(character);
+        buffer_to_append_to.push(character);
     }
 
     //Copy any remaining characters as-is
     loop {
         match iterator.next() {
             None => { break; },//End of the word
-            Some(character) => { pig_latin_word.push(character); },
+            Some(character) => { buffer_to_append_to.push(character); },
         }
     }
 }
