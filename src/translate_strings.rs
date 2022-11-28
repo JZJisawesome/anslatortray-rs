@@ -399,113 +399,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_translate_and_translate_way() {
-        assert_eq!(translate("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
-
-        assert_eq!(translate("This library can translate any English text. It can even handle multiple sentences!"),
-            "Isthay ibrarylay ancay anslatetray anyway Englishway exttay. Itway ancay evenway andlehay ultiplemay entencessay!"
-        );
-    }
-
-    #[test]
-    fn test_translate_and_translate_way_edgecases() {
-        assert_eq!(translate("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
-            "Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!"
-        );
-
-        assert_eq!(translate("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
-            "Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay"
-        );
-
-        assert_eq!(translate("Cool, so the heuristics make pretty good guesses with what they're fed!"),
-            "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
-        );
-
-        assert_eq!(translate("Hello-world"), "Ellohay-orldway");
-        assert_eq!(translate("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
-    }
-
-    #[test]
-    fn test_translate_and_translate_way_uppercase() {
-        assert_eq!(translate("HELLO WORLD!"), "ELLOHAY ORLDWAY!");
-        assert_eq!(translate("ISN't THIS COOL?"), "ISNWAY't ISTHAY OOLCAY?");//The case of the second part of a contraction should match the original
-        assert_eq!(translate("What ABOUT a MIX?"), "Atwhay ABOUTWAY away IXMAY?");
-        assert_eq!(translate("Luke, I am your father!"), "Ukelay, Iway amway ouryay atherfay!");//We don't want to capitalize single-letter words
-    }
-
-    #[test]
-    fn test_translate_yay() {
-        assert_eq!(translate_yay("Hello world from the coolest Pig Latin translator!"), "Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
-
-        assert_eq!(translate_yay("This library can translate any English text. It can even handle multiple sentences!"),
-            "Isthay ibrarylay ancay anslatetray anyyay Englishyay exttay. Ityay ancay evenyay andlehay ultiplemay entencessay!"
-        );
-    }
-
-    #[test]
-    fn test_translate_yay_edgecases() {
-        assert_eq!(translate_yay("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
-            "Etlay's ytray omesay edgeyay asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allyay atthay orksway!"
-        );
-
-        assert_eq!(translate_yay("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
-            "Atwhay ifyay ayay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZay"
-        );
-
-        assert_eq!(translate_yay("Cool, so the heuristics make pretty good guesses with what they're fed!"),
-            "Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!"
-        );
-
-        assert_eq!(translate_yay("Hello-world"), "Ellohay-orldway");
-        assert_eq!(translate_yay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
-    }
-
-    #[test]
-    fn test_translate_yay_uppercase() {
-        assert_eq!(translate_yay("HELLO WORLD!"), "ELLOHAY ORLDWAY!");
-        assert_eq!(translate_yay("ISN't THIS COOL?"), "ISNYAY't ISTHAY OOLCAY?");//The case of the second part of a contraction should match the original
-        assert_eq!(translate_yay("What ABOUT a MIX?"), "Atwhay ABOUTYAY ayay IXMAY?");
-        assert_eq!(translate_yay("Luke, I am your father!"), "Ukelay, Iyay amyay ouryay atherfay!");//We don't want to capitalize single-letter words
-    }
-
-    #[test]
-    fn test_translate_ferb() {
-        assert_eq!(translate_ferb("Hello world from the coolest Ferb Latin translator!"), "Elloherb orldwerb omfrerb etherb oolestcerb Erbferb Atinlerb anslatortrerb!");
-
-        assert_eq!(translate_ferb("This library can translate any English text. It can even handle multiple sentences!"),
-            "Istherb ibrarylerb ancerb anslatetrerb anyferb Englishferb extterb. Itferb ancerb evenferb andleherb ultiplemerb entencesserb!"
-        );
-    }
-
-    #[test]
-    fn test_translate_ferb_edgecases() {
-        assert_eq!(translate_ferb("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!"),
-            "Etlerb's ytrerb omeserb edgeferb asescerb. Attherb isferb aferb ontractioncerb, asferb ellwerb asferb aferb ordwerb erewherb etherb onlyferb owelverb isferb yferb. Eatnerb, allferb attherb orkswerb!"
-        );
-
-        assert_eq!(translate_ferb("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ"),
-            "Atwherb ifferb aferb ordwerb asherb onerb owelsverb, ikelerb istherb: bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZerb"
-        );
-
-        assert_eq!(translate_ferb("Cool, so the heuristics make pretty good guesses with what they're fed!"),
-            "Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!"
-        );
-
-        assert_eq!(translate_ferb("Hello-world"), "Elloherb-orldwerb");
-        assert_eq!(translate_ferb("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
-    }
-
-    #[test]
-    fn test_translate_ferb_uppercase() {
-        assert_eq!(translate_ferb("HELLO WORLD!"), "ELLOHERB ORLDWERB!");
-        assert_eq!(translate_ferb("ISN't THIS COOL?"), "ISNFERB't ISTHERB OOLCERB?");
-        assert_eq!(translate_ferb("What ABOUT a MIX?"), "Atwherb ABOUTFERB aferb IXMERB?");
-        assert_eq!(translate_ferb("Luke, I am your father!"), "Ukelerb, Iferb amferb ouryerb atherferb!");//We don't want to capitalize single-letter words
-    }
-
-    #[test]
     fn test_translate_with_style() {
-        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+        let suffix_special_case_suffix_pairs = [
+            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
+        ];
 
         for pair in suffix_special_case_suffix_pairs {
             let suffix = pair.0;
@@ -524,7 +421,9 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_edgecases() {
-        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+        let suffix_special_case_suffix_pairs = [
+            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
+        ];
 
         for pair in suffix_special_case_suffix_pairs {
             let suffix = pair.0;
@@ -553,17 +452,26 @@ mod tests {
         }
     }
 
-    //TODO
-    /*
     #[test]
     fn test_translate_with_style_uppercase() {
-
+        let suffix_special_case_suffix_pairs = [
+            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
+        ];
     }
-    */
+
+        #[test]
+    fn test_translate_ferb_uppercase() {
+        assert_eq!(translate_ferb("HELLO WORLD!"), "ELLOHERB ORLDWERB!");
+        assert_eq!(translate_ferb("ISN't THIS COOL?"), "ISNFERB't ISTHERB OOLCERB?");
+        assert_eq!(translate_ferb("What ABOUT a MIX?"), "Atwherb ABOUTFERB aferb IXMERB?");
+        assert_eq!(translate_ferb("Luke, I am your father!"), "Ukelerb, Iferb amferb ouryerb atherferb!");//We don't want to capitalize single-letter words
+    }
 
     #[test]
     fn test_translate_with_style_ascii() {
-        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+        let suffix_special_case_suffix_pairs = [
+            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
+        ];
 
         for pair in suffix_special_case_suffix_pairs {
             let suffix = pair.0;
@@ -582,7 +490,9 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_ascii_edgecases() {
-        let suffix_special_case_suffix_pairs = [("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")];
+        let suffix_special_case_suffix_pairs = [
+            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
+        ];
 
         for pair in suffix_special_case_suffix_pairs {
             let suffix = pair.0;

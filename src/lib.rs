@@ -8,7 +8,7 @@
 //!
 //!Essentially, the word is reorganized in an effort to hide its true meaning, which can be lots of fun!
 //!
-//!The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily. It is incredibly fast (see the Performance section below) and requires no dependencies!
+//!The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily. It is **incredibly fast** (see the Performance section below) and **requires no dependencies**!
 //!
 //!You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to [`translate()`].
 //!The function handles edge cases quite well (words without vowels, one-letter words, contractions, etc.), though there is always room for improvement.
@@ -19,13 +19,11 @@
 //!
 //!# Building and Installation
 //!
-//!See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
-//!
-//!Spoilers:
-//!
 //!If you wish to use the library in your crate, add anslatortray as a dependency and follow along with the examples below, or <a href="https://docs.rs/anslatortray/latest/anslatortray/">check out the documentation</a>.
 //!
 //!If you wish to use the anslatortray standalone binary, clone `https://git.jekel.ca/JZJ/anslatortray.git`, do cargo build --release, and you'll find the binary in the target/release directory.
+//!
+//!See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
 //!
 //!# Library Examples
 //!
@@ -92,7 +90,7 @@
 //!
 //!Check out the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Performance">wiki page about Anslatortray's performance</a>!
 //!
-//!Spoiler: It can translate one word in under 200ns on average in the default UTF-8 mode, and in under 100ns on average in ASCII-only mode :)
+//!Spoiler: It can translate one word in under 140ns on average in the default UTF-8 mode, and in under 100ns on average in ASCII-only mode :)
 //!
 //!# Edge Cases
 //!
@@ -116,15 +114,10 @@
 //!None other than the standard libraries!
 //!
 //!# Anslatortray Code and Documentation Licence
-//!MIT License
 //!
 //!Copyright (c) 2022 John Jekel
 //!
-//!Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-//!
-//!The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-//!
-//!THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//!MIT Licensed (see the LICENSE file for details)
 
 /* Nightly Features */
 
