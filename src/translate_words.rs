@@ -273,18 +273,26 @@ pub fn translate_word_ferb(english_word: &str) -> String {
 ///assert_eq!(translate_word_with_style("over 9000", suffix, special_case_suffix), "overfancy 9000");//A number after a word
 ///```
 pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_suffix: &str) -> String {
+    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2
+    let mut starting_consonants_buffer = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2, plus the fact this isn't a whole word
+    translate_word_with_style_reuse_buffers(english_word, suffix, special_case_suffix, &mut pig_latin_word, &mut starting_consonants_buffer);
+    return pig_latin_word;
+}
+
+pub(crate) fn translate_word_with_style_reuse_buffers(english_word: &str, suffix: &str, special_case_suffix: &str, pig_latin_word: &mut String, starting_consonants: &mut String) {
+    pig_latin_word.truncate(0);
+
     if english_word.is_empty() {
-        return String::new();
+        return;
     }
 
-    let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2
     let mut iterator = english_word.chars().peekable();
 
     //Copy leading symbols/whitespace until the first letter
     let first_letter: char;
     loop {
         match iterator.next() {
-            None => { return english_word.to_string(); },//There are only symbols/whitespace in the word
+            None => { *pig_latin_word = english_word.to_string(); return; },//There are only symbols/whitespace in the word//TODO do this without creating a new string
             Some(character) => {
                 if character.is_alphabetic() {
                     first_letter = character;//We found the first character of the word/contraction
@@ -304,7 +312,7 @@ pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_
         is_vowel(first_letter).unwrap()//Not including y
         || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { true }//Non-alphabetic character after the first letter, or the word ends after the first letter
     };
-    let mut starting_consonants = String::with_capacity(english_word.len() * 2);
+    starting_consonants.truncate(0);
 
     if first_letter_was_vowel {
         pig_latin_word.push(first_letter);
@@ -376,8 +384,6 @@ pub fn translate_word_with_style(english_word: &str, suffix: &str, special_case_
             Some(character) => { pig_latin_word.push(character); },
         }
     }
-
-    return pig_latin_word;
 }
 
 /* Tests */

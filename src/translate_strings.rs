@@ -8,7 +8,7 @@
 
 /* Imports */
 
-use crate::translate_words::translate_word_with_style;
+use crate::translate_words::translate_word_with_style_reuse_buffers;
 
 /* Functions */
 
@@ -196,11 +196,13 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
         return String::new();
     }
 
-    //TODO perhaps make this multithreaded?
-
     let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
     let mut current_word = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations
     let mut in_word: bool = false;
+
+    //Buffers for improved performance (avoid repeated heap allocations)
+    let mut pig_latin_word_buffer = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2
+    let mut starting_consonants_buffer = String::with_capacity(64 * 2);//Longer than basically all English words to avoid unneeded allocations; times 2, plus the fact this isn't a whole word
 
     for character in english.chars().peekable() {
         if in_word {
@@ -210,7 +212,8 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
             } else {
                 //The word ended, so translate the chararacters we've saved up until this point!
                 in_word = false;
-                pig_latin_string.push_str(translate_word_with_style(current_word.as_str(), suffix, special_case_suffix).as_str());
+                translate_word_with_style_reuse_buffers(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_word_buffer, &mut starting_consonants_buffer);
+                pig_latin_string.push_str(pig_latin_word_buffer.as_str());
 
                 //Append the symbol/whitespace we just got after the translated word
                 pig_latin_string.push(character);
@@ -229,7 +232,8 @@ pub fn translate_with_style(english: &str, suffix: &str, special_case_suffix: &s
     }
     //If we ended on a word, we translate it and push it to the end of the string
     if in_word {
-        pig_latin_string.push_str(translate_word_with_style(current_word.as_str(), suffix, special_case_suffix).as_str());
+        translate_word_with_style_reuse_buffers(current_word.as_str(), suffix, special_case_suffix, &mut pig_latin_word_buffer, &mut starting_consonants_buffer);
+        pig_latin_string.push_str(pig_latin_word_buffer.as_str());
     }
 
     return pig_latin_string;
