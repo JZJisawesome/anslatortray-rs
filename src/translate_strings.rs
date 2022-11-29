@@ -625,6 +625,26 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
     return std::str::from_utf8(pig_latin_string.as_slice()).unwrap().to_string();
 }
 
+///TODO description
+/*
+pub fn translate_with_style_ascii_byte(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin: &mut Vec<u8>) {
+    todo!();
+}
+
+
+//TODO this would be better but we can't have some const generics depending on others
+#[cfg(feature = "nightly-features")]
+pub fn translate_with_style_ascii_byte_generic <
+    const SUFFIX_LEN: usize, const SUFFIX_LOWER: [u8],
+    const SPECIAL_CASE_SUFFIX_LEN: usize, const SPECIAL_CASE_SUFFIX_LOWER: [u8]
+> (
+    english: &[u8],
+    pig_latin: &mut Vec<u8>
+) {
+    todo!();
+}
+*/
+
 /* Tests */
 
 #[cfg(test)]
