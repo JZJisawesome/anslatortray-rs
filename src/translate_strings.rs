@@ -552,7 +552,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
     let mut in_contraction_suffix: bool = false;
 
     //Buffer for improved performance (avoid repeated heap allocations)
-    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+    let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
     //Indexes for improved performance (avoid copying characters to use as the english_word argument for translate_word_with_style_reuse_buffers)
     //However, this assumes each character is one byte, so this only works with ASCII strings

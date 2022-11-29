@@ -41,6 +41,13 @@ pub(crate) fn word_is_uppercase_ascii(english_word_bytes: &[u8]) -> bool {
     return (english_word_bytes[english_word_bytes.len() - 1] as char).is_ascii_uppercase();
 }
 
+//Clones each element of a slice and push()es it to a vector
+pub(crate) fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
+    for element in slice {
+        vec.push(element.clone());
+    }
+}
+
 /* Tests */
 
 #[cfg(test)]
