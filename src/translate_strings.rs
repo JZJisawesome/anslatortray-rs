@@ -9,8 +9,10 @@
 /* Imports */
 
 use crate::translate_words::translate_word_with_style_reuse_buffers;
+#[cfg(feature = "nightly-features-generics")]
 use crate::translate_words::translate_word_with_style_reuse_buffers_generic;
 use crate::translate_words::translate_word_with_style_reuse_buffers_ascii;
+#[cfg(feature = "nightly-features-generics")]
 use crate::translate_words::translate_word_with_style_reuse_buffers_ascii_generic;
 
 /* Functions */
@@ -120,9 +122,9 @@ pub fn translate_ascii(english: &str) -> String {
 ///assert_eq!(translate_way("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
 ///```
 pub fn translate_way(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style(english, "ay", "way");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_generic::<"ay", "way", "AY", "WAY">(english);
 }
 
@@ -159,9 +161,9 @@ pub fn translate_way(english: &str) -> String {
 ///assert_eq!(translate_way_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
 ///```
 pub fn translate_way_ascii(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style_ascii(english, "ay", "way");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_ascii_generic::<b"ay", b"way", b"AY", b"WAY">(english);
 }
 
@@ -196,9 +198,9 @@ pub fn translate_way_ascii(english: &str) -> String {
 ///assert_eq!(translate_yay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
 ///```
 pub fn translate_yay(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style(english, "ay", "yay");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_generic::<"ay", "yay", "AY", "YAY">(english);
 }
 
@@ -235,9 +237,9 @@ pub fn translate_yay(english: &str) -> String {
 ///assert_eq!(translate_yay_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
 ///```
 pub fn translate_yay_ascii(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style_ascii(english, "ay", "yay");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_ascii_generic::<b"ay", b"yay", b"AY", b"YAY">(english);
 }
 
@@ -272,9 +274,9 @@ pub fn translate_yay_ascii(english: &str) -> String {
 ///assert_eq!(translate_hay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-arehay-ifficultday-arenhay't-eythay?");
 ///```
 pub fn translate_hay(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style(english, "ay", "hay");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_generic::<"ay", "hay", "AY", "HAY">(english);
 }
 
@@ -311,9 +313,9 @@ pub fn translate_hay(english: &str) -> String {
 ///assert_eq!(translate_hay_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-arehay-ifficultday-arenhay't-eythay?");
 ///```
 pub fn translate_hay_ascii(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style_ascii(english, "ay", "hay");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_ascii_generic::<b"ay", b"hay", b"AY", b"HAY">(english);
 }
 
@@ -346,9 +348,9 @@ pub fn translate_hay_ascii(english: &str) -> String {
 ///assert_eq!(translate_ferb("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
 ///```
 pub fn translate_ferb(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style(english, "erb", "ferb");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_generic::<"erb", "ferb", "ERB", "FERB">(english);
 }
 
@@ -383,9 +385,9 @@ pub fn translate_ferb(english: &str) -> String {
 ///assert_eq!(translate_ferb_ascii("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
 ///```
 pub fn translate_ferb_ascii(english: &str) -> String {
-    #[cfg(not(feature = "nightly-features"))]
+    #[cfg(not(feature = "nightly-features-generics"))]
     return translate_with_style_ascii(english, "erb", "ferb");
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     return translate_with_style_ascii_generic::<b"erb", b"ferb", b"ERB", b"FERB">(english);
 }
 
@@ -510,7 +512,7 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
 }
 
 ///TODO description, tests, examples
-#[cfg(feature = "nightly-features")]
+#[cfg(feature = "nightly-features-generics")]
 pub fn translate_with_style_generic <
     const SUFFIX_LOWER: &'static str, const SPECIAL_CASE_SUFFIX_LOWER: &'static str,
     const SUFFIX_UPPER: &'static str, const SPECIAL_CASE_SUFFIX_UPPER: &'static str
@@ -727,7 +729,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
 
 
 ///TODO description, tests, examples
-#[cfg(feature = "nightly-features")]
+#[cfg(feature = "nightly-features-generics")]
 pub fn translate_with_style_ascii_generic <
     const SUFFIX_LOWER: &'static [u8], const SPECIAL_CASE_SUFFIX_LOWER: &'static [u8],
     const SUFFIX_UPPER: &'static [u8], const SPECIAL_CASE_SUFFIX_UPPER: &'static [u8]
@@ -827,7 +829,7 @@ pub fn translate_with_style_ascii_byte(english: &[u8], suffix_lower: &[u8], spec
 
 
 //TODO this would be better but we can't have some const generics depending on others
-#[cfg(feature = "nightly-features")]
+#[cfg(feature = "nightly-features-generics")]
 pub fn translate_with_style_ascii_byte_generic <
     const SUFFIX_LEN: usize, const SUFFIX_LOWER: [u8],
     const SPECIAL_CASE_SUFFIX_LEN: usize, const SPECIAL_CASE_SUFFIX_LOWER: [u8]
@@ -1004,8 +1006,8 @@ mod tests {
 
 /* Benches */
 
-#[cfg_attr(feature = "nightly-features", cfg(test))]
-#[cfg(feature = "nightly-features")]
+#[cfg_attr(feature = "nightly-features-benches", cfg(test))]
+#[cfg(feature = "nightly-features-benches")]
 mod benches {
     extern crate test;
     use test::Bencher;

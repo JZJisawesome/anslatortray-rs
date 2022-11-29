@@ -89,7 +89,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
     }
 }
 
-#[cfg(feature = "nightly-features")]
+#[cfg(feature = "nightly-features-generics")]
 pub(crate) fn translate_word_with_style_reuse_buffers_generic <
     const SUFFIX_LOWER: &'static str, const SPECIAL_CASE_SUFFIX_LOWER: &'static str,
     const SUFFIX_UPPER: &'static str, const SPECIAL_CASE_SUFFIX_UPPER: &'static str
@@ -250,7 +250,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii_generic <
     const SUFFIX_UPPER: [u8; SUFFIX_LEN], const SPECIAL_CASE_SUFFIX_UPPER: [u8; SPECIAL_CASE_SUFFIX_LEN]
 > (
 */
-#[cfg(feature = "nightly-features")]
+#[cfg(feature = "nightly-features-generics")]
 pub(crate) fn translate_word_with_style_reuse_buffers_ascii_generic <
     const SUFFIX_LOWER: &'static [u8], const SPECIAL_CASE_SUFFIX_LOWER: &'static [u8],
     const SUFFIX_UPPER: &'static [u8], const SPECIAL_CASE_SUFFIX_UPPER: &'static [u8]
@@ -373,7 +373,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn test_translate_word_with_style_generic() {
         //TODO test with other suffixes perhaps?
         let suffix = "ay";
@@ -445,7 +445,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn test_translate_word_with_style_ascii_generic() {
         //TODO test with other suffixes perhaps?
         let suffix = "ay";
@@ -498,7 +498,7 @@ mod tests {
         return pig_latin_word;
     }
 
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn translate_word_with_style_generic <
         const SUFFIX_LOWER: &'static str, const SPECIAL_CASE_SUFFIX_LOWER: &'static str,
         const SUFFIX_UPPER: &'static str, const SPECIAL_CASE_SUFFIX_UPPER: &'static str
@@ -540,7 +540,7 @@ mod tests {
         return std::str::from_utf8(pig_latin_word.as_slice()).unwrap().to_string();
     }
 
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn translate_word_with_style_ascii_generic <
         const SUFFIX_LOWER: &'static [u8], const SPECIAL_CASE_SUFFIX_LOWER: &'static [u8],
         const SUFFIX_UPPER: &'static [u8], const SPECIAL_CASE_SUFFIX_UPPER: &'static [u8]
@@ -565,8 +565,8 @@ mod tests {
 
 /* Benches */
 
-#[cfg_attr(feature = "nightly-features", cfg(test))]
-#[cfg(feature = "nightly-features")]
+#[cfg_attr(feature = "nightly-features-benches", cfg(test))]
+#[cfg(feature = "nightly-features-benches")]
 mod benches {
     extern crate test;
     use test::Bencher;
@@ -653,7 +653,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn generic_way_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
@@ -675,7 +675,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn generic_yay_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
@@ -697,7 +697,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn generic_hay_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
@@ -719,7 +719,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn generic_ferb_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
@@ -821,7 +821,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn ascii_generic_way_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
@@ -843,7 +843,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn ascii_generic_yay_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
@@ -865,7 +865,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn ascii_generic_hay_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
@@ -887,7 +887,7 @@ mod benches {
     }
 
     #[bench]
-    #[cfg(feature = "nightly-features")]
+    #[cfg(feature = "nightly-features-generics")]
     fn ascii_generic_ferb_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word

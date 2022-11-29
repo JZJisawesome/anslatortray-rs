@@ -72,9 +72,9 @@
 /* Nightly Features */
 
 //Only enabled if the relevant Cargo feature is
-#![cfg_attr(feature = "nightly-features", feature(test))]
-#![cfg_attr(feature = "nightly-features", feature(adt_const_params))]
-#![cfg_attr(feature = "nightly-features", feature(generic_const_exprs))]
+#![cfg_attr(feature = "nightly-features-benches", feature(test))]
+#![cfg_attr(feature = "nightly-features-generics", feature(adt_const_params))]
+#![cfg_attr(feature = "nightly-features-generics", feature(generic_const_exprs))]
 
 /* Imports */
 

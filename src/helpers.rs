@@ -55,7 +55,7 @@ pub(crate) fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
 }
 
 //Capitalizes an ASCII/byte string at compile time
-#[cfg(feature = "nightly-features")]//Not unstable on it's own, but only needed by things enabled by nightly-features
+#[cfg(feature = "nightly-features-generics")]//Not unstable on it's own, but only needed by things enabled by nightly-features
 pub(crate) const fn capitalize_ascii<const LEN: usize>(word: &[u8; LEN]) -> [u8; LEN] {
     let mut capitalized = [0u8; LEN];
     let mut i: usize = 0;
