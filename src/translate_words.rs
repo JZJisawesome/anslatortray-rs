@@ -8,7 +8,7 @@
 
 /* Imports */
 
-use crate::helpers::{is_vowel, is_y, word_is_uppercase, word_is_uppercase_ascii, push_slice_to_vector};
+use crate::helpers::{is_vowel, is_vowel_ascii, is_y, word_is_uppercase, word_is_uppercase_ascii, push_slice_to_vector};
 
 /* Functions */
 
@@ -102,16 +102,14 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
 
     //TODO more ascii optimizations
 
-    //Check the first letter
-    let first_letter: char = english_word[0] as char;
-
+    //Set the starting index (the first character is assumed to exist and is accessed directly in several spots)
     let mut index = 1;
 
     //Check if the word is uppercase
     let word_uppercase = word_is_uppercase_ascii(english_word);
 
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
-    let first_letter_was_vowel: bool = is_vowel(first_letter);//Not including y
+    let first_letter_was_vowel: bool = is_vowel_ascii(english_word[0]);//Not including y
 
     //Clear the starting_consonants buffer we were given
     starting_consonants.truncate(0);
@@ -119,8 +117,8 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
     if first_letter_was_vowel {
         buffer_to_append_to.push(english_word[0]);
     } else {
-        let first_char_was_upper = first_letter.is_ascii_uppercase();
-        starting_consonants.push(if word_uppercase { first_letter as u8 } else { first_letter.to_ascii_lowercase() as u8 });
+        let first_char_was_upper = (english_word[0] as char).is_ascii_uppercase();
+        starting_consonants.push(if word_uppercase { english_word[0] } else { (english_word[0] as char).to_ascii_lowercase() as u8 });
 
         //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
         while index < english_word.len() {
@@ -132,20 +130,18 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
                 } else {
                     buffer_to_append_to.push(character.to_ascii_lowercase() as u8);
                 }
+                index += 1;
                 break;
             } else {
                 starting_consonants.push(character as u8);
+                index += 1;
             }
-
-            index += 1;
         }
-        index += 1;
     }
 
     //Copy all of the remaining letters up to the end of the word
     while index < english_word.len() {
         buffer_to_append_to.push(english_word[index]);
-
         index += 1;
     }
 

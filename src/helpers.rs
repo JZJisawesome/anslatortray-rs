@@ -16,6 +16,12 @@ pub(crate) fn is_vowel(letter: char) -> bool {
     }
 }
 
+//Returns whether a letter is a vowel or not.
+pub(crate) fn is_vowel_ascii(letter: u8) -> bool {
+    //TODO do this more efficiently
+    return is_vowel(letter as char);
+}
+
 //Returns whether a letter is y or not.
 pub(crate) fn is_y(letter: char) -> bool {
     return letter.to_ascii_lowercase() == 'y';
