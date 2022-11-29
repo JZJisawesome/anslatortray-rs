@@ -35,10 +35,10 @@ pub(crate) fn word_is_uppercase(english_word: &str) -> bool {
 }
 
 //Returns whether an entire word is upper case or not (the word must only contain ASCII characters)
-pub(crate) fn word_is_uppercase_ascii(english_word: &str) -> bool {
+pub(crate) fn word_is_uppercase_ascii(english_word_bytes: &[u8]) -> bool {
     //Asume length is non-zero
     //Heuristic: If the last letter of the word is uppercase, likely the whole word is uppercase
-    return (english_word.as_bytes()[english_word.as_bytes().len() - 1] as char).is_ascii_uppercase();
+    return (english_word_bytes[english_word_bytes.len() - 1] as char).is_ascii_uppercase();
 }
 
 /* Tests */
@@ -94,16 +94,16 @@ mod tests {
 
     #[test]
     fn test_word_is_uppercase_ascii() {
-        assert!(word_is_uppercase_ascii("HELLO"));
-        assert!(word_is_uppercase_ascii("WORLD"));
+        assert!(word_is_uppercase_ascii(b"HELLO"));
+        assert!(word_is_uppercase_ascii(b"WORLD"));
 
-        assert!(word_is_uppercase_ascii("I"));
-        assert!(!word_is_uppercase_ascii("would"));
-        assert!(!word_is_uppercase_ascii("like"));
-        assert!(!word_is_uppercase_ascii("a"));
-        assert!(!word_is_uppercase_ascii("pizza"));
+        assert!(word_is_uppercase_ascii(b"I"));
+        assert!(!word_is_uppercase_ascii(b"would"));
+        assert!(!word_is_uppercase_ascii(b"like"));
+        assert!(!word_is_uppercase_ascii(b"a"));
+        assert!(!word_is_uppercase_ascii(b"pizza"));
 
-        assert!(!word_is_uppercase_ascii("Sussus"));
-        assert!(!word_is_uppercase_ascii("Amogus"));
+        assert!(!word_is_uppercase_ascii(b"Sussus"));
+        assert!(!word_is_uppercase_ascii(b"Amogus"));
     }
 }

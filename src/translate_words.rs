@@ -23,7 +23,7 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
         return;
     }
 
-    let mut iterator = english_word.chars().peekable();
+    let mut iterator = english_word.chars();
 
     //Check the first letter
     let first_letter: char = iterator.next().unwrap();
@@ -48,20 +48,16 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
             match iterator.next() {
                 None => { break; },//The word has no vowels, but it is a herustic to pass it on so that ex. the acroynm binary code decimal or bcd becomes bcdway, etc.
                 Some(character) => {
-                    if character.is_alphabetic() {
-                        if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
-                            //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
-                            if first_char_was_upper {
-                                buffer_to_append_to.push(character.to_ascii_uppercase());
-                            } else {
-                                buffer_to_append_to.push(character.to_ascii_lowercase());
-                            }
-                            break;
+                    if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                        //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
+                        if first_char_was_upper {
+                            buffer_to_append_to.push(character.to_ascii_uppercase());
                         } else {
-                            starting_consonants.push(character);
+                            buffer_to_append_to.push(character.to_ascii_lowercase());
                         }
-                    } else {//The word ended without vowels or we met an apostrophe
-                        break;//It is a herustic to pass it on so that ex. the letter y becomes yway, the word a becomes away, etc.
+                        break;
+                    } else {
+                        starting_consonants.push(character);
                     }
                 }
             }
@@ -98,7 +94,9 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
     suffix_lower: &str, special_case_suffix_lower: &str, suffix_upper: &str, special_case_suffix_upper: &str,
     buffer_to_append_to: &mut String, starting_consonants: &mut String
 ) {
-    if english_word.len() == 1 {
+    let english_word_bytes: &[u8] = english_word.as_bytes();
+
+    if english_word_bytes.len() == 1 {
         buffer_to_append_to.push_str(english_word);
         buffer_to_append_to.push_str(special_case_suffix_lower);
         return;
@@ -106,13 +104,13 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
 
     //TODO more ascii optimizations
 
-    let mut iterator = english_word.chars().peekable();
-
     //Check the first letter
-    let first_letter: char = iterator.next().unwrap();
+    let first_letter: char = english_word_bytes[0] as char;
+
+    let mut index = 1;
 
     //Check if the word is uppercase
-    let word_uppercase = word_is_uppercase_ascii(&english_word);
+    let word_uppercase = word_is_uppercase_ascii(english_word_bytes);
 
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
     let first_letter_was_vowel: bool = is_vowel(first_letter);//Not including y
@@ -127,36 +125,30 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
         starting_consonants.push(if word_uppercase { first_letter } else { first_letter.to_ascii_lowercase() });
 
         //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
-        loop {
-            match iterator.next() {
-                None => { break; },//The word has no vowels, but it is a herustic to pass it on so that ex. the acroynm binary code decimal or bcd becomes bcdway, etc.
-                Some(character) => {
-                    if character.is_alphabetic() {
-                        if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
-                            //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
-                            if first_char_was_upper {
-                                buffer_to_append_to.push(character.to_ascii_uppercase());
-                            } else {
-                                buffer_to_append_to.push(character.to_ascii_lowercase());
-                            }
-                            break;
-                        } else {
-                            starting_consonants.push(character);
-                        }
-                    } else {//The word ended without vowels or we met an apostrophe
-                        break;//It is a herustic to pass it on so that ex. the letter y becomes yway, the word a becomes away, etc.
-                    }
+        while index < english_word_bytes.len() {
+            let character: char = english_word_bytes[index] as char;
+            if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
+                if first_char_was_upper {
+                    buffer_to_append_to.push(character.to_ascii_uppercase());
+                } else {
+                    buffer_to_append_to.push(character.to_ascii_lowercase());
                 }
+                break;
+            } else {
+                starting_consonants.push(character);
             }
+
+            index += 1;
         }
+        index += 1;
     }
 
     //Copy all of the remaining letters up to the end of the word
-    loop {
-        match iterator.next() {
-            None => { break; },//End of the word
-            Some(character) => { buffer_to_append_to.push(character); }
-        }
+    while index < english_word_bytes.len() {
+        buffer_to_append_to.push(english_word_bytes[index] as char);
+
+        index += 1;
     }
 
     //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
