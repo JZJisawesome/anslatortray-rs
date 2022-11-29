@@ -13,14 +13,10 @@ use crate::helpers::{is_vowel, is_y, word_is_uppercase, word_is_uppercase_ascii}
 /* Functions */
 
 pub(crate) fn translate_word_with_style_reuse_buffers (
-    english_word: &str,
+    english_word: &str,//Assumes this word is not empty
     suffix_lower: &str, special_case_suffix_lower: &str, suffix_upper: &str, special_case_suffix_upper: &str,
     buffer_to_append_to: &mut String, starting_consonants: &mut String
 ) {
-    if english_word.is_empty() {
-        return;
-    }
-
     if english_word.len() == 1 {
         buffer_to_append_to.push_str(english_word);
         buffer_to_append_to.push_str(special_case_suffix_lower);
@@ -36,11 +32,9 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
     let word_uppercase = word_is_uppercase(&english_word);
 
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
-    //However, if any word is only one letter long, this takes priority and the word is treated like a vowel
-    let first_letter_was_vowel: bool = {
-        is_vowel(first_letter)//Not including y
-        || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { true }//Non-alphabetic character after the first letter, or the word ends after the first letter
-    };
+    let first_letter_was_vowel: bool = is_vowel(first_letter);//Not including y
+
+    //Clear the starting_consonants buffer we were given
     starting_consonants.truncate(0);
 
     if first_letter_was_vowel {
@@ -100,14 +94,10 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
 }
 
 pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
-    english_word: &str,
+    english_word: &str,//Assumes this word is not empty
     suffix_lower: &str, special_case_suffix_lower: &str, suffix_upper: &str, special_case_suffix_upper: &str,
     buffer_to_append_to: &mut String, starting_consonants: &mut String
 ) {
-    if english_word.is_empty() {
-        return;
-    }
-
     if english_word.len() == 1 {
         buffer_to_append_to.push_str(english_word);
         buffer_to_append_to.push_str(special_case_suffix_lower);
@@ -125,11 +115,9 @@ pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
     let word_uppercase = word_is_uppercase_ascii(&english_word);
 
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
-    //However, if any word is only one letter long, this takes priority and the word is treated like a vowel
-    let first_letter_was_vowel: bool = {
-        is_vowel(first_letter)//Not including y
-        || if let Some(character) = iterator.peek() { !character.is_alphabetic() } else { true }//Non-alphabetic character after the first letter, or the word ends after the first letter
-    };
+    let first_letter_was_vowel: bool = is_vowel(first_letter);//Not including y
+
+    //Clear the starting_consonants buffer we were given
     starting_consonants.truncate(0);
 
     if first_letter_was_vowel {

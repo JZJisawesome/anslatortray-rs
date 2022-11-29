@@ -430,7 +430,7 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
     //Buffers for improved performance (avoid repeated heap allocations)
     let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
-    for character in english.chars().peekable() {
+    for character in english.chars() {
         if in_word {
             if character.is_alphabetic() {
                 //Save the character to translate once the word ends; we also keep apostrophes so that translate_word_with_style can handle contractions
@@ -630,14 +630,18 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
 #[cfg(test)]
 mod tests {
     use super::*;
+    const SUFFIX_SPECIAL_CASE_SUFFIX_PAIRS: [(&str, &str); 9] = [
+        ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
+    ];
+    const SUFFIX_SPECIAL_CASE_SUFFIX_LOWER_UPPER_TUPLES: [(&str, &str, &str, &str); 9] = [
+        ("ay", "way", "AY", "WAY"), ("ay", "yay", "AY", "YAY"), ("ay", "hay", "AY", "HAY"), ("erb", "ferb", "ERB", "FERB"),
+        ("ancy", "fancy", "ANCY", "FANCY"), ("orange", "porange", "ORANGE", "PORANGE"),
+        ("anana", "banana", "ANANA", "BANANA"), ("atin", "latin", "ATIN", "LATIN"), ("ust", "rust", "UST", "RUST"),
+    ];
 
     #[test]
     fn test_translate_with_style() {
-        let suffix_special_case_suffix_pairs = [
-            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
-        ];
-
-        for pair in suffix_special_case_suffix_pairs {
+        for pair in SUFFIX_SPECIAL_CASE_SUFFIX_PAIRS {
             let suffix = pair.0;
             let special_case_suffix = pair.1;
 
@@ -654,11 +658,7 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_edgecases() {
-        let suffix_special_case_suffix_pairs = [
-            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
-        ];
-
-        for pair in suffix_special_case_suffix_pairs {
+        for pair in SUFFIX_SPECIAL_CASE_SUFFIX_PAIRS {
             let suffix = pair.0;
             let special_case_suffix = pair.1;
 
@@ -687,13 +687,7 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_uppercase() {
-        let suffix_special_case_suffix_lower_upper_tuples = [
-            ("ay", "way", "AY", "WAY"), ("ay", "yay", "AY", "YAY"), ("ay", "hay", "AY", "HAY"), ("erb", "ferb", "ERB", "FERB"),
-            ("ancy", "fancy", "ANCY", "FANCY"), ("orange", "porange", "ORANGE", "PORANGE"),
-            ("anana", "banana", "ANANA", "BANANA"), ("atin", "latin", "ATIN", "LATIN"), ("ust", "rust", "UST", "RUST"),
-        ];
-
-        for pair in suffix_special_case_suffix_lower_upper_tuples {
+        for pair in SUFFIX_SPECIAL_CASE_SUFFIX_LOWER_UPPER_TUPLES {
             let suffix_lower = pair.0;
             let special_case_suffix_lower = pair.1;
             let suffix_upper = pair.2;
@@ -724,11 +718,7 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_ascii() {
-        let suffix_special_case_suffix_pairs = [
-            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
-        ];
-
-        for pair in suffix_special_case_suffix_pairs {
+        for pair in SUFFIX_SPECIAL_CASE_SUFFIX_PAIRS {
             let suffix = pair.0;
             let special_case_suffix = pair.1;
 
@@ -745,11 +735,7 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_ascii_edgecases() {
-        let suffix_special_case_suffix_pairs = [
-            ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
-        ];
-
-        for pair in suffix_special_case_suffix_pairs {
+        for pair in SUFFIX_SPECIAL_CASE_SUFFIX_PAIRS {
             let suffix = pair.0;
             let special_case_suffix = pair.1;
 
@@ -778,13 +764,7 @@ mod tests {
 
     #[test]
     fn test_translate_with_style_ascii_uppercase() {
-        let suffix_special_case_suffix_lower_upper_tuples = [
-            ("ay", "way", "AY", "WAY"), ("ay", "yay", "AY", "YAY"), ("ay", "hay", "AY", "HAY"), ("erb", "ferb", "ERB", "FERB"),
-            ("ancy", "fancy", "ANCY", "FANCY"), ("orange", "porange", "ORANGE", "PORANGE"),
-            ("anana", "banana", "ANANA", "BANANA"), ("atin", "latin", "ATIN", "LATIN"), ("ust", "rust", "UST", "RUST"),
-        ];
-
-        for pair in suffix_special_case_suffix_lower_upper_tuples {
+        for pair in SUFFIX_SPECIAL_CASE_SUFFIX_LOWER_UPPER_TUPLES {
             let suffix_lower = pair.0;
             let special_case_suffix_lower = pair.1;
             let suffix_upper = pair.2;
