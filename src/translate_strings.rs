@@ -118,7 +118,10 @@ pub fn translate_ascii(english: &str) -> String {
 ///assert_eq!(translate_way("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
 ///```
 pub fn translate_way(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style(english, "ay", "way");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_generic::<"ay", "way", "AY", "WAY">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (way-style) (Faster, but ASCII-only)!
@@ -188,7 +191,10 @@ pub fn translate_way_ascii(english: &str) -> String {
 ///assert_eq!(translate_yay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
 ///```
 pub fn translate_yay(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style(english, "ay", "yay");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_generic::<"ay", "yay", "AY", "YAY">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (yay-style) (Faster, but ASCII-only)!
@@ -258,7 +264,10 @@ pub fn translate_yay_ascii(english: &str) -> String {
 ///assert_eq!(translate_hay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-arehay-ifficultday-arenhay't-eythay?");
 ///```
 pub fn translate_hay(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style(english, "ay", "hay");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_generic::<"ay", "hay", "AY", "HAY">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (hay-style) (Faster, but ASCII-only)!
@@ -326,7 +335,10 @@ pub fn translate_hay_ascii(english: &str) -> String {
 ///assert_eq!(translate_ferb("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
 ///```
 pub fn translate_ferb(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style(english, "erb", "ferb");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_generic::<"erb", "ferb", "ERB", "FERB">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Ferb Latin (Faster, but ASCII-only)!
@@ -483,6 +495,80 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
     return pig_latin_string;
 }
 
+
+#[cfg(feature = "nightly-features")]
+pub fn translate_with_style_generic <
+    const SUFFIX_LOWER: &'static str, const SPECIAL_CASE_SUFFIX_LOWER: &'static str,
+    const SUFFIX_UPPER: &'static str, const SPECIAL_CASE_SUFFIX_UPPER: &'static str
+> (
+    english: &str,
+) -> String {
+    if english.is_empty() {
+        return String::new();
+    }
+
+    let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+    let mut current_word = String::with_capacity(64);//Longer than all English words to avoid unneeded allocations (plus leaving room for leading and trailing extra characters)
+    let mut contraction_suffix = String::with_capacity(64);
+    let mut in_word: bool = false;
+    let mut in_contraction_suffix: bool = false;
+
+    //Buffers for improved performance (avoid repeated heap allocations)
+    let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+    for character in english.chars() {
+        if in_word {
+            if character.is_alphabetic() {
+                //Save the character to translate once the word ends; we also keep apostrophes so that translate_word_with_style can handle contractions
+                if in_contraction_suffix {
+                    contraction_suffix.push(character);
+                } else {
+                    current_word.push(character);
+                }
+            } else if character == '\'' {
+                in_contraction_suffix = true;
+                contraction_suffix.push(character);
+            } else {
+                //The word ended, so translate the chararacters we've saved up until this point!
+                in_word = false;
+                translate_word_with_style_reuse_buffers (
+                    current_word.as_str(),
+                    SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
+                    &mut pig_latin_string, &mut starting_consonants_buffer
+                );
+
+                //Push the contraction
+                in_contraction_suffix = false;
+                pig_latin_string.push_str(&contraction_suffix);
+                contraction_suffix.truncate(0);//Faster than creating a new string
+
+                //Append the symbol/whitespace we just got after the translated word
+                pig_latin_string.push(character);
+            }
+        } else {//We are not currently in a word
+            if character.is_alphabetic() {
+                //If we see a letter, we are in a word, so save the character for now so we can translate the word later
+                in_word = true;
+                current_word.truncate(0);//Faster than creating a new string
+                current_word.push(character);
+            } else {
+                //Otherwise copy symbols and whitespace as-is
+                pig_latin_string.push(character);
+            }
+        }
+    }
+    //If we ended on a word, we translate it and push it to the end of the string
+    if in_word {
+        translate_word_with_style_reuse_buffers (
+            current_word.as_str(),
+            SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
+            &mut pig_latin_string, &mut starting_consonants_buffer
+        );
+    }
+
+    return pig_latin_string;
+}
+
 ///Translates a multi-word string (including punctuation) into a custom-styled play language (Faster, but ASCII-only)!
 ///
 ///Faster than [`translate_with_style()`], but requires that the string only contains ASCII characters or else it may panic.
@@ -625,7 +711,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
     return std::str::from_utf8(pig_latin_string.as_slice()).unwrap().to_string();
 }
 
-///TODO description
+///TODO description (same as translate_with_style_ascii, but exposes the raw byte strings/etc)
 /*
 pub fn translate_with_style_ascii_byte(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_buffer_to_push_to: &mut Vec<u8>) {
     todo!();
@@ -644,6 +730,10 @@ pub fn translate_with_style_ascii_byte_generic <
     todo!();
 }
 */
+
+
+//TODO also add an ascii_byte_generic that combines all 3
+//TODO also add a regular generic version for UTF-8
 
 /* Tests */
 
@@ -729,11 +819,6 @@ mod tests {
                 "Ukel".to_string() + suffix_lower + ", I" + special_case_suffix_lower+ " am" + special_case_suffix_lower + " oury" + suffix_lower + " atherf" + suffix_lower + "!"
             );
         }
-    }
-
-    #[test]
-    fn test_translate_ferb_uppercase() {
-
     }
 
     #[test]
