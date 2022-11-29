@@ -411,10 +411,13 @@ mod tests {
     > (
         english_word: &str
     ) -> String {
+        use crate::helpers::capitalize_ascii;
 
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
         translate_word_with_style_reuse_buffers_ascii_generic::<
+            //Almost works, but it can't infer the length
+            //SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, { &capitalize_ascii(SUFFIX_LOWER.try_into().unwrap()) }, { &capitalize_ascii(SPECIAL_CASE_SUFFIX_LOWER.try_into().unwrap()) },
             SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
         > (
             english_word.as_bytes(),
