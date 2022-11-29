@@ -9,7 +9,9 @@
 /* Imports */
 
 use crate::translate_words::translate_word_with_style_reuse_buffers;
+use crate::translate_words::translate_word_with_style_reuse_buffers_generic;
 use crate::translate_words::translate_word_with_style_reuse_buffers_ascii;
+use crate::translate_words::translate_word_with_style_reuse_buffers_ascii_generic;
 
 /* Functions */
 
@@ -157,7 +159,10 @@ pub fn translate_way(english: &str) -> String {
 ///assert_eq!(translate_way_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
 ///```
 pub fn translate_way_ascii(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style_ascii(english, "ay", "way");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_ascii_generic::<b"ay", b"way", b"AY", b"WAY">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (yay-style)!
@@ -230,7 +235,10 @@ pub fn translate_yay(english: &str) -> String {
 ///assert_eq!(translate_yay_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
 ///```
 pub fn translate_yay_ascii(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style_ascii(english, "ay", "yay");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_ascii_generic::<b"ay", b"yay", b"AY", b"YAY">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (hay-style)!
@@ -303,7 +311,10 @@ pub fn translate_hay(english: &str) -> String {
 ///assert_eq!(translate_hay_ascii("Hyphens-are-difficult-aren't-they?"), "Yphenshay-arehay-ifficultday-arenhay't-eythay?");
 ///```
 pub fn translate_hay_ascii(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style_ascii(english, "ay", "hay");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_ascii_generic::<b"ay", b"hay", b"AY", b"HAY">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into Ferb Latin!
@@ -372,7 +383,10 @@ pub fn translate_ferb(english: &str) -> String {
 ///assert_eq!(translate_ferb_ascii("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
 ///```
 pub fn translate_ferb_ascii(english: &str) -> String {
+    #[cfg(not(feature = "nightly-features"))]
     return translate_with_style_ascii(english, "erb", "ferb");
+    #[cfg(feature = "nightly-features")]
+    return translate_with_style_ascii_generic::<b"erb", b"ferb", b"ERB", b"FERB">(english);
 }
 
 ///Translates a multi-word string (including punctuation) into a custom-styled play language!
@@ -495,7 +509,7 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
     return pig_latin_string;
 }
 
-
+///TODO description, tests, examples
 #[cfg(feature = "nightly-features")]
 pub fn translate_with_style_generic <
     const SUFFIX_LOWER: &'static str, const SPECIAL_CASE_SUFFIX_LOWER: &'static str,
@@ -531,9 +545,10 @@ pub fn translate_with_style_generic <
             } else {
                 //The word ended, so translate the chararacters we've saved up until this point!
                 in_word = false;
-                translate_word_with_style_reuse_buffers (
-                    current_word.as_str(),
+                translate_word_with_style_reuse_buffers_generic::<
                     SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
+                > (
+                    current_word.as_str(),
                     &mut pig_latin_string, &mut starting_consonants_buffer
                 );
 
@@ -558,13 +573,12 @@ pub fn translate_with_style_generic <
         }
     }
     //If we ended on a word, we translate it and push it to the end of the string
-    if in_word {
-        translate_word_with_style_reuse_buffers (
-            current_word.as_str(),
-            SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
-            &mut pig_latin_string, &mut starting_consonants_buffer
-        );
-    }
+    translate_word_with_style_reuse_buffers_generic::<
+        SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
+    > (
+        current_word.as_str(),
+        &mut pig_latin_string, &mut starting_consonants_buffer
+    );
 
     return pig_latin_string;
 }
@@ -704,6 +718,100 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
         translate_word_with_style_reuse_buffers_ascii (
             word_slice.as_bytes(),
             suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),
+            &mut pig_latin_string, &mut starting_consonants_buffer
+        );
+    }
+
+    return std::str::from_utf8(pig_latin_string.as_slice()).unwrap().to_string();
+}
+
+
+///TODO description, tests, examples
+#[cfg(feature = "nightly-features")]
+pub fn translate_with_style_ascii_generic <
+    const SUFFIX_LOWER: &'static [u8], const SPECIAL_CASE_SUFFIX_LOWER: &'static [u8],
+    const SUFFIX_UPPER: &'static [u8], const SPECIAL_CASE_SUFFIX_UPPER: &'static [u8]
+> (
+    english: &str,
+) -> String {
+
+    //TODO switch to fully operating on u8 slices/arrays/Vecs internally (converting from a string, then to a string at the end) in anslatortray 0.5.0
+
+    let mut pig_latin_string = Vec::<u8>::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+
+    //Flags used to remember if we're currently processing a word, contraction, contraction suffix or neither
+    let mut in_word: bool = false;
+    let mut in_contraction_suffix: bool = false;
+
+    //Buffer for improved performance (avoid repeated heap allocations)
+    let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+    //Indexes for improved performance (avoid copying characters to use as the english_word argument for translate_word_with_style_reuse_buffers)
+    //However, this assumes each character is one byte, so this only works with ASCII strings
+    let mut slice_start_index: usize = 0;//Inclusive
+    let mut slice_end_index: usize = 0;//Exclusive
+
+    for character in english.chars() {
+        if in_word {
+            if in_contraction_suffix {
+                if character.is_alphabetic() {
+                    //We never translate the contraction suffix of a word, so just copy remaining letters as-is
+                } else {
+                    //The contraction ended, and so too does the word
+                    //We still want to copy the non-letter to the output though
+                    in_contraction_suffix = false;
+                    in_word = false;
+                }
+
+                pig_latin_string.push(character as u8);//Copy the character
+                slice_start_index += 1;//Keep the slice start index up to speed for later use
+            } else {
+                if character.is_alphabetic() {
+                    //This character is part of the word, so increment the slice_end_index to include it in the slice
+                    slice_end_index += 1;
+                } else {
+                    //The word or first part of the contraction ended, so translate the word we've identified up until this point!
+                    let word_slice: &str = &english[slice_start_index..slice_end_index];
+                    translate_word_with_style_reuse_buffers_ascii_generic::<
+                        SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
+                    > (
+                        word_slice.as_bytes(),
+                        &mut pig_latin_string, &mut starting_consonants_buffer
+                    );
+
+                    //Bring the slice_start_index to the end since we've finished the word and need it ready for the next one
+                    slice_start_index = slice_end_index + 1;
+
+                    //Append the symbol/whitespace we just got after the translated word
+                    pig_latin_string.push(character as u8);
+
+                    //If the symbol/whitespace we just got is an apostrophe, then this is a contraction suffix
+                    if character == '\'' {
+                        in_contraction_suffix = true;
+                    } else {
+                        in_word = false;//This wasn't a contraction, so we're done with the word
+                    }
+                }
+            }
+        } else {
+            if character.is_alphabetic() {
+                //If we see a letter, we are in a word, so set the slice_end_index to the character after the slice_start_index
+                in_word = true;
+                slice_end_index = slice_start_index + 1;
+            } else {
+                //Otherwise copy symbols and whitespace as-is
+                pig_latin_string.push(character as u8);
+                slice_start_index += 1;
+            }
+        }
+    }
+    //If we ended on a word (but not on a contraction suffix), we translate it and push it to the end of the string
+    if in_word && !in_contraction_suffix {
+        let word_slice: &str = &english[slice_start_index..slice_end_index];
+        translate_word_with_style_reuse_buffers_ascii_generic::<
+            SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
+        > (
+            word_slice.as_bytes(),
             &mut pig_latin_string, &mut starting_consonants_buffer
         );
     }
