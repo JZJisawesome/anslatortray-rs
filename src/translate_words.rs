@@ -90,86 +90,6 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
 }
 
 pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
-    english_word: &str,//Assumes this word is not empty
-    suffix_lower: &str, special_case_suffix_lower: &str, suffix_upper: &str, special_case_suffix_upper: &str,
-    buffer_to_append_to: &mut String, starting_consonants: &mut Vec<u8>
-) {
-    let english_word_bytes: &[u8] = english_word.as_bytes();
-
-    if english_word_bytes.len() == 1 {
-        buffer_to_append_to.push_str(english_word);
-        buffer_to_append_to.push_str(special_case_suffix_lower);
-        return;
-    }
-
-    //TODO more ascii optimizations
-
-    //Check the first letter
-    let first_letter: char = english_word_bytes[0] as char;
-
-    let mut index = 1;
-
-    //Check if the word is uppercase
-    let word_uppercase = word_is_uppercase_ascii(english_word_bytes);
-
-    //As a herustic, we consider Y to be a vowel when it is not at the start of the word
-    let first_letter_was_vowel: bool = is_vowel(first_letter);//Not including y
-
-    //Clear the starting_consonants buffer we were given
-    starting_consonants.truncate(0);
-
-    if first_letter_was_vowel {
-        buffer_to_append_to.push(first_letter);
-    } else {
-        let first_char_was_upper = first_letter.is_ascii_uppercase();
-        starting_consonants.push(if word_uppercase { first_letter as u8 } else { first_letter.to_ascii_lowercase() as u8 });
-
-        //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
-        while index < english_word_bytes.len() {
-            let character: char = english_word_bytes[index] as char;
-            if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
-                //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
-                if first_char_was_upper {
-                    buffer_to_append_to.push(character.to_ascii_uppercase());
-                } else {
-                    buffer_to_append_to.push(character.to_ascii_lowercase());
-                }
-                break;
-            } else {
-                starting_consonants.push(character as u8);
-            }
-
-            index += 1;
-        }
-        index += 1;
-    }
-
-    //Copy all of the remaining letters up to the end of the word
-    while index < english_word_bytes.len() {
-        buffer_to_append_to.push(english_word_bytes[index] as char);
-
-        index += 1;
-    }
-
-    //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
-    if first_letter_was_vowel {
-        if word_uppercase {
-            buffer_to_append_to.push_str(special_case_suffix_upper);
-        } else {
-            buffer_to_append_to.push_str(special_case_suffix_lower);
-        }
-    } else {
-        //We know this is valid UTF-8 since it is ASCII and ASCII is UTF-8; I'd like to avoid unsafe rust though
-        buffer_to_append_to.push_str(std::str::from_utf8(starting_consonants.as_slice()).unwrap());//(unsafe { std::str::from_utf8_unchecked(starting_consonants.as_slice()) });
-        if word_uppercase {
-            buffer_to_append_to.push_str(suffix_upper);
-        } else {
-            buffer_to_append_to.push_str(suffix_lower);
-        }
-    }
-}
-
-pub(crate) fn translate_word_with_style_reuse_buffers_ascii_new (
     english_word: &[u8],//Assumes this word is not empty
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
     buffer_to_append_to: &mut Vec<u8>, starting_consonants: &mut Vec<u8>
@@ -358,14 +278,14 @@ mod tests {
             special_case_suffix_upper.push(letter.to_ascii_uppercase());
         }
 
-        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
         translate_word_with_style_reuse_buffers_ascii (
-            english_word,
-            suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+            english_word.as_bytes(),
+            suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),
             &mut pig_latin_word, &mut starting_consonants_buffer
         );
-        return pig_latin_word;
+        return std::str::from_utf8(pig_latin_word.as_slice()).unwrap().to_string();
     }
 }
 
@@ -460,81 +380,81 @@ mod benches {
 
     #[bench]
     fn ascii_way_the_word_translator(b: &mut Bencher) {
-        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
-            let word = test::black_box("translator");
+            let word = test::black_box(b"translator");
 
             translate_word_with_style_reuse_buffers_ascii (
                 word,
-                "ay", "way", "AY", "WAY",
+                b"ay", b"way", b"AY", b"WAY",
                 &mut pig_latin_word, &mut starting_consonants_buffer
             );
 
             pig_latin_word.truncate(0);
         });
 
-        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+        eprintln!("{}", std::str::from_utf8(pig_latin_word.as_slice()).unwrap());//To avoid optimizing things out
     }
 
     #[bench]
     fn ascii_yay_the_word_translator(b: &mut Bencher) {
-        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
-            let word = test::black_box("translator");
+            let word = test::black_box(b"translator");
 
             translate_word_with_style_reuse_buffers_ascii (
                 word,
-                "ay", "yay", "AY", "YAY",
+                b"ay", b"yay", b"AY", b"YAY",
                 &mut pig_latin_word, &mut starting_consonants_buffer
             );
 
             pig_latin_word.truncate(0);
         });
 
-        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+        eprintln!("{}", std::str::from_utf8(pig_latin_word.as_slice()).unwrap());//To avoid optimizing things out
     }
 
     #[bench]
     fn ascii_hay_the_word_translator(b: &mut Bencher) {
-        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
-            let word = test::black_box("translator");
+            let word = test::black_box(b"translator");
 
             translate_word_with_style_reuse_buffers_ascii (
                 word,
-                "ay", "hay", "AY", "HAY",
+                b"ay", b"hay", b"AY", b"HAY",
                 &mut pig_latin_word, &mut starting_consonants_buffer
             );
 
             pig_latin_word.truncate(0);
         });
 
-        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+        eprintln!("{}", std::str::from_utf8(pig_latin_word.as_slice()).unwrap());//To avoid optimizing things out
     }
 
     #[bench]
     fn ascii_ferb_the_word_translator(b: &mut Bencher) {
-        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
         let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
-            let word = test::black_box("translator");
+            let word = test::black_box(b"translator");
 
             translate_word_with_style_reuse_buffers_ascii (
                 word,
-                "erb", "ferb", "ERB", "FERB",
+                b"erb", b"ferb", b"ERB", b"FERB",
                 &mut pig_latin_word, &mut starting_consonants_buffer
             );
 
             pig_latin_word.truncate(0);
         });
 
-        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+        eprintln!("{}", std::str::from_utf8(pig_latin_word.as_slice()).unwrap());//To avoid optimizing things out
     }
 }

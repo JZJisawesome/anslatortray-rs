@@ -535,7 +535,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
 
     //TODO switch to fully operating on u8 slices/arrays/Vecs internally (converting from a string, then to a string at the end) in anslatortray 0.5.0
 
-    let mut pig_latin_string = String::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+    let mut pig_latin_string = Vec::<u8>::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
 
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = String::with_capacity(suffix_lower.len());
@@ -571,7 +571,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
                     in_word = false;
                 }
 
-                pig_latin_string.push(character);//Copy the character
+                pig_latin_string.push(character as u8);//Copy the character
                 slice_start_index += 1;//Keep the slice start index up to speed for later use
             } else {
                 if character.is_alphabetic() {
@@ -581,8 +581,8 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
                     //The word or first part of the contraction ended, so translate the word we've identified up until this point!
                     let word_slice: &str = &english[slice_start_index..slice_end_index];
                     translate_word_with_style_reuse_buffers_ascii (
-                        word_slice,
-                        suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+                        word_slice.as_bytes(),
+                        suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),
                         &mut pig_latin_string, &mut starting_consonants_buffer
                     );
 
@@ -590,7 +590,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
                     slice_start_index = slice_end_index + 1;
 
                     //Append the symbol/whitespace we just got after the translated word
-                    pig_latin_string.push(character);
+                    pig_latin_string.push(character as u8);
 
                     //If the symbol/whitespace we just got is an apostrophe, then this is a contraction suffix
                     if character == '\'' {
@@ -607,7 +607,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
                 slice_end_index = slice_start_index + 1;
             } else {
                 //Otherwise copy symbols and whitespace as-is
-                pig_latin_string.push(character);
+                pig_latin_string.push(character as u8);
                 slice_start_index += 1;
             }
         }
@@ -616,13 +616,13 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
     if in_word && !in_contraction_suffix {
         let word_slice: &str = &english[slice_start_index..slice_end_index];
         translate_word_with_style_reuse_buffers_ascii (
-            word_slice,
-            suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+            word_slice.as_bytes(),
+            suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),
             &mut pig_latin_string, &mut starting_consonants_buffer
         );
     }
 
-    return pig_latin_string;
+    return std::str::from_utf8(pig_latin_string.as_slice()).unwrap().to_string();
 }
 
 /* Tests */
