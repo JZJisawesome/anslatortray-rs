@@ -627,7 +627,7 @@ pub fn translate_with_style_ascii(english: &str, suffix_lower: &str, special_cas
 
 ///TODO description
 /*
-pub fn translate_with_style_ascii_byte(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin: &mut Vec<u8>) {
+pub fn translate_with_style_ascii_byte(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_buffer_to_push_to: &mut Vec<u8>) {
     todo!();
 }
 
@@ -639,7 +639,7 @@ pub fn translate_with_style_ascii_byte_generic <
     const SPECIAL_CASE_SUFFIX_LEN: usize, const SPECIAL_CASE_SUFFIX_LOWER: [u8]
 > (
     english: &[u8],
-    pig_latin: &mut Vec<u8>
+    pig_latin_buffer_to_push_to: &mut Vec<u8>
 ) {
     todo!();
 }

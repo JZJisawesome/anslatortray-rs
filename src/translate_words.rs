@@ -89,6 +89,86 @@ pub(crate) fn translate_word_with_style_reuse_buffers (
     }
 }
 
+#[cfg(feature = "nightly-features")]
+pub(crate) fn translate_word_with_style_reuse_buffers_generic <
+    const SUFFIX_LOWER: &'static str, const SPECIAL_CASE_SUFFIX_LOWER: &'static str,
+    const SUFFIX_UPPER: &'static str, const SPECIAL_CASE_SUFFIX_UPPER: &'static str
+> (
+    english_word: &str,//Assumes this word is not empty
+    buffer_to_append_to: &mut String, starting_consonants: &mut String
+) {
+    if english_word.len() == 1 {
+        buffer_to_append_to.push_str(english_word);
+        buffer_to_append_to.push_str(SPECIAL_CASE_SUFFIX_LOWER);
+        return;
+    }
+
+    let mut iterator = english_word.chars();
+
+    //Check the first letter
+    let first_letter: char = iterator.next().unwrap();
+
+    //Check if the word is uppercase
+    let word_uppercase = word_is_uppercase(&english_word);
+
+    //As a herustic, we consider Y to be a vowel when it is not at the start of the word
+    let first_letter_was_vowel: bool = is_vowel(first_letter);//Not including y
+
+    //Clear the starting_consonants buffer we were given
+    starting_consonants.truncate(0);
+
+    if first_letter_was_vowel {
+        buffer_to_append_to.push(first_letter);
+    } else {
+        let first_char_was_upper = first_letter.is_ascii_uppercase();
+        starting_consonants.push(if word_uppercase { first_letter } else { first_letter.to_ascii_lowercase() });
+
+        //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
+        loop {
+            match iterator.next() {
+                None => { break; },//The word has no vowels, but it is a herustic to pass it on so that ex. the acroynm binary code decimal or bcd becomes bcdway, etc.
+                Some(character) => {
+                    if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                        //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
+                        if first_char_was_upper {
+                            buffer_to_append_to.push(character.to_ascii_uppercase());
+                        } else {
+                            buffer_to_append_to.push(character.to_ascii_lowercase());
+                        }
+                        break;
+                    } else {
+                        starting_consonants.push(character);
+                    }
+                }
+            }
+        }
+    }
+
+    //Copy all of the remaining letters up to the end of the word
+    loop {
+        match iterator.next() {
+            None => { break; },//End of the word
+            Some(character) => { buffer_to_append_to.push(character); }
+        }
+    }
+
+    //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
+    if first_letter_was_vowel {
+        if word_uppercase {
+            buffer_to_append_to.push_str(SPECIAL_CASE_SUFFIX_UPPER);
+        } else {
+            buffer_to_append_to.push_str(SPECIAL_CASE_SUFFIX_LOWER);
+        }
+    } else {
+        buffer_to_append_to.push_str(&starting_consonants);
+        if word_uppercase {
+            buffer_to_append_to.push_str(SUFFIX_UPPER);
+        } else {
+            buffer_to_append_to.push_str(SUFFIX_LOWER);
+        }
+    }
+}
+
 pub(crate) fn translate_word_with_style_reuse_buffers_ascii (
     english_word: &[u8],//Assumes this word is not empty
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
@@ -293,6 +373,40 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "nightly-features")]
+    fn test_translate_word_with_style_generic() {
+        //TODO test with other suffixes perhaps?
+        let suffix = "ay";
+        let special_case_suffix = "way";
+
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("Hello"), "Elloh".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("World"), "Orldw".to_string() + suffix);
+
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("This"), "Isth".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("is"), "is".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("a"), "a".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("test"), "estt".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("of"), "of".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("the"), "eth".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("function"), "unctionf".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("translate"), "anslatetr".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("word"), "ordw".to_string() + suffix);
+
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("I"), "I".to_string() + special_case_suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("Love"), "Ovel".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("Pig"), "Igp".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("Latin"), "Atinl".to_string() + suffix);
+
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("You"), "Ouy".to_string() + suffix);//Y isn't a vowel here
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("should"), "ouldsh".to_string() + suffix);
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("try"), "ytr".to_string() + suffix);//Y is a vowel here
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("yougurt"), "ougurty".to_string() + suffix);//Y isn't a vowel here
+        //assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("it's"), "it".to_string() + special_case_suffix + "'s");//Contraction
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("quite"), "uiteq".to_string() + suffix);//Awful to pronounce, but correct
+        assert_eq!(translate_word_with_style_generic::<"ay", "way", "AY", "WAY">("nice"), "icen".to_string() + suffix);
+    }
+
+    #[test]
     fn test_translate_word_with_style_ascii() {
         let suffix_special_case_suffix_pairs = [
             ("ay", "way"), ("ay", "yay"), ("ay", "hay"), ("erb", "ferb"), ("ancy", "fancy"), ("orange", "porange"), ("anana", "banana"), ("atin", "latin"), ("ust", "rust")
@@ -379,6 +493,28 @@ mod tests {
         translate_word_with_style_reuse_buffers (
             english_word,
             suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+            &mut pig_latin_word, &mut starting_consonants_buffer
+        );
+        return pig_latin_word;
+    }
+
+    #[cfg(feature = "nightly-features")]
+    fn translate_word_with_style_generic <
+        const SUFFIX_LOWER: &'static str, const SPECIAL_CASE_SUFFIX_LOWER: &'static str,
+        const SUFFIX_UPPER: &'static str, const SPECIAL_CASE_SUFFIX_UPPER: &'static str
+    > (
+        english_word: &str
+    ) -> String {
+        use crate::helpers::capitalize_ascii;
+
+        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+        translate_word_with_style_reuse_buffers_generic::<
+            //Almost works, but it can't infer the length
+            //SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, { &capitalize_ascii(SUFFIX_LOWER.try_into().unwrap()) }, { &capitalize_ascii(SPECIAL_CASE_SUFFIX_LOWER.try_into().unwrap()) },
+            SUFFIX_LOWER, SPECIAL_CASE_SUFFIX_LOWER, SUFFIX_UPPER, SPECIAL_CASE_SUFFIX_UPPER,
+        > (
+            english_word,
             &mut pig_latin_word, &mut starting_consonants_buffer
         );
         return pig_latin_word;
@@ -507,6 +643,94 @@ mod benches {
             translate_word_with_style_reuse_buffers (
                 word,
                 "erb", "ferb", "ERB", "FERB",
+                &mut pig_latin_word, &mut starting_consonants_buffer
+            );
+
+            pig_latin_word.truncate(0);
+        });
+
+        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+    }
+
+    #[bench]
+    #[cfg(feature = "nightly-features")]
+    fn generic_way_the_word_translator(b: &mut Bencher) {
+        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+        b.iter(|| {
+            let word = test::black_box("translator");
+
+            translate_word_with_style_reuse_buffers_generic::<
+                "ay", "way", "AY", "WAY"
+            > (
+                word,
+                &mut pig_latin_word, &mut starting_consonants_buffer
+            );
+
+            pig_latin_word.truncate(0);
+        });
+
+        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+    }
+
+    #[bench]
+    #[cfg(feature = "nightly-features")]
+    fn generic_yay_the_word_translator(b: &mut Bencher) {
+        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+        b.iter(|| {
+            let word = test::black_box("translator");
+
+            translate_word_with_style_reuse_buffers_generic::<
+                "ay", "yay", "AY", "YAY"
+            > (
+                word,
+                &mut pig_latin_word, &mut starting_consonants_buffer
+            );
+
+            pig_latin_word.truncate(0);
+        });
+
+        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+    }
+
+    #[bench]
+    #[cfg(feature = "nightly-features")]
+    fn generic_hay_the_word_translator(b: &mut Bencher) {
+        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+        b.iter(|| {
+            let word = test::black_box("translator");
+
+            translate_word_with_style_reuse_buffers_generic::<
+                "ay", "hay", "AY", "HAY"
+            > (
+                word,
+                &mut pig_latin_word, &mut starting_consonants_buffer
+            );
+
+            pig_latin_word.truncate(0);
+        });
+
+        eprintln!("{}", pig_latin_word);//To avoid optimizing things out
+    }
+
+    #[bench]
+    #[cfg(feature = "nightly-features")]
+    fn generic_ferb_the_word_translator(b: &mut Bencher) {
+        let mut pig_latin_word = String::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
+        let mut starting_consonants_buffer = String::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+        b.iter(|| {
+            let word = test::black_box("translator");
+
+            translate_word_with_style_reuse_buffers_generic::<
+                "erb", "ferb", "ERB", "FERB"
+            > (
+                word,
                 &mut pig_latin_word, &mut starting_consonants_buffer
             );
 
