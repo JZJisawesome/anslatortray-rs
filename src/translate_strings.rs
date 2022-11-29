@@ -49,7 +49,7 @@ pub fn translate(english: &str) -> String {
     return translate_way(english);
 }
 
-///Translates a multi-word string (including punctuation) into Pig Latin!
+///Translates a multi-word string (including punctuation) into Pig Latin (Faster, but ASCII-only)!
 ///
 ///Faster than [`translate()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
@@ -121,7 +121,7 @@ pub fn translate_way(english: &str) -> String {
     return translate_with_style(english, "ay", "way");
 }
 
-///Translates a multi-word string (including punctuation) into Pig Latin (way-style)!
+///Translates a multi-word string (including punctuation) into Pig Latin (way-style) (Faster, but ASCII-only)!
 ///
 ///Faster than [`translate_way()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
@@ -191,7 +191,7 @@ pub fn translate_yay(english: &str) -> String {
     return translate_with_style(english, "ay", "yay");
 }
 
-///Translates a multi-word string (including punctuation) into Pig Latin (yay-style)!
+///Translates a multi-word string (including punctuation) into Pig Latin (yay-style) (Faster, but ASCII-only)!
 ///
 ///Faster than [`translate_yay()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
@@ -261,7 +261,7 @@ pub fn translate_hay(english: &str) -> String {
     return translate_with_style(english, "ay", "hay");
 }
 
-///Translates a multi-word string (including punctuation) into Pig Latin (hay-style)!
+///Translates a multi-word string (including punctuation) into Pig Latin (hay-style) (Faster, but ASCII-only)!
 ///
 ///Faster than [`translate_hay()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
@@ -329,7 +329,7 @@ pub fn translate_ferb(english: &str) -> String {
     return translate_with_style(english, "erb", "ferb");
 }
 
-///Translates a multi-word string (including punctuation) into Ferb Latin!
+///Translates a multi-word string (including punctuation) into Ferb Latin (Faster, but ASCII-only)!
 ///
 ///Faster than [`translate_hay()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
@@ -483,7 +483,7 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
     return pig_latin_string;
 }
 
-///Translates a multi-word string (including punctuation) into a custom-styled play language!
+///Translates a multi-word string (including punctuation) into a custom-styled play language (Faster, but ASCII-only)!
 ///
 ///Faster than [`translate_with_style()`], but requires that the string only contains ASCII characters or else it may panic.
 ///
