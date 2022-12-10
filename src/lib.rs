@@ -81,7 +81,7 @@
 mod helpers;
 mod translate_strings;
 mod translate_words;
-mod ascii;
+pub mod ascii;
 mod utf8;
 
 pub use translate_strings::{translate, translate_way, translate_yay, translate_hay, translate_ferb, translate_with_style};

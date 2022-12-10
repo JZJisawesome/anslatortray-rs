@@ -31,6 +31,111 @@ use crate::helpers::{is_vowel_ascii, is_y_ascii, word_is_uppercase_ascii, push_s
 
 /* Functions */
 
+pub fn translate(english: &[u8]) -> Vec::<u8> {
+    return translate_way(english);
+}
+
+pub fn translate_way(english: &[u8]) -> Vec::<u8> {
+    return translate_with_style(english, b"ay", b"way");
+}
+
+pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8]) -> Vec::<u8> {
+    if english.is_empty() {
+        return Vec::<u8>::new();
+    }
+
+    //TODO switch to fully operating on u8 slices/arrays/Vecs internally (converting from a string, then to a string at the end) in anslatortray 0.5.0
+
+    let mut pig_latin_string = Vec::<u8>::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
+
+    //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
+    let mut suffix_upper = Vec::<u8>::with_capacity(suffix_lower.len());
+    for letter in suffix_lower.iter() {
+        suffix_upper.push(letter.to_ascii_uppercase());
+    }
+    let mut special_case_suffix_upper = Vec::<u8>::with_capacity(special_case_suffix_lower.len());
+    for letter in special_case_suffix_lower.iter() {
+        special_case_suffix_upper.push(letter.to_ascii_uppercase());
+    }
+
+    //Flags used to remember if we're currently processing a word, contraction, contraction suffix or neither
+    let mut in_word: bool = false;
+    let mut in_contraction_suffix: bool = false;
+
+    //Buffer for improved performance (avoid repeated heap allocations)
+    let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+
+    //Indexes for improved performance (avoid copying characters to use as the english_word argument for translate_word_with_style_reuse_buffers)
+    //However, this assumes each character is one byte, so this only works with ASCII strings
+    let mut slice_start_index: usize = 0;//Inclusive
+    let mut slice_end_index: usize = 0;//Exclusive
+
+    for character in english.iter() {
+        if in_word {
+            if in_contraction_suffix {
+                if character.is_ascii_alphabetic() {
+                    //We never translate the contraction suffix of a word, so just copy remaining letters as-is
+                } else {
+                    //The contraction ended, and so too does the word
+                    //We still want to copy the non-letter to the output though
+                    in_contraction_suffix = false;
+                    in_word = false;
+                }
+
+                pig_latin_string.push(*character);//Copy the character
+                slice_start_index += 1;//Keep the slice start index up to speed for later use
+            } else {
+                if character.is_ascii_alphabetic() {
+                    //This character is part of the word, so increment the slice_end_index to include it in the slice
+                    slice_end_index += 1;
+                } else {
+                    //The word or first part of the contraction ended, so translate the word we've identified up until this point!
+                    let word_slice: &[u8] = &english[slice_start_index..slice_end_index];
+                    translate_word_with_style_reuse_buffers (
+                        word_slice,
+                        suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+                        &mut pig_latin_string, &mut starting_consonants_buffer
+                    );
+
+                    //Bring the slice_start_index to the end since we've finished the word and need it ready for the next one
+                    slice_start_index = slice_end_index + 1;
+
+                    //Append the symbol/whitespace we just got after the translated word
+                    pig_latin_string.push(*character);
+
+                    //If the symbol/whitespace we just got is an apostrophe, then this is a contraction suffix
+                    if *character == b'\'' {
+                        in_contraction_suffix = true;
+                    } else {
+                        in_word = false;//This wasn't a contraction, so we're done with the word
+                    }
+                }
+            }
+        } else {
+            if character.is_ascii_alphabetic() {
+                //If we see a letter, we are in a word, so set the slice_end_index to the character after the slice_start_index
+                in_word = true;
+                slice_end_index = slice_start_index + 1;
+            } else {
+                //Otherwise copy symbols and whitespace as-is
+                pig_latin_string.push(*character);
+                slice_start_index += 1;
+            }
+        }
+    }
+    //If we ended on a word (but not on a contraction suffix), we translate it and push it to the end of the string
+    if in_word && !in_contraction_suffix {
+        let word_slice: &[u8] = &english[slice_start_index..slice_end_index];
+        translate_word_with_style_reuse_buffers (
+            word_slice,
+            suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+            &mut pig_latin_string, &mut starting_consonants_buffer
+        );
+    }
+
+    return pig_latin_string;
+}
+
 /*
 pub(super) fn translate_word_with_style_reuse_buffers_better_perhaps <
     const SUFFIX_LEN: usize, const SPECIAL_CASE_SUFFIX_LEN: usize

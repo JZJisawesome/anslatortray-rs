@@ -9,7 +9,7 @@
 /* Imports */
 
 use anslatortray::translate;
-use anslatortray::translate_ascii;
+use anslatortray::ascii;
 
 /* Constants */
 
@@ -71,7 +71,7 @@ fn help() {
     eprintln!("--translate-args  Translates all remaining arguments provided and outputs them to stdout");
     eprintln!("--stdin-to-stdout Translates input from stdin directly to stdout");
 
-    eprintln!("\n{}", translate_ascii("Have a good day!"));
+    eprintln!("\n{}", String::from_utf8(ascii::translate(b"Have a good day!")).unwrap());
 }
 
 fn interactive(args: &Vec<String>) {
@@ -156,7 +156,7 @@ fn benchmark_file(args: &Vec<String>) {
 
     for _ in 0..iterations {
         let start_time = std::time::Instant::now();
-        let translated_file_contents = translate_ascii(&file_contents);
+        let translated_file_contents = ascii::translate(file_contents.as_bytes());
         let time_to_translate = start_time.elapsed();
         total_duration_ascii += time_to_translate;
         std::fs::write("/dev/null", &translated_file_contents).unwrap();//TODO avoid needing unix
