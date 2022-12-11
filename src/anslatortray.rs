@@ -71,7 +71,7 @@ fn help() {
     eprintln!("--translate-args  Translates all remaining arguments provided and outputs them to stdout");
     eprintln!("--stdin-to-stdout Translates input from stdin directly to stdout");
 
-    eprintln!("\n{}", String::from_utf8(ascii::translate(b"Have a good day!")).unwrap());
+    //eprintln!("\n{}", String::from_utf8(ascii::translate(b"Have a good day!")).unwrap());//TODO add this back
 }
 
 fn interactive(args: &Vec<String>) {
@@ -155,9 +155,11 @@ fn benchmark_file(args: &Vec<String>) {
 
     let mut total_duration_ascii = std::time::Duration::new(0, 0);
 
+    let mut translated_file_contents = Vec::<u8>::new();//TODO set a sane initial size
     for _ in 0..iterations {
         let start_time = std::time::Instant::now();
-        let translated_file_contents = ascii::translate(file_contents.as_bytes());
+        translated_file_contents.truncate(0);
+        ascii::translate(file_contents.as_bytes(), &mut translated_file_contents);
         let time_to_translate = start_time.elapsed();
         total_duration_ascii += time_to_translate;
         std::fs::write("/dev/null", &translated_file_contents).unwrap();//TODO avoid needing unix

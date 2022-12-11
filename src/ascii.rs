@@ -31,23 +31,24 @@ use crate::helpers::{is_vowel_ascii, is_y_ascii, word_is_uppercase_ascii, push_s
 
 /* Functions */
 
-pub fn translate(english: &[u8]) -> Vec::<u8> {
-    return translate_way(english);
+//TODO rename the "ascii" functions to "byte" functions since they work on UTF8 bytestrings too
+
+//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+pub fn translate(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
+    translate_way(english, pig_latin_string);
 }
 
-pub fn translate_way(english: &[u8]) -> Vec::<u8> {
-    return translate_with_style(english, b"ay", b"way");
+//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+pub fn translate_way(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
+    translate_with_style(english, b"ay", b"way", pig_latin_string);
 }
 
 //TODO tests for this function
-pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8]) -> Vec::<u8> {
+//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_string: &mut Vec::<u8>) {
     if english.is_empty() {
-        return Vec::<u8>::new();
+        return;
     }
-
-    //TODO switch to fully operating on u8 slices/arrays/Vecs internally (converting from a string, then to a string at the end) in anslatortray 0.5.0
-
-    let mut pig_latin_string = Vec::<u8>::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
 
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = Vec::<u8>::with_capacity(suffix_lower.len());
@@ -95,7 +96,7 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
                     translate_word_with_style_reuse_buffers (
                         word_slice,
                         suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
-                        &mut pig_latin_string, &mut starting_consonants_buffer
+                        pig_latin_string, &mut starting_consonants_buffer
                     );
 
                     //Bring the slice_start_index to the end since we've finished the word and need it ready for the next one
@@ -130,11 +131,9 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
         translate_word_with_style_reuse_buffers (
             word_slice,
             suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
-            &mut pig_latin_string, &mut starting_consonants_buffer
+            pig_latin_string, &mut starting_consonants_buffer
         );
     }
-
-    return pig_latin_string;
 }
 
 /*
