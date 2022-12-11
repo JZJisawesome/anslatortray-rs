@@ -6,23 +6,6 @@ A simple Rust library to translate from English to Pig Latin!
 
 Essentially, the word is reorganized in an effort to hide its true meaning, which can be lots of fun!
 
-The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily. It is **incredibly fast** (see the Performance section below) and **requires no dependencies**!
-
-You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to `anslatortray::translate()`.
-The function handles edge cases quite well (words without vowels, one-letter words, contractions, ALL CAPS, etc.), though there is always room for improvement.
-
-If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
-
-Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
-
-# Building and Installation
-
-If you wish to use the library in your crate, add anslatortray as a dependency and follow along with the example below, or <a href="https://docs.rs/anslatortray/latest/anslatortray/">check out the documentation</a> for more.
-
-If you wish to use the `anslatortray` standalone binary, clone `https://git.jekel.ca/JZJ/anslatortray.git`, do `cargo build --release`, and you'll find the binary in the target/release directory.
-
-See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
-
 # A Quick Example
 
 After adding Anslatortray as a dependency in your crate, try compiling this example code:
@@ -36,7 +19,24 @@ fn main() {
 }
 ```
 
-<a href="https://docs.rs/anslatortray/latest/anslatortray/">Check out the documentation</a> for more examples!
+# Tell me more!
+
+The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily. It is **incredibly fast** (see the Performance section below) and **requires no dependencies**!
+
+You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to `anslatortray::translate()`.
+The function handles edge cases quite well (words without vowels, one-letter words, contractions, ALL CAPS, etc.), though there is always room for improvement.
+
+If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
+
+Be sure to check out the documentation at <https://docs.rs/anslatortray/latest/anslatortray/>!
+
+# Building and Installation
+
+If you wish to use the library in your crate, add anslatortray as a dependency and <a href="https://docs.rs/anslatortray/latest/anslatortray/">check out the documentation</a>.
+
+If you wish to use the `anslatortray` standalone binary (shown in the next section), clone `https://git.jekel.ca/JZJ/anslatortray.git`, do `cargo build --release`, and you'll find the binary in the target/release directory.
+
+See the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Building-And-Installing">wiki</a> for more information.
 
 # anslatortray CLI Tool Usage
 
@@ -102,7 +102,7 @@ See <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Using-the-anslatortra
 
 Check out the <a href="https://git.jekel.ca/JZJ/anslatortray-rs/wiki/Performance">wiki page about Anslatortray's performance</a>!
 
-Spoiler: It can translate one word in under **129ns** on average in the default UTF-8 mode, and in under **94ns** on average in ASCII-only mode on my dated system :)
+Spoiler: `anslatortray::translate()` can process one word in under **50ns** on average!
 
 # Useful Links
 

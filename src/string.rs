@@ -9,11 +9,9 @@
 
 /* Imports */
 
-use crate::byte_string::translate_with_style as translate_byte_string_with_style;
+use crate::byte_string::translate_with_style_lower_and_upper_suffixes as translate_byte_string_with_style_lower_and_upper_suffixes;
 
 /* Functions */
-
-//TODO use byte_string::translate_with_style_lower_and_upper_suffixes for speed
 
 ///Translates a multi-word string (including punctuation) into Pig Latin!
 ///
@@ -82,7 +80,7 @@ pub fn translate(english: &str) -> String {
 ///assert_eq!(translate_way("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areway-ifficultday-arenway't-eythay?");
 ///```
 pub fn translate_way(english: &str) -> String {
-    return translate_with_style(english, "ay", "way");
+    return translate_with_style_lower_and_upper_suffixes(english, "ay", "way", "AY", "WAY");
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (yay-style)!
@@ -116,7 +114,7 @@ pub fn translate_way(english: &str) -> String {
 ///assert_eq!(translate_yay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-areyay-ifficultday-arenyay't-eythay?");
 ///```
 pub fn translate_yay(english: &str) -> String {
-    return translate_with_style(english, "ay", "yay");
+    return translate_with_style_lower_and_upper_suffixes(english, "ay", "yay", "AY", "YAY");
 }
 
 ///Translates a multi-word string (including punctuation) into Pig Latin (hay-style)!
@@ -150,7 +148,7 @@ pub fn translate_yay(english: &str) -> String {
 ///assert_eq!(translate_hay("Hyphens-are-difficult-aren't-they?"), "Yphenshay-arehay-ifficultday-arenhay't-eythay?");
 ///```
 pub fn translate_hay(english: &str) -> String {
-    return translate_with_style(english, "ay", "hay");
+    return translate_with_style_lower_and_upper_suffixes(english, "ay", "hay", "AY", "HAY");
 }
 
 ///Translates a multi-word string (including punctuation) into Ferb Latin!
@@ -182,7 +180,7 @@ pub fn translate_hay(english: &str) -> String {
 ///assert_eq!(translate_ferb("Hyphens-are-difficult-aren't-they?"), "Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
 ///```
 pub fn translate_ferb(english: &str) -> String {
-    return translate_with_style(english, "erb", "ferb");
+    return translate_with_style_lower_and_upper_suffixes(english, "erb", "ferb", "ERB", "FERB");
 }
 
 ///Translates a multi-word string (including punctuation) into a custom-styled play language!
@@ -229,14 +227,38 @@ pub fn translate_ferb(english: &str) -> String {
 ///);
 ///```
 pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
+    //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
+    let mut suffix_upper = String::with_capacity(suffix_lower.len());
+    for letter in suffix_lower.chars() {
+        suffix_upper.push(letter.to_ascii_uppercase());
+    }
+    let mut special_case_suffix_upper = String::with_capacity(special_case_suffix_lower.len());
+    for letter in special_case_suffix_lower.chars() {
+        special_case_suffix_upper.push(letter.to_ascii_uppercase());
+    }
+
+    return translate_with_style_lower_and_upper_suffixes (
+        english,
+        suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper
+    );
+}
+
+//More efficient: Does not need to convert to upppercase at runtime
+fn translate_with_style_lower_and_upper_suffixes (
+    english: &str,
+    suffix_lower: &str, special_case_suffix_lower: &str, suffix_upper: &str, special_case_suffix_upper: &str
+) -> String {
     //Convert the string slices to byte slices and translate those (only ASCII letters are affected, non-letters or UTF-8 are preserved)
     let mut pig_latin_string_bytes = Vec::<u8>::with_capacity(english.len() * 2);//Plenty of headroom in case the words are very small or the suffixes are long
-    translate_byte_string_with_style(english.as_bytes(), suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &mut pig_latin_string_bytes);
+    translate_byte_string_with_style_lower_and_upper_suffixes (
+        english.as_bytes(),
+        suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), suffix_upper.as_bytes(), special_case_suffix_upper.as_bytes(),
+        &mut pig_latin_string_bytes
+    );
 
     //This is safe since translate_byte_string_with_style does not touch any unicode bytes (it just copies them)
     return unsafe { String::from_utf8_unchecked(pig_latin_string_bytes) };
 }
-
 
 /* Tests */
 

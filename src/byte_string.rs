@@ -71,7 +71,6 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
 }
 
 //TODO tests for this function
-//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
 pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     english: &[u8],
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
@@ -265,7 +264,7 @@ fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
 mod tests {
     use super::*;
 
-    //TODO test translate_with_style_lower_and_upper_suffixes (that's probably all we really need to test here)
+    //NOTE: We don't test byte_string::translate_with_style and other similar functions in here directly since we test them through string.rs
 
     //TODO test uppercase words
 

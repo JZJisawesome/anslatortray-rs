@@ -1,15 +1,6 @@
-//!Anslatortray for Rust
+//!Anslatortray for Rust: A simple Rust library to translate from English to Pig Latin.
 //!
 //!Welcome to the Anslatortray Documentation!
-//!
-//!A simple Rust library to translate from English to Pig Latin.
-//!
-//!The Anslatortray library can help out by converting any English text into Pig Latin quickly and easily. It is **incredibly fast** and **requires no dependencies**!
-//!
-//!You can translate multiple sentences, including numbers, punctuation, and spacing, with a single call to [`translate()`].
-//!The function handles edge cases quite well (words without vowels, one-letter words, contractions, ALL CAPS, etc.), though there is always room for improvement.
-//!
-//!If you have suggestions for how the project could be improved, please visit the repository's issues page on <a href="https://github.com/JZJisawesome/anslatortray-rs/issues">Github</a> or <a href="https://gitlab.com/JZJisawesome/anslatortray-rs/-/issues">GitLab</a> or contact me directly :)
 //!
 //!# Building and Installation
 //!
@@ -48,7 +39,7 @@
 //!
 //!If none of these suit your needs, you can also choose your own suffixes with [`translate_with_style()`]
 //!
-//!If you want more speed, and you know your text contains only ASCII characters, check out [`byte_string`]
+//!If you want even more speed than the regular translation functions bring to the table, check out the [`byte_string`] module.
 //!
 //!# Useful Links
 //!<a href="https://git.jekel.ca/JZJ/anslatortray-rs">Click here to visit the Anslatortray for Rust Git Repository!</a>.
