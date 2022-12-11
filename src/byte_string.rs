@@ -84,9 +84,6 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     let mut in_word: bool = false;
     let mut in_contraction_suffix: bool = false;
 
-    //Buffer for improved performance (avoid repeated heap allocations)
-    let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
-
     //Indexes for improved performance (avoid copying characters to use as the english_word argument for translate_word_with_style_reuse_buffers)
     //However, this assumes each character is one byte, so this only works with ASCII strings
     let mut slice_start_index: usize = 0;//Inclusive
@@ -116,7 +113,7 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                     translate_word_with_style_reuse_buffers (
                         word_slice,
                         suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
-                        pig_latin_string, &mut starting_consonants_buffer
+                        pig_latin_string
                     );
 
                     //Bring the slice_start_index to the end since we've finished the word and need it ready for the next one
@@ -151,19 +148,28 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
         translate_word_with_style_reuse_buffers (
             word_slice,
             suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
-            pig_latin_string, &mut starting_consonants_buffer
+            pig_latin_string
         );
     }
 }
 
 //Translate a word (english_word MUST ONLY CONTAIN ASCII LETTERS, not numbers/symbols/etc or anything UTF-8)
+#[inline(always)]//Only used by the one function in this module, so this makes sense
 fn translate_word_with_style_reuse_buffers (
     english_word: &[u8],//Assumes this word is not empty
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
-    buffer_to_append_to: &mut Vec<u8>, starting_consonants: &mut Vec<u8>
+    buffer_to_append_to: &mut Vec<u8>
 ) {
+    //Assume the word is at least 1 letter
     debug_assert!(english_word.len() != 0);
-    if english_word.len() == 1 {
+    if english_word.len() == 0 {
+        unsafe {
+            std::hint::unreachable_unchecked();
+        }
+    }
+
+    //Special case for 1-letter words
+    if english_word.len() == 1 {//TODO annotate this branch as unlikely taken
         //TODO it may be better to chain these back to back in a single call so the vector gets a hint with how much it needs to resize for both at once
         //See https://stackoverflow.com/questions/71785682/calling-extend-from-slice-multiple-times
         buffer_to_append_to.extend_from_slice(english_word);
@@ -171,69 +177,63 @@ fn translate_word_with_style_reuse_buffers (
         return;
     }
 
-    //TODO more ascii optimizations
-    //TODO is it better to not push characters, but rather count up indexes and then do a single extend_from_slice?
-
-    //Set the starting index (the first character is assumed to exist and is accessed directly in several spots)
-    let mut index = 1;
-
     //Check if the word is uppercase
     let word_uppercase = word_is_uppercase(english_word);
 
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
-    let first_letter_was_vowel: bool = is_vowel(english_word[0]);//Not including y
-
-    //Clear the starting_consonants buffer we were given
-    starting_consonants.truncate(0);
-
-    if first_letter_was_vowel {
-        buffer_to_append_to.push(english_word[0]);
-    } else {
-        let first_char_was_upper = english_word[0].is_ascii_uppercase();
-        starting_consonants.push(if word_uppercase { english_word[0] } else { english_word[0].to_ascii_lowercase() });
-
-        //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
-        while index < english_word.len() {
-            let character: u8 = english_word[index];
-            if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
-                //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
-                if first_char_was_upper {
-                    buffer_to_append_to.push(character.to_ascii_uppercase());
-                } else {
-                    buffer_to_append_to.push(character.to_ascii_lowercase());
-                }
-                index += 1;
-                break;
-            } else {
-                starting_consonants.push(character);
-                index += 1;
-            }
-        }
-    }
-
-    //Copy all of the remaining letters up to the end of the word
-    buffer_to_append_to.extend_from_slice(&english_word[index..]);
-
-    //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
-    if first_letter_was_vowel {
+    if is_vowel(english_word[0]) {//Not including y//TODO annotate this branch as unlikely taken
+        buffer_to_append_to.extend_from_slice(english_word);
         if word_uppercase {
             buffer_to_append_to.extend_from_slice(special_case_suffix_upper);
         } else {
             buffer_to_append_to.extend_from_slice(special_case_suffix_lower);
         }
-    } else {
-        //TODO it may be better to chain these back to back in a single call so the vector gets a hint with how much it needs to resize for both at once
-        //See https://stackoverflow.com/questions/71785682/calling-extend-from-slice-multiple-times
-        buffer_to_append_to.extend_from_slice(starting_consonants.as_slice());
-        if word_uppercase {
-            buffer_to_append_to.extend_from_slice(suffix_upper);
-        } else {
-            buffer_to_append_to.extend_from_slice(suffix_lower);
+        return;
+    }
+
+    //Find the index of the first vowel, skipping index 1 since that was handled above
+    let mut index_of_first_vowel: usize = 1;
+    while index_of_first_vowel < english_word.len() {
+        let character: u8 = english_word[index_of_first_vowel];
+        if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+            break;
         }
+        index_of_first_vowel += 1;
+    }
+
+    //Now that we know where the first vowel is and if the word is uppercase, we can construct the pig-latin word
+    if index_of_first_vowel < english_word.len() {//We found a vowel//TODO mark this branch as likely taken
+        //Push the first vowel to the new pig latin string. If the first letter was capitalized originally, match the case
+        if english_word[0].is_ascii_uppercase() {
+            buffer_to_append_to.push(english_word[index_of_first_vowel].to_ascii_uppercase());
+        } else {
+            buffer_to_append_to.push(english_word[index_of_first_vowel]);
+        }
+
+        //Copy the remaining letters in the word after the vowel
+        buffer_to_append_to.extend_from_slice(&english_word[(index_of_first_vowel + 1)..]);
+
+        //If the first letter (a consonant) was uppercase, it no longer needs to be (since the vowel above is now at the start and capitalized)
+        //Unless, of course, the whole word is uppercase, in which case it should be left alone
+        buffer_to_append_to.push(if word_uppercase { english_word[0] } else { english_word[0].to_ascii_lowercase() });
+
+        //Copy the remaining starting consonants
+        buffer_to_append_to.extend_from_slice(&english_word[1..index_of_first_vowel]);
+    } else {//This word dosn't have a vowel
+        //Just copy it as-is then
+        buffer_to_append_to.extend_from_slice(english_word);
+    }
+
+    //Add the regular suffixes
+    if word_uppercase {//TODO annotate this branch as unlikely taken
+        buffer_to_append_to.extend_from_slice(suffix_upper);
+    } else {
+        buffer_to_append_to.extend_from_slice(suffix_lower);
     }
 }
 
 //Returns whether a letter is a vowel or not.
+#[inline(always)]//Only used by the one function in this module, so this makes sense
 fn is_vowel(letter: u8) -> bool {
     match letter.to_ascii_lowercase() {
         b'a' | b'e' | b'i' | b'o' | b'u' => { return true; }
@@ -242,15 +242,17 @@ fn is_vowel(letter: u8) -> bool {
 }
 
 //Returns whether a letter is y or not.
+#[inline(always)]//Only used by the one function in this module, so this makes sense
 fn is_y(letter: u8) -> bool {
     return letter.to_ascii_lowercase() == b'y';
 }
 
 //Returns whether an entire word is upper case or not.
+#[inline(always)]//Only used by the one function in this module, so this makes sense
 fn word_is_uppercase(english_word_bytes: &[u8]) -> bool {
     //Asume length is non-zero
     //Heuristic: If the last letter of the word is uppercase, likely the whole word is uppercase
-    return (english_word_bytes[english_word_bytes.len() - 1] as char).is_ascii_uppercase();
+    return english_word_bytes[english_word_bytes.len() - 1].is_ascii_uppercase();
 }
 
 /* Tests */
@@ -311,11 +313,10 @@ mod tests {
         }
 
         let mut pig_latin_word = Vec::<u8>::new();
-        let mut starting_consonants_buffer = Vec::<u8>::new();
         translate_word_with_style_reuse_buffers (
             english_word.as_bytes(),
             suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),
-            &mut pig_latin_word, &mut starting_consonants_buffer
+            &mut pig_latin_word
         );
         return std::str::from_utf8(pig_latin_word.as_slice()).unwrap().to_string();
     }
