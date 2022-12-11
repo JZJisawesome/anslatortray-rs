@@ -135,26 +135,19 @@ fn benchmark_file(args: &Vec<String>) {
 
     let file_contents = std::fs::read_to_string(input_file).unwrap();
 
-    let mut total_duration_utf8 = std::time::Duration::new(0, 0);
+    let mut total_duration_regular = std::time::Duration::new(0, 0);
 
     for _ in 0..iterations {
         let start_time = std::time::Instant::now();
         let translated_file_contents = translate(&file_contents);
         let time_to_translate = start_time.elapsed();
 
-        total_duration_utf8 += time_to_translate;
+        total_duration_regular += time_to_translate;
         std::fs::write("/dev/null", &translated_file_contents).unwrap();//TODO avoid needing unix
     }
-    eprintln!("Sucessful: UTF-8 translation took {}ns to translate on average over {} runs.", total_duration_utf8.as_nanos() / iterations, iterations);
+    eprintln!("Sucessful: Regular translation took {}ns to translate on average over {} runs.", total_duration_regular.as_nanos() / iterations, iterations);
 
-    for character in file_contents.chars() {
-        if !character.is_ascii() {
-            eprintln!("Not performing ASCII translation benchmarks as the file's contents are not entirely ASCII.");
-            return;
-        }
-    }
-
-    let mut total_duration_ascii = std::time::Duration::new(0, 0);
+    let mut total_duration_byte_string = std::time::Duration::new(0, 0);
 
     let mut translated_file_contents = Vec::<u8>::new();//TODO set a sane initial size
     for _ in 0..iterations {
@@ -162,10 +155,10 @@ fn benchmark_file(args: &Vec<String>) {
         translated_file_contents.truncate(0);
         byte_string::translate(file_contents.as_bytes(), &mut translated_file_contents);
         let time_to_translate = start_time.elapsed();
-        total_duration_ascii += time_to_translate;
+        total_duration_byte_string += time_to_translate;
         std::fs::write("/dev/null", &translated_file_contents).unwrap();//TODO avoid needing unix
     }
-    eprintln!("Sucessful: ASCII translation took {}ns to translate on average over {} runs.", total_duration_ascii.as_nanos() / iterations, iterations);
+    eprintln!("Sucessful: Byte-string translation with reused allocations took {}ns to translate on average over {} runs.", total_duration_byte_string.as_nanos() / iterations, iterations);
 }
 
 fn translate_args(args: &Vec<String>) {

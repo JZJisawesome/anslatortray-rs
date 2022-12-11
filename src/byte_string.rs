@@ -70,7 +70,6 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
     translate_with_style_lower_and_upper_suffixes(english, suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper, pig_latin_string);
 }
 
-//TODO tests for this function
 pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     english: &[u8],
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
@@ -267,7 +266,6 @@ mod tests {
     //NOTE: We don't test byte_string::translate_with_style and other similar functions in here directly since we test them through string.rs
 
     //TODO test uppercase words
-
     #[test]
     fn test_translate_word_with_style() {
         let suffix_special_case_suffix_pairs = [
