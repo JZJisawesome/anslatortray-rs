@@ -1,13 +1,11 @@
 /* NAME//TODO
  * By: John Jekel
+ * Copyright (C) 2022 John Jekel
+ * See the LICENSE file at the root of the project for licensing info.
  *
  * TODO description
  *
 */
-
-/* Imports */
-
-use crate::helpers::{is_vowel_ascii, is_y_ascii, word_is_uppercase_ascii, push_slice_to_vector};
 
 /* Constants */
 
@@ -31,8 +29,6 @@ use crate::helpers::{is_vowel_ascii, is_y_ascii, word_is_uppercase_ascii, push_s
 
 /* Functions */
 
-//TODO rename the "ascii" functions to "byte" functions since they work on UTF8 bytestrings too
-
 //TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
 pub fn translate(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_way(english, pig_latin_string);
@@ -40,16 +36,25 @@ pub fn translate(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
 
 //TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
 pub fn translate_way(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
-    translate_with_style(english, b"ay", b"way", pig_latin_string);
+    translate_with_style_lower_and_upper_suffixes(english, b"ay", b"way", b"AY", b"WAY", pig_latin_string);
 }
 
-//TODO tests for this function
 //TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
-pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_string: &mut Vec::<u8>) {
-    if english.is_empty() {
-        return;
-    }
+pub fn translate_yay(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
+    translate_with_style_lower_and_upper_suffixes(english, b"ay", b"yay", b"AY", b"WAY", pig_latin_string);
+}
 
+//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+pub fn translate_hay(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
+    translate_with_style_lower_and_upper_suffixes(english, b"ay", b"hay", b"AY", b"HAY", pig_latin_string);
+}
+
+//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+pub fn translate_ferb(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
+    translate_with_style_lower_and_upper_suffixes(english, b"erb", b"ferb", b"ERB", b"FERB", pig_latin_string);
+}
+
+pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_string: &mut Vec::<u8>) {
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = Vec::<u8>::with_capacity(suffix_lower.len());
     for letter in suffix_lower.iter() {
@@ -58,6 +63,20 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
     let mut special_case_suffix_upper = Vec::<u8>::with_capacity(special_case_suffix_lower.len());
     for letter in special_case_suffix_lower.iter() {
         special_case_suffix_upper.push(letter.to_ascii_uppercase());
+    }
+
+    translate_with_style_lower_and_upper_suffixes(english, suffix_lower, &suffix_upper, special_case_suffix_lower, &special_case_suffix_upper, pig_latin_string);
+}
+
+//TODO tests for this function
+//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+pub(crate) fn translate_with_style_lower_and_upper_suffixes (
+    english: &[u8],
+    suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
+    pig_latin_string: &mut Vec::<u8>
+) {
+    if english.is_empty() {
+        return;
     }
 
     //Flags used to remember if we're currently processing a word, contraction, contraction suffix or neither
@@ -95,7 +114,7 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
                     let word_slice: &[u8] = &english[slice_start_index..slice_end_index];
                     translate_word_with_style_reuse_buffers (
                         word_slice,
-                        suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+                        suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
                         pig_latin_string, &mut starting_consonants_buffer
                     );
 
@@ -130,7 +149,7 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
         let word_slice: &[u8] = &english[slice_start_index..slice_end_index];
         translate_word_with_style_reuse_buffers (
             word_slice,
-            suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper,
+            suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
             pig_latin_string, &mut starting_consonants_buffer
         );
     }
@@ -153,6 +172,7 @@ fn translate_word_with_style_reuse_buffers (
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
     buffer_to_append_to: &mut Vec<u8>, starting_consonants: &mut Vec<u8>
 ) {
+    debug_assert!(english_word.len() != 0);
     if english_word.len() == 1 {
         push_slice_to_vector(buffer_to_append_to, english_word);
         push_slice_to_vector(buffer_to_append_to, special_case_suffix_lower);
@@ -165,10 +185,10 @@ fn translate_word_with_style_reuse_buffers (
     let mut index = 1;
 
     //Check if the word is uppercase
-    let word_uppercase = word_is_uppercase_ascii(english_word);
+    let word_uppercase = word_is_uppercase(english_word);
 
     //As a herustic, we consider Y to be a vowel when it is not at the start of the word
-    let first_letter_was_vowel: bool = is_vowel_ascii(english_word[0]);//Not including y
+    let first_letter_was_vowel: bool = is_vowel(english_word[0]);//Not including y
 
     //Clear the starting_consonants buffer we were given
     starting_consonants.truncate(0);
@@ -182,7 +202,7 @@ fn translate_word_with_style_reuse_buffers (
         //Grab all of the starting consonants, and push the first vowel we enounter to buffer_to_append_to
         while index < english_word.len() {
             let character: u8 = english_word[index];
-            if is_vowel_ascii(character) || is_y_ascii(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+            if is_vowel(character) || is_y(character) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
                 //The vowel is the first letter of the word; we want it match the capitalization of the first letter of the original word
                 if first_char_was_upper {
                     buffer_to_append_to.push(character.to_ascii_uppercase());
@@ -218,6 +238,33 @@ fn translate_word_with_style_reuse_buffers (
         } else {
             push_slice_to_vector(buffer_to_append_to, suffix_lower);
         }
+    }
+}
+
+//Returns whether a letter is a vowel or not.
+fn is_vowel(letter: u8) -> bool {
+    match letter.to_ascii_lowercase() {
+        b'a' | b'e' | b'i' | b'o' | b'u' => { return true; }
+        _ => { return false; }
+    }
+}
+
+//Returns whether a letter is y or not.
+pub(crate) fn is_y(letter: u8) -> bool {
+    return letter.to_ascii_lowercase() == b'y';
+}
+
+//Returns whether an entire word is upper case or not.
+pub(crate) fn word_is_uppercase(english_word_bytes: &[u8]) -> bool {
+    //Asume length is non-zero
+    //Heuristic: If the last letter of the word is uppercase, likely the whole word is uppercase
+    return (english_word_bytes[english_word_bytes.len() - 1] as char).is_ascii_uppercase();
+}
+
+//Clones each element of a slice and push()es it to a vector
+pub(crate) fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
+    for element in slice {
+        vec.push(element.clone());
     }
 }
 
@@ -267,8 +314,6 @@ mod tests {
         }
     }
 
-    //TODO add generic versions
-
     fn translate_word_with_style(english_word: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
         let mut suffix_upper = String::with_capacity(suffix_lower.len());
         for letter in suffix_lower.chars() {
@@ -279,8 +324,8 @@ mod tests {
             special_case_suffix_upper.push(letter.to_ascii_uppercase());
         }
 
-        let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
-        let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
+        let mut pig_latin_word = Vec::<u8>::new();
+        let mut starting_consonants_buffer = Vec::<u8>::new();
         translate_word_with_style_reuse_buffers (
             english_word.as_bytes(),
             suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),

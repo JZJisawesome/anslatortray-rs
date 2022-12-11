@@ -73,16 +73,10 @@
 
 //Only enabled if the relevant Cargo feature is
 #![cfg_attr(feature = "nightly-features-benches", feature(test))]
-#![cfg_attr(feature = "nightly-features-generics", feature(adt_const_params))]
-#![cfg_attr(feature = "nightly-features-generics", feature(generic_const_exprs))]
 
 /* Imports */
 
-mod helpers;
-//mod translate_strings;
-//mod translate_words;
 pub mod byte_string;
-pub mod string;
+mod string;
 
-pub use string::translate;//For convinence; for other functions use either the string or byte_string modules
-//pub use translate_strings::{translate_ascii, translate_way_ascii, translate_yay_ascii, translate_hay_ascii, translate_ferb_ascii, translate_with_style_ascii};
+pub use string::{translate, translate_yay, translate_hay, translate_ferb, translate_with_style};

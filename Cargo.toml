@@ -16,9 +16,8 @@ documentation = "https://docs.rs/anslatortray/latest/anslatortray/"
 
 [features]
 default = []
-nightly-features = ["nightly-features-benches", "nightly-features-generics"]
+nightly-features = ["nightly-features-benches"]
 nightly-features-benches = []
-nightly-features-generics = []
 
 [lib]
 name = "anslatortray"

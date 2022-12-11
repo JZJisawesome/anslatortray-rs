@@ -8,7 +8,7 @@
 
 /* Imports */
 
-use anslatortray::string;
+use anslatortray::translate;
 use anslatortray::byte_string;
 
 /* Constants */
@@ -71,7 +71,7 @@ fn help() {
     eprintln!("--translate-args  Translates all remaining arguments provided and outputs them to stdout");
     eprintln!("--stdin-to-stdout Translates input from stdin directly to stdout");
 
-    eprintln!("\n{}", string::translate("Have a good day!"));
+    eprintln!("\n{}", translate("Have a good day!"));
 }
 
 fn interactive(args: &Vec<String>) {
@@ -89,7 +89,7 @@ fn interactive(args: &Vec<String>) {
     loop {
         eprint!("anslatortray> ");
         stdin.read_line(&mut line_buffer).unwrap();
-        eprintln!("{}", string::translate(&line_buffer));
+        eprintln!("{}", translate(&line_buffer));
         line_buffer.truncate(0);
     }
 }
@@ -111,7 +111,7 @@ fn file(args: &Vec<String>) {
 
     let file_contents = std::fs::read_to_string(input_file).unwrap();
     let start_time = std::time::Instant::now();
-    let translated_file_contents = string::translate(&file_contents);
+    let translated_file_contents = translate(&file_contents);
     //let translated_file_contents = ascii::translate(file_contents.as_bytes());//TESTING
     let time_to_translate = start_time.elapsed();
     std::fs::write(output_file, &translated_file_contents).unwrap();
@@ -129,7 +129,6 @@ fn benchmark_file(args: &Vec<String>) {
     }
 
     //TODO error handling
-    //TODO just benchmark byte_string from now on
 
     let input_file = &args[0];
     let iterations = args[1].parse::<u128>().unwrap();//TODO error handling
@@ -140,7 +139,7 @@ fn benchmark_file(args: &Vec<String>) {
 
     for _ in 0..iterations {
         let start_time = std::time::Instant::now();
-        let translated_file_contents = string::translate(&file_contents);
+        let translated_file_contents = translate(&file_contents);
         let time_to_translate = start_time.elapsed();
 
         total_duration_utf8 += time_to_translate;
@@ -178,7 +177,7 @@ fn translate_args(args: &Vec<String>) {
 
     //Translate the arguments and print them out for the user
     for string in args {
-        print!("{} ", string::translate(&string));
+        print!("{} ", translate(&string));
     }
     println!();
 }
@@ -198,7 +197,7 @@ fn stdin_to_stdout(args: &Vec<String>) {
 
     while let Ok(bytes_read) = stdin.read_to_string(&mut buffer) {
         if bytes_read == 0 { return; }
-        write!(stdout, "{}", string::translate(&buffer)).unwrap();//TODO do this more efficiently (avoid format string)
+        write!(stdout, "{}", translate(&buffer)).unwrap();//TODO do this more efficiently (avoid format string)
         buffer.truncate(0);//TODO is this needed here?
     }
 }
