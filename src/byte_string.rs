@@ -148,7 +148,7 @@ pub(super) fn translate_word_with_style_reuse_buffers_better_perhaps <
 }
 */
 
-pub(super) fn translate_word_with_style_reuse_buffers (
+fn translate_word_with_style_reuse_buffers (
     english_word: &[u8],//Assumes this word is not empty
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
     buffer_to_append_to: &mut Vec<u8>, starting_consonants: &mut Vec<u8>
