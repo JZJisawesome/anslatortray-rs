@@ -1,9 +1,9 @@
-/* NAME//TODO
+/* byte_string.rs
  * By: John Jekel
  * Copyright (C) 2022 John Jekel
  * See the LICENSE file at the root of the project for licensing info.
  *
- * TODO description
+ * Translation functions operating on &[u8] and Vec::<u8> (higher efficiency, but less user-friendly)
  *
 */
 
@@ -250,19 +250,19 @@ fn is_vowel(letter: u8) -> bool {
 }
 
 //Returns whether a letter is y or not.
-pub(crate) fn is_y(letter: u8) -> bool {
+fn is_y(letter: u8) -> bool {
     return letter.to_ascii_lowercase() == b'y';
 }
 
 //Returns whether an entire word is upper case or not.
-pub(crate) fn word_is_uppercase(english_word_bytes: &[u8]) -> bool {
+fn word_is_uppercase(english_word_bytes: &[u8]) -> bool {
     //Asume length is non-zero
     //Heuristic: If the last letter of the word is uppercase, likely the whole word is uppercase
     return (english_word_bytes[english_word_bytes.len() - 1] as char).is_ascii_uppercase();
 }
 
 //Clones each element of a slice and push()es it to a vector
-pub(crate) fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
+fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
     for element in slice {
         vec.push(element.clone());
     }
@@ -314,6 +314,26 @@ mod tests {
         }
     }
 
+    fn translate_word_with_style(english_word: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
+        let mut suffix_upper = String::new();
+        for letter in suffix_lower.chars() {
+            suffix_upper.push(letter.to_ascii_uppercase());
+        }
+        let mut special_case_suffix_upper = String::new();
+        for letter in special_case_suffix_lower.chars() {
+            special_case_suffix_upper.push(letter.to_ascii_uppercase());
+        }
+
+        let mut pig_latin_word = Vec::<u8>::new();
+        let mut starting_consonants_buffer = Vec::<u8>::new();
+        translate_word_with_style_reuse_buffers (
+            english_word.as_bytes(),
+            suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),
+            &mut pig_latin_word, &mut starting_consonants_buffer
+        );
+        return std::str::from_utf8(pig_latin_word.as_slice()).unwrap().to_string();
+    }
+
     #[test]
     fn test_is_vowel() {
         for letter in b"aeiouAEIOU".iter() {
@@ -357,26 +377,6 @@ mod tests {
 
         assert!(!word_is_uppercase(b"Sussus"));
         assert!(!word_is_uppercase(b"Amogus"));
-    }
-
-    fn translate_word_with_style(english_word: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
-        let mut suffix_upper = String::with_capacity(suffix_lower.len());
-        for letter in suffix_lower.chars() {
-            suffix_upper.push(letter.to_ascii_uppercase());
-        }
-        let mut special_case_suffix_upper = String::with_capacity(special_case_suffix_lower.len());
-        for letter in special_case_suffix_lower.chars() {
-            special_case_suffix_upper.push(letter.to_ascii_uppercase());
-        }
-
-        let mut pig_latin_word = Vec::<u8>::new();
-        let mut starting_consonants_buffer = Vec::<u8>::new();
-        translate_word_with_style_reuse_buffers (
-            english_word.as_bytes(),
-            suffix_lower.as_bytes(), special_case_suffix_lower.as_bytes(), &suffix_upper.as_bytes(), &special_case_suffix_upper.as_bytes(),
-            &mut pig_latin_word, &mut starting_consonants_buffer
-        );
-        return std::str::from_utf8(pig_latin_word.as_slice()).unwrap().to_string();
     }
 }
 
