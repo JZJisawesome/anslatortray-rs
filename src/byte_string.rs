@@ -163,8 +163,10 @@ fn translate_word_with_style_reuse_buffers (
 ) {
     debug_assert!(english_word.len() != 0);
     if english_word.len() == 1 {
-        push_slice_to_vector(buffer_to_append_to, english_word);
-        push_slice_to_vector(buffer_to_append_to, special_case_suffix_lower);
+        //TODO it may be better to chain these back to back in a single call so the vector gets a hint with how much it needs to resize for both at once
+        //See https://stackoverflow.com/questions/71785682/calling-extend-from-slice-multiple-times
+        buffer_to_append_to.extend_from_slice(english_word);
+        buffer_to_append_to.extend_from_slice(special_case_suffix_lower);
         return;
     }
 
@@ -208,24 +210,23 @@ fn translate_word_with_style_reuse_buffers (
     }
 
     //Copy all of the remaining letters up to the end of the word
-    while index < english_word.len() {
-        buffer_to_append_to.push(english_word[index]);
-        index += 1;
-    }
+    buffer_to_append_to.extend_from_slice(&english_word[index..]);
 
     //Copy starting consonants and add the suffix, or add the special_case_suffix depending on the circumstances
     if first_letter_was_vowel {
         if word_uppercase {
-            push_slice_to_vector(buffer_to_append_to, special_case_suffix_upper);
+            buffer_to_append_to.extend_from_slice(special_case_suffix_upper);
         } else {
-            push_slice_to_vector(buffer_to_append_to, special_case_suffix_lower);
+            buffer_to_append_to.extend_from_slice(special_case_suffix_lower);
         }
     } else {
-        push_slice_to_vector(buffer_to_append_to, starting_consonants.as_slice());
+        //TODO it may be better to chain these back to back in a single call so the vector gets a hint with how much it needs to resize for both at once
+        //See https://stackoverflow.com/questions/71785682/calling-extend-from-slice-multiple-times
+        buffer_to_append_to.extend_from_slice(starting_consonants.as_slice());
         if word_uppercase {
-            push_slice_to_vector(buffer_to_append_to, suffix_upper);
+            buffer_to_append_to.extend_from_slice(suffix_upper);
         } else {
-            push_slice_to_vector(buffer_to_append_to, suffix_lower);
+            buffer_to_append_to.extend_from_slice(suffix_lower);
         }
     }
 }
@@ -248,13 +249,6 @@ fn word_is_uppercase(english_word_bytes: &[u8]) -> bool {
     //Asume length is non-zero
     //Heuristic: If the last letter of the word is uppercase, likely the whole word is uppercase
     return (english_word_bytes[english_word_bytes.len() - 1] as char).is_ascii_uppercase();
-}
-
-//Clones each element of a slice and push()es it to a vector
-fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
-    for element in slice {
-        vec.push(element.clone());
-    }
 }
 
 /* Tests */
