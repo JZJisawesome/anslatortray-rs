@@ -111,6 +111,7 @@ fn file(args: &Vec<String>) {
     let file_contents = std::fs::read_to_string(input_file).unwrap();
     let start_time = std::time::Instant::now();
     let translated_file_contents = translate(&file_contents);
+    //let translated_file_contents = ascii::translate(file_contents.as_bytes());//TESTING
     let time_to_translate = start_time.elapsed();
     std::fs::write(output_file, &translated_file_contents).unwrap();
 

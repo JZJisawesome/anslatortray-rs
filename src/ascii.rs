@@ -39,6 +39,7 @@ pub fn translate_way(english: &[u8]) -> Vec::<u8> {
     return translate_with_style(english, b"ay", b"way");
 }
 
+//TODO tests for this function
 pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8]) -> Vec::<u8> {
     if english.is_empty() {
         return Vec::<u8>::new();

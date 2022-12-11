@@ -439,6 +439,8 @@ pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suff
         return String::new();
     }
 
+    //TODO make optimizations based on the fact that non-ASCII characters are just copied as-is
+
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = String::with_capacity(suffix_lower.len());
     for letter in suffix_lower.chars() {
