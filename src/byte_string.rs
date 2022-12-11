@@ -314,6 +314,51 @@ mod tests {
         }
     }
 
+    #[test]
+    fn test_is_vowel() {
+        for letter in b"aeiouAEIOU".iter() {
+            assert!(is_vowel(*letter));
+        }
+
+        for letter in b"bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ".iter() {
+            assert!(!is_vowel(*letter));
+        }
+
+        for not_letter in b" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".iter() {
+            assert!(!is_vowel(*not_letter));
+        }
+    }
+
+    #[test]
+    fn test_is_y() {
+        for letter in b"yY".iter() {
+            assert!(is_y(*letter));
+        }
+
+        for letter in b"abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXZ".iter() {
+            assert!(!is_y(*letter));
+        }
+
+        for not_letter in b" !@#$%^&*()_+={}|\":>?~`\\][';/.,\t\n".iter() {
+            assert!(!is_y(*not_letter));
+        }
+    }
+
+    #[test]
+    fn test_word_is_uppercase() {
+        assert!(word_is_uppercase(b"HELLO"));
+        assert!(word_is_uppercase(b"WORLD"));
+
+        assert!(word_is_uppercase(b"I"));
+        assert!(!word_is_uppercase(b"would"));
+        assert!(!word_is_uppercase(b"like"));
+        assert!(!word_is_uppercase(b"a"));
+        assert!(!word_is_uppercase(b"pizza"));
+
+        assert!(!word_is_uppercase(b"Sussus"));
+        assert!(!word_is_uppercase(b"Amogus"));
+    }
+
     fn translate_word_with_style(english_word: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
         let mut suffix_upper = String::with_capacity(suffix_lower.len());
         for letter in suffix_lower.chars() {
