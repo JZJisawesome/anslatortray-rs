@@ -80,6 +80,7 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     }
 
     //Flags used to remember if we're currently processing a word, contraction, contraction suffix or neither
+    //TODO can we avoid needing these flags and be more efficient?
     let mut in_word: bool = false;
     let mut in_contraction_suffix: bool = false;
 
@@ -171,6 +172,7 @@ fn translate_word_with_style_reuse_buffers (
     }
 
     //TODO more ascii optimizations
+    //TODO is it better to not push characters, but rather count up indexes and then do a single extend_from_slice?
 
     //Set the starting index (the first character is assumed to exist and is accessed directly in several spots)
     let mut index = 1;
