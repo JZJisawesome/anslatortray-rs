@@ -376,10 +376,12 @@ mod benches {
     use test::Bencher;
     use super::*;
 
+    const PROJECT_DESCRIPTION: &str = "A simple Rust library to translate from English to Pig Latin!";
+    const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
     #[bench]
     fn way_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
-        let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
             let word = test::black_box(b"translator");
@@ -387,7 +389,7 @@ mod benches {
             translate_word_with_style_reuse_buffers (
                 word,
                 b"ay", b"way", b"AY", b"WAY",
-                &mut pig_latin_word, &mut starting_consonants_buffer
+                &mut pig_latin_word
             );
 
             pig_latin_word.truncate(0);
@@ -399,7 +401,6 @@ mod benches {
     #[bench]
     fn yay_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
-        let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
             let word = test::black_box(b"translator");
@@ -407,7 +408,7 @@ mod benches {
             translate_word_with_style_reuse_buffers (
                 word,
                 b"ay", b"yay", b"AY", b"YAY",
-                &mut pig_latin_word, &mut starting_consonants_buffer
+                &mut pig_latin_word
             );
 
             pig_latin_word.truncate(0);
@@ -419,7 +420,6 @@ mod benches {
     #[bench]
     fn hay_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
-        let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
             let word = test::black_box(b"translator");
@@ -427,7 +427,7 @@ mod benches {
             translate_word_with_style_reuse_buffers (
                 word,
                 b"ay", b"hay", b"AY", b"HAY",
-                &mut pig_latin_word, &mut starting_consonants_buffer
+                &mut pig_latin_word
             );
 
             pig_latin_word.truncate(0);
@@ -439,7 +439,6 @@ mod benches {
     #[bench]
     fn ferb_the_word_translator(b: &mut Bencher) {
         let mut pig_latin_word = Vec::<u8>::with_capacity(64 * 2);//Longer than all English words to avoid unneeded allocations, times 2 to leave room for whitespace, symbols, and the suffix
-        let mut starting_consonants_buffer = Vec::<u8>::with_capacity(64);//Longer than basically all English words to avoid unneeded allocations, plus the fact that this isn't the whole word
 
         b.iter(|| {
             let word = test::black_box(b"translator");
@@ -447,7 +446,7 @@ mod benches {
             translate_word_with_style_reuse_buffers (
                 word,
                 b"erb", b"ferb", b"ERB", b"FERB",
-                &mut pig_latin_word, &mut starting_consonants_buffer
+                &mut pig_latin_word
             );
 
             pig_latin_word.truncate(0);
@@ -455,19 +454,6 @@ mod benches {
 
         eprintln!("{}", std::str::from_utf8(pig_latin_word.as_slice()).unwrap());//To avoid optimizing things out
     }
-}
-
-/* Benches */
-
-#[cfg_attr(feature = "nightly-features-benches", cfg(test))]
-#[cfg(feature = "nightly-features-benches")]
-mod benches {
-    extern crate test;
-    use test::Bencher;
-    use super::*;
-
-    const PROJECT_DESCRIPTION: &str = "A simple Rust library to translate from English to Pig Latin!";
-    const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
     #[bench]
     fn way_project_description(b: &mut Bencher) {
