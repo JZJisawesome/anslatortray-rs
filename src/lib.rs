@@ -48,7 +48,7 @@
 //!
 //!If none of these suit your needs, you can also choose your own suffixes with [`translate_with_style()`]
 //!
-//!If you want more speed, and you know your text contains only ASCII characters, check out [`translate_ascii()`]
+//!If you want more speed, and you know your text contains only ASCII characters, check out [`byte_string`]
 //!
 //!# Useful Links
 //!<a href="https://git.jekel.ca/JZJ/anslatortray-rs">Click here to visit the Anslatortray for Rust Git Repository!</a>.
@@ -79,4 +79,4 @@
 pub mod byte_string;
 mod string;
 
-pub use string::{translate, translate_yay, translate_hay, translate_ferb, translate_with_style};
+pub use string::{translate, translate_way, translate_yay, translate_hay, translate_ferb, translate_with_style};

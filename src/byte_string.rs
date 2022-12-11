@@ -7,6 +7,8 @@
  *
 */
 
+//!TODO module description for rust doc
+
 /* Constants */
 
 //TODO
@@ -65,7 +67,7 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
         special_case_suffix_upper.push(letter.to_ascii_uppercase());
     }
 
-    translate_with_style_lower_and_upper_suffixes(english, suffix_lower, &suffix_upper, special_case_suffix_lower, &special_case_suffix_upper, pig_latin_string);
+    translate_with_style_lower_and_upper_suffixes(english, suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper, pig_latin_string);
 }
 
 //TODO tests for this function
@@ -155,18 +157,7 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     }
 }
 
-/*
-pub(super) fn translate_word_with_style_reuse_buffers_better_perhaps <
-    const SUFFIX_LEN: usize, const SPECIAL_CASE_SUFFIX_LEN: usize
-> (
-    english_word: &[u8],//Assumes this word is not empty
-    suffix_lower: &[u8; SUFFIX_LEN], special_case_suffix_lower: &[u8; SPECIAL_CASE_SUFFIX_LEN], suffix_upper: &[u8; SUFFIX_LEN], special_case_suffix_upper: &[u8; SPECIAL_CASE_SUFFIX_LEN],
-    buffer_to_append_to: &mut Vec<u8>, starting_consonants: &mut Vec<u8>
-) {
-
-}
-*/
-
+//Translate a word (english_word MUST ONLY CONTAIN ASCII LETTERS, not numbers/symbols/etc or anything UTF-8)
 fn translate_word_with_style_reuse_buffers (
     english_word: &[u8],//Assumes this word is not empty
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
@@ -273,6 +264,8 @@ fn push_slice_to_vector<T: Clone>(vec: &mut Vec<T>, slice: &[T]) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    //TODO test translate_with_style_lower_and_upper_suffixes (that's probably all we really need to test here)
 
     //TODO test uppercase words
 
@@ -467,5 +460,66 @@ mod benches {
         });
 
         eprintln!("{}", std::str::from_utf8(pig_latin_word.as_slice()).unwrap());//To avoid optimizing things out
+    }
+}
+
+/* Benches */
+
+#[cfg_attr(feature = "nightly-features-benches", cfg(test))]
+#[cfg(feature = "nightly-features-benches")]
+mod benches {
+    extern crate test;
+    use test::Bencher;
+    use super::*;
+
+    const PROJECT_DESCRIPTION: &str = "A simple Rust library to translate from English to Pig Latin!";
+    const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+    #[bench]
+    fn way_project_description(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn yay_project_description(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate_yay(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn hay_project_description(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate_hay(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn ferb_project_description(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate_ferb(PROJECT_DESCRIPTION); });
+    }
+
+    #[bench]
+    fn way_lorem_ipsum(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn yay_lorem_ipsum(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate_yay(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn hay_lorem_ipsum(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate_hay(LOREM_IPSUM); });
+    }
+
+    #[bench]
+    fn ferb_lorem_ipsum(b: &mut Bencher) {
+        todo!();
+        //b.iter(|| -> String { return translate_ferb(LOREM_IPSUM); });
     }
 }
