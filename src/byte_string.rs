@@ -21,6 +21,10 @@
 //!Without exception, ALL functions in anslatortray accept both ASCII and UTF-8 text, regardless of whether they operate on byte-strings or char-strings.
 //!The modern functions present are faster than the old ASCII ones anyways, even the ones in the crate's root that don't operate on byte-strings.
 
+/* Imports */
+
+use std::num::Wrapping;
+
 /* Constants */
 
 //TODO
@@ -290,16 +294,15 @@ pub fn translate_ferb(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_with_style_lower_and_upper_suffixes(english, b"erb", b"ferb", b"ERB", b"FERB", pig_latin_string);
 }
 
-///TODO
 pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_string: &mut Vec::<u8>) {
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = Vec::<u8>::with_capacity(suffix_lower.len());
     for letter in suffix_lower.iter() {
-        suffix_upper.push(letter.to_ascii_uppercase());
+        suffix_upper.push(letter.to_ascii_uppercase());//NOTE: We can't use fast_to_ascii_uppercase in case the suffixes contain UTF-8 or non-letters
     }
     let mut special_case_suffix_upper = Vec::<u8>::with_capacity(special_case_suffix_lower.len());
     for letter in special_case_suffix_lower.iter() {
-        special_case_suffix_upper.push(letter.to_ascii_uppercase());
+        special_case_suffix_upper.push(letter.to_ascii_uppercase());//NOTE: We can't use fast_to_ascii_uppercase in case the suffixes contain UTF-8 or non-letters
     }
 
     translate_with_style_lower_and_upper_suffixes(english, suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper, pig_latin_string);
@@ -315,6 +318,7 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     }
 
     //TODO merge the word and the generic text function into one function to allow for optimizations with certain things
+    //TODO do an SSE/AVX optimized version of this
 
     //Flags used to remember if we're currently processing a word, contraction, contraction suffix or neither
     //TODO can we avoid needing these flags and be more efficient?
@@ -391,6 +395,7 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
 }
 
 //Translate a word (english_word MUST ONLY CONTAIN ASCII LETTERS, not numbers/symbols/etc or anything UTF-8)
+#[inline(always)]//Only used by the one function in this module, so this makes sense
 fn translate_word_with_style_reuse_buffers (
     english_word: &[u8],//Assumes this word is not empty
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
@@ -440,8 +445,8 @@ fn translate_word_with_style_reuse_buffers (
     //Now that we know where the first vowel is and if the word is uppercase, we can construct the pig-latin word
     if index_of_first_vowel < english_word.len() {//We found a vowel//TODO mark this branch as likely taken
         //Push the first vowel to the new pig latin string. If the first letter was capitalized originally, match the case
-        if english_word[0].is_ascii_uppercase() {
-            buffer_to_append_to.push(english_word[index_of_first_vowel].to_ascii_uppercase());
+        if fast_is_ascii_uppercase(english_word[0]) {
+            buffer_to_append_to.push(fast_to_ascii_uppercase(english_word[index_of_first_vowel]));
         } else {
             buffer_to_append_to.push(english_word[index_of_first_vowel]);
         }
@@ -451,7 +456,7 @@ fn translate_word_with_style_reuse_buffers (
 
         //If the first letter (a consonant) was uppercase, it no longer needs to be (since the vowel above is now at the start and capitalized)
         //Unless, of course, the whole word is uppercase, in which case it should be left alone
-        buffer_to_append_to.push(if word_uppercase { english_word[0] } else { english_word[0].to_ascii_lowercase() });
+        buffer_to_append_to.push(if word_uppercase { english_word[0] } else { fast_to_ascii_lowercase(english_word[0]) });
 
         //Copy the remaining starting consonants
         buffer_to_append_to.extend_from_slice(&english_word[1..index_of_first_vowel]);
@@ -471,8 +476,8 @@ fn translate_word_with_style_reuse_buffers (
 //Returns whether a letter is a vowel or not.
 #[inline(always)]//Only used by the one function in this module, so this makes sense
 fn is_vowel(letter: u8) -> bool {
-    match letter.to_ascii_lowercase() {
-        b'a' | b'e' | b'i' | b'o' | b'u' => { return true; }
+    match letter {
+        b'a' | b'e' | b'i' | b'o' | b'u' | b'A' | b'E' | b'I' | b'O' | b'U' => { return true; }
         _ => { return false; }
     }
 }
@@ -480,7 +485,7 @@ fn is_vowel(letter: u8) -> bool {
 //Returns whether a letter is y or not.
 #[inline(always)]//Only used by the one function in this module, so this makes sense
 fn is_y(letter: u8) -> bool {
-    return letter.to_ascii_lowercase() == b'y';
+    return (letter == b'y') || (letter == b'Y');
 }
 
 //Returns whether an entire word is upper case or not.
@@ -495,7 +500,29 @@ fn word_is_uppercase(english_word: &[u8]) -> bool {
     }
 
     //Heuristic: If the last letter of the word is uppercase, likely the whole word is uppercase
-    return english_word[english_word.len() - 1].is_ascii_uppercase();
+    return fast_is_ascii_uppercase(english_word[english_word.len() - 1]);
+}
+
+#[inline(always)]//Only used by the one function in this module, so this makes sense
+fn fast_is_ascii_uppercase(character: u8) -> bool {
+    return character <= b'Z';
+}
+
+#[inline(always)]//Only used by the one function in this module, so this makes sense
+fn fast_is_ascii_lowercase(character: u8) -> bool {
+    return character >= b'a';
+}
+
+//NOTE if the character is not an ascii letter, this may produce invalid UTF-8
+#[inline(always)]//Only used by the one function in this module, so this makes sense
+fn fast_to_ascii_uppercase(character: u8) -> u8 {
+    return if character >= b'a' { (Wrapping(character) - Wrapping(0x20)).0 } else { character };
+}
+
+//NOTE if the character is not an ascii letter, this may produce invalid UTF-8
+#[inline(always)]//Only used by the one function in this module, so this makes sense
+fn fast_to_ascii_lowercase(character: u8) -> u8 {
+    return if character <= b'Z' { (Wrapping(character) + Wrapping(0x20)).0 } else { character };
 }
 
 /* Tests */
