@@ -349,6 +349,157 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
         return;
     }
 
+    #[derive(Debug, Clone, Copy)]
+    enum State {
+        InBetweenWords,
+        //InFirstLetterOfWord,//TODO to specially handle one-letter words
+        InRegularWord,
+        FinishingRegularWord,
+        InWordStartingWithVowel,
+        InContractionSuffix
+    };
+
+    let mut current_state: State = State::InBetweenWords;
+    let mut word_start_index: usize = 0xDEADBEEF;//Inclusive
+    let mut first_vowel_index: usize = 0xDEADBEEF;//Also exclusive end of starting consonants
+    let mut start_of_in_between_words_index: usize = 0;//Inclusive; Also exclusive end of word
+
+    for i in 0..english.len() {
+        //println!("{:?}", current_state);
+        match current_state {
+            State::InBetweenWords => {
+                if english[i].is_ascii_alphabetic() {
+                    //This is the start of the word, so copy all non-word characters up to this point since the last word
+                    let in_between_words_characters_slice = &english[start_of_in_between_words_index..i];
+                    pig_latin_string.extend_from_slice(in_between_words_characters_slice);
+
+                    //Setup things to begin processing the word
+                    word_start_index = i;
+                    if is_vowel(english[i]) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                        current_state = State::InWordStartingWithVowel;
+                    } else {
+                        current_state = State::InRegularWord;
+                    }
+                }
+            },
+            State::InRegularWord => {
+                if is_vowel(english[i]) || is_y(english[i]) {
+                    first_vowel_index = i;
+                    current_state = State::FinishingRegularWord;
+                }
+                //TODO handle the case where the word ends here before a vowel is encountered
+            },
+            State::FinishingRegularWord => {
+                if !english[i].is_ascii_alphabetic() {//End of word
+                    //We now need to actually translate the word
+                    if fast_is_ascii_uppercase(english[word_start_index]) {//The first letter of the word was uppercase
+                        if fast_is_ascii_uppercase(english[first_vowel_index]) {//Heuristic: Assume the word was uppercase if the first vowel is
+                            //TODO
+                        } else {
+                            //Push the vowel, matching the starting case of the original word
+                            pig_latin_string.push(fast_to_ascii_uppercase(english[first_vowel_index]));
+
+                            //Push all letters after the vowel
+                            let after_vowel_slice = &english[(first_vowel_index + 1)..i];
+                            pig_latin_string.extend_from_slice(after_vowel_slice);
+
+                            //Push the first starting consonant, which should be lowercase now
+                            pig_latin_string.push(fast_to_ascii_lowercase(english[word_start_index]));
+
+                            //Push the remaining starting consonants
+                            let after_start_to_vowel_slice = &english[(word_start_index + 1)..first_vowel_index];
+                            pig_latin_string.extend_from_slice(after_start_to_vowel_slice);
+
+                            //Push the normal suffix
+                            pig_latin_string.extend_from_slice(suffix_lower);
+                        }
+                    } else {//The first letter of the word was lowercase
+                        //Push the vowel and all letters after it
+                        let vowel_to_end_slice = &english[first_vowel_index..i];
+                        pig_latin_string.extend_from_slice(vowel_to_end_slice);
+
+                        //Push the starting consonants
+                        let start_to_vowel_slice = &english[word_start_index..first_vowel_index];
+                        pig_latin_string.extend_from_slice(start_to_vowel_slice);
+
+                        //Push the normal suffix
+                        pig_latin_string.extend_from_slice(suffix_lower);
+                    }
+
+                    //Decide the next state
+                    if english[i] == b'\'' {
+                        current_state = State::InContractionSuffix;
+                    } else {
+                        current_state = State::InBetweenWords;
+                    }
+                    start_of_in_between_words_index = i;
+                }
+            }
+            State::InWordStartingWithVowel => {
+                if !english[i].is_ascii_alphabetic() {//End of word
+                    //We now need to actually translate the word
+                    //TODO handle uppercase
+                    let word_slice = &english[word_start_index..i];
+                    pig_latin_string.extend_from_slice(word_slice);
+                    pig_latin_string.extend_from_slice(special_case_suffix_lower);
+
+                    //Decide the next state
+                    if english[i] == b'\'' {
+                        current_state = State::InContractionSuffix;
+                    } else {
+                        current_state = State::InBetweenWords;
+                    }
+                    start_of_in_between_words_index = i;
+                }
+            },
+            State::InContractionSuffix => {
+                if !english[i].is_ascii_alphabetic() {//End of contraction suffix
+                    //Push the contraction suffix
+                    let contraction_suffix_slice = &english[start_of_in_between_words_index..i];
+                    pig_latin_string.extend_from_slice(contraction_suffix_slice);
+
+                    //We're back in-between words
+                    start_of_in_between_words_index = i;
+                    current_state = State::InBetweenWords;
+                }
+            },
+        }
+    }
+
+    //Wrap-up based on the state we ended the loop in
+    match current_state {
+        State::InBetweenWords => {
+            //Copy remaining characters
+            let remaining_characters_slice = &english[start_of_in_between_words_index..];
+            pig_latin_string.extend_from_slice(remaining_characters_slice);
+        },
+        State::InRegularWord => {
+            //TODO
+        },
+        State::FinishingRegularWord => {
+            //TODO
+        }
+        State::InWordStartingWithVowel => {
+            //TODO
+        },
+        State::InContractionSuffix => {
+            //Push the contraction suffix
+            let contraction_suffix_slice = &english[start_of_in_between_words_index..i];
+            pig_latin_string.extend_from_slice(contraction_suffix_slice);
+        },
+    }
+}
+
+//Avoids the overhead of having to convert suffixes to uppercase for the standard translation functions at runtime
+pub(crate) fn translate_with_style_lower_and_upper_suffixes_old (
+    english: &[u8],
+    suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
+    pig_latin_string: &mut Vec::<u8>
+) {
+    if english.is_empty() {
+        return;
+    }
+
     //TODO merge the word and the generic text function into one function to allow for optimizations with certain things
     //TODO do an SSE/AVX optimized version of this
 
