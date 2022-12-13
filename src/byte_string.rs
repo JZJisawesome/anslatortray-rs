@@ -25,26 +25,6 @@
 
 use std::num::Wrapping;
 
-/* Constants */
-
-//TODO
-
-/* Macros */
-
-//TODO (also pub(crate) use the_macro statements here too)
-
-/* Static Variables */
-
-//TODO
-
-/* Types */
-
-//TODO
-
-/* Associated Functions and Methods */
-
-//TODO
-
 /* Functions */
 
 ///Translates a multi-word string (including punctuation) into Pig Latin!
@@ -294,7 +274,6 @@ pub fn translate_ferb(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_with_style_lower_and_upper_suffixes(english, b"erb", b"ferb", b"ERB", b"FERB", pig_latin_string);
 }
 
-
 ///Translates a multi-word string (including punctuation) into a custom-styled play language!
 ///
 ///Pass the string you wish to translate, the suffix you wish to have appended to most words, and the suffix
@@ -360,6 +339,7 @@ pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_su
     translate_with_style_lower_and_upper_suffixes(english, suffix_lower, special_case_suffix_lower, &suffix_upper, &special_case_suffix_upper, pig_latin_string);
 }
 
+//Avoids the overhead of having to convert suffixes to uppercase for the standard translation functions at runtime
 pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     english: &[u8],
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
@@ -562,10 +542,10 @@ fn fast_is_ascii_uppercase(letter: u8) -> bool {
 }
 
 //NOTE the result is undefined if the character is not a letter
-#[inline(always)]//Only used by the one function in this module, so this makes sense
+/*#[inline(always)]//Only used by the one function in this module, so this makes sense
 fn fast_is_ascii_lowercase(letter: u8) -> bool {
     return letter >= b'a';
-}
+}*/
 
 //NOTE if the character is not an ascii letter, this may produce invalid UTF-8
 #[inline(always)]//Only used by the one function in this module, so this makes sense
@@ -697,12 +677,12 @@ mod tests {
         }
     }
 
-    #[test]
+    /*#[test]
     fn test_fast_is_ascii_lowercase() {
         for letter in b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".iter() {
             assert_eq!(fast_is_ascii_lowercase(*letter), letter.is_ascii_lowercase());
         }
-    }
+    }*/
 
     #[test]
     fn test_fast_to_ascii_uppercase() {
@@ -728,8 +708,8 @@ mod benches {
     use test::Bencher;
     use super::*;
 
-    const PROJECT_DESCRIPTION: &str = "A simple Rust library to translate from English to Pig Latin!";
-    const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+    const PROJECT_DESCRIPTION: &[u8] = b"A simple Rust library to translate from English to Pig Latin!";
+    const LOREM_IPSUM: &[u8] = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
     #[bench]
     fn way_the_word_translator(b: &mut Bencher) {
@@ -809,49 +789,105 @@ mod benches {
 
     #[bench]
     fn way_project_description(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate(PROJECT_DESCRIPTION); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(PROJECT_DESCRIPTION.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(PROJECT_DESCRIPTION);
+
+            translate_way(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 
     #[bench]
     fn yay_project_description(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate_yay(PROJECT_DESCRIPTION); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(PROJECT_DESCRIPTION.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(PROJECT_DESCRIPTION);
+
+            translate_yay(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 
     #[bench]
     fn hay_project_description(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate_hay(PROJECT_DESCRIPTION); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(PROJECT_DESCRIPTION.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(PROJECT_DESCRIPTION);
+
+            translate_hay(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 
     #[bench]
     fn ferb_project_description(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate_ferb(PROJECT_DESCRIPTION); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(PROJECT_DESCRIPTION.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(PROJECT_DESCRIPTION);
+
+            translate_ferb(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 
     #[bench]
     fn way_lorem_ipsum(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate(LOREM_IPSUM); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(LOREM_IPSUM.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(LOREM_IPSUM);
+
+            translate_way(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 
     #[bench]
     fn yay_lorem_ipsum(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate_yay(LOREM_IPSUM); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(LOREM_IPSUM.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(LOREM_IPSUM);
+
+            translate_yay(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 
     #[bench]
     fn hay_lorem_ipsum(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate_hay(LOREM_IPSUM); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(LOREM_IPSUM.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(LOREM_IPSUM);
+
+            translate_hay(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 
     #[bench]
     fn ferb_lorem_ipsum(b: &mut Bencher) {
-        todo!();
-        //b.iter(|| -> String { return translate_ferb(LOREM_IPSUM); });
+        let mut pig_latin_word = Vec::<u8>::with_capacity(LOREM_IPSUM.len() * 2);
+
+        b.iter(|| {
+            let word = test::black_box(LOREM_IPSUM);
+
+            translate_ferb(word, &mut pig_latin_word);
+
+            pig_latin_word.truncate(0);
+        });
     }
 }
