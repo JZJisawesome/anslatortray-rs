@@ -11,26 +11,6 @@
 use anslatortray::translate;
 use anslatortray::byte_string;
 
-/* Constants */
-
-//TODO
-
-/* Macros */
-
-//TODO (also pub(crate) use the_macro statements here too)
-
-/* Static Variables */
-
-//TODO
-
-/* Types */
-
-//TODO
-
-/* Associated Functions and Methods */
-
-//TODO
-
 /* Functions */
 
 fn main() {
@@ -112,7 +92,6 @@ fn file(args: &Vec<String>) {
     let file_contents = std::fs::read_to_string(input_file).unwrap();
     let start_time = std::time::Instant::now();
     let translated_file_contents = translate(&file_contents);
-    //let translated_file_contents = ascii::translate(file_contents.as_bytes());//TESTING
     let time_to_translate = start_time.elapsed();
     std::fs::write(output_file, &translated_file_contents).unwrap();
 
