@@ -349,10 +349,97 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
         return;
     }
 
+    let mut global_index: usize = 0;
+    loop {
+        //Copies characters in-between words
+        {
+            let mut start_of_in_between_words_index: usize = global_index;//Inclusive
+            loop {
+                if english[global_index].is_ascii_alphabetic() {//Start of a word
+                    break;
+                }
+
+                global_index += 1;
+                if global_index == english.len() {
+                    //Copy all of the characters so far (all that remain) and return
+                    let remaining_characters_slice = &english[start_of_in_between_words_index..];
+                    pig_latin_string.extend_from_slice(remaining_characters_slice);
+                    return;
+                }
+            }
+            //Copy the characters in-between words as-is
+            let in_between_words_characters_slice = &english[start_of_in_between_words_index..global_index];
+            pig_latin_string.extend_from_slice(in_between_words_characters_slice);
+        }
+
+        //Translates the current word and pushes the result
+        {
+            //TODO initial code to deal with the first letter
+            let mut word_start_index: usize = global_index;//Inclusive
+            /*let mut first_vowel_index: usize = 0xDEADBEEF;//Also exclusive end of starting consonants
+            loop {
+                //TODO
+            }*/
+            //TODO Wrap-up this section here
+
+            //TESTING just call the original function for now
+            {
+                while global_index < english.len() {
+                    if !english[global_index].is_ascii_alphabetic() {
+                        break;
+                    }
+
+                    global_index += 1;
+                }
+                let word_slice: &[u8] = &english[word_start_index..global_index];
+                translate_word_with_style_reuse_buffers (
+                    word_slice,
+                    suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
+                    pig_latin_string
+                );
+            }
+        }
+        if global_index == english.len() { return; }
+
+        //Copies contraction suffixes, if present
+        if english[global_index] == b'\'' {
+            let mut start_of_contraction_suffix_index: usize = global_index;//Inclusive
+            global_index += 1;
+            loop {
+                if global_index == english.len() {
+                    //Copy all of the characters so far (all that remain) and return
+                    let remaining_characters_slice = &english[start_of_contraction_suffix_index..];
+                    pig_latin_string.extend_from_slice(remaining_characters_slice);
+                    return;
+                }
+
+                if !english[global_index].is_ascii_alphabetic() {//End of the contraction suffix
+                    break;
+                }
+
+                global_index += 1;
+            }
+            //Copy the contraction suffix as-is
+            let contraction_suffix_slice = &english[start_of_contraction_suffix_index..global_index];
+            pig_latin_string.extend_from_slice(contraction_suffix_slice);
+        }
+    }
+}
+
+//Avoids the overhead of having to convert suffixes to uppercase for the standard translation functions at runtime
+pub(crate) fn translate_with_style_lower_and_upper_suffixes_abandoned (
+    english: &[u8],
+    suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
+    pig_latin_string: &mut Vec::<u8>
+) {
+    if english.is_empty() {
+        return;
+    }
+
     #[derive(Debug, Clone, Copy)]
     enum State {
         InBetweenWords,
-        //InFirstLetterOfWord,//TODO to specially handle one-letter words
+        InFirstLetterOfWord,
         InRegularWord,
         FinishingRegularWord,
         InWordStartingWithVowel,
@@ -366,24 +453,46 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
 
     for i in 0..english.len() {
         //println!("{:?}", current_state);
-        match current_state {
+        match current_state {//FIXME this is a bottleneck; instead have two nested infinite loops within another infinite loops to reduce the size of the match
             State::InBetweenWords => {
-                if english[i].is_ascii_alphabetic() {
+                if english[i].is_ascii_alphabetic() {//Start of a word
                     //This is the start of the word, so copy all non-word characters up to this point since the last word
                     let in_between_words_characters_slice = &english[start_of_in_between_words_index..i];
                     pig_latin_string.extend_from_slice(in_between_words_characters_slice);
 
                     //Setup things to begin processing the word
                     word_start_index = i;
-                    if is_vowel(english[i]) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                    current_state = State::InFirstLetterOfWord;
+                }
+            },
+            State::InFirstLetterOfWord => {
+                if english[i].is_ascii_alphabetic() {//This word is more than one letter
+                    if is_vowel(english[word_start_index]) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
                         current_state = State::InWordStartingWithVowel;
                     } else {
-                        current_state = State::InRegularWord;
+                        if is_vowel(english[i]) || is_y(english[i]) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                            first_vowel_index = i;
+                            current_state = State::FinishingRegularWord;
+                        } else {
+                            current_state = State::InRegularWord;
+                        }
                     }
+                } else {//This is a one-letter word (special case)
+                    //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
+                    pig_latin_string.push(english[word_start_index]);
+                    pig_latin_string.extend_from_slice(special_case_suffix_lower);
+
+                    //Decide the next state
+                    if english[i] == b'\'' {
+                        current_state = State::InContractionSuffix;
+                    } else {
+                        current_state = State::InBetweenWords;
+                    }
+                    start_of_in_between_words_index = i;
                 }
             },
             State::InRegularWord => {
-                if is_vowel(english[i]) || is_y(english[i]) {
+                if is_vowel(english[i]) || is_y(english[i]) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
                     first_vowel_index = i;
                     current_state = State::FinishingRegularWord;
                 }
@@ -473,6 +582,9 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
             let remaining_characters_slice = &english[start_of_in_between_words_index..];
             pig_latin_string.extend_from_slice(remaining_characters_slice);
         },
+        State::InFirstLetterOfWord => {
+            //TODO
+        },
         State::InRegularWord => {
             //TODO
         },
@@ -484,7 +596,7 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
         },
         State::InContractionSuffix => {
             //Push the contraction suffix
-            let contraction_suffix_slice = &english[start_of_in_between_words_index..i];
+            let contraction_suffix_slice = &english[start_of_in_between_words_index..];
             pig_latin_string.extend_from_slice(contraction_suffix_slice);
         },
     }
