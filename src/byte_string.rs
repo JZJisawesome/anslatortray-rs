@@ -352,7 +352,9 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     let mut global_index: usize = 0;
     loop {
         //Copies characters in-between words
+        //TODO this could probably be optimized with vector instructions
         {
+            //Fastest so far :)
             let mut start_of_in_between_words_index: usize = global_index;//Inclusive
             loop {
                 if english[global_index].is_ascii_alphabetic() {//Start of a word
@@ -370,19 +372,124 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
             //Copy the characters in-between words as-is
             let in_between_words_characters_slice = &english[start_of_in_between_words_index..global_index];
             pig_latin_string.extend_from_slice(in_between_words_characters_slice);
+
+            //The speed of this is in-between
+            /*
+            let mut start_of_in_between_words_index: usize = global_index;//Inclusive
+            loop {
+                if english[global_index].is_ascii_alphabetic() {//Start of a word
+                    break;
+                }
+
+                pig_latin_string.push(english[global_index]);
+                global_index += 1;
+                if global_index == english.len() {
+                    return;
+                }
+            }
+            */
+
+            //This is the slowest
+            /*let slice_to_search = &english[global_index..];
+            if let Some(rel_letter_index) = slice_to_search.iter().position(|&character| character.is_ascii_alphabetic()) {
+                let abs_letter_index = global_index + rel_letter_index;
+                let slice_to_copy = &english[global_index..abs_letter_index];
+                pig_latin_string.extend_from_slice(slice_to_copy);
+                global_index = abs_letter_index;
+            } else {
+                pig_latin_string.extend_from_slice(slice_to_search);
+                return;
+            }
+            */
         }
 
         //Translates the current word and pushes the result
         {
             //TODO initial code to deal with the first letter
-            let mut word_start_index: usize = global_index;//Inclusive
-            /*let mut first_vowel_index: usize = 0xDEADBEEF;//Also exclusive end of starting consonants
+            let first_letter = english[global_index];
+
+            if (global_index + 1) == english.len() {//The word is only one letter long (special case)
+                //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
+                pig_latin_string.push(first_letter);
+                pig_latin_string.extend_from_slice(special_case_suffix_lower);
+                return;
+            }
+            let second_character = english[global_index + 1];
+            if !second_character.is_ascii_alphabetic() {//The word is only one letter long (special case)
+                //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
+                pig_latin_string.push(first_letter);
+                pig_latin_string.extend_from_slice(special_case_suffix_lower);
+                global_index += 1;
+            } else {//The word is more than one letter long
+                let mut word_start_index: usize = global_index;//Inclusive
+                global_index += 1;
+                //TODO case if word starts with vowel
+                if is_vowel(first_letter) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                    //Copy all remaining letters in the word and append the special suffix
+                    //TODO what about uppercase words?
+                    /*loop {
+                        if global_index == english.len() {
+                            //Copy all of the characters so far (all that remain) and return
+                            let remaining_characters_slice = &english[start_of_contraction_suffix_index..];
+                            pig_latin_string.extend_from_slice(remaining_characters_slice);
+                            return;
+                        }
+
+                        if !english[global_index].is_ascii_alphabetic() {//End of the contraction suffix
+                            break;
+                        }
+
+                        global_index += 1;
+                    }
+                    */
+                } else {
+                    //Find the first vowel's index
+                    loop {
+                        if is_vowel(english[global_index]) || is_y(english[global_index]) {//As a herustic, we consider Y to be a vowel when it is not at the start of the word
+                            break;
+                        }
+
+                        global_index += 1;
+                        if global_index == english.len() {
+                            todo!();//No vowels in the word
+                        }
+                    }
+                    let first_vowel_index: usize = global_index;
+
+                    //Find the end of the word
+                    loop {
+                        if !english[global_index].is_ascii_alphabetic() {
+                            break;
+                        }
+
+                        global_index += 1;
+                        if global_index == english.len() {
+                            todo!();//Word ended
+                        }
+                    }
+                    let word_end_index: usize = global_index;
+
+                    //Translate the word
+                    //TODO
+                }
+
+                /*let mut word_start_index: usize = global_index;//Inclusive
+                loop {
+
+                }
+                */
+            }
+            /**/
+            //let mut first_vowel_index: usize = 0xDEADBEEF;//Also exclusive end of starting consonants
             loop {
-                //TODO
-            }*/
+                break;//TODO
+            }
+            /**/
             //TODO Wrap-up this section here
 
             //TESTING just call the original function for now
+            /*
+            let mut word_start_index: usize = global_index;//Inclusive
             {
                 while global_index < english.len() {
                     if !english[global_index].is_ascii_alphabetic() {
@@ -397,12 +504,12 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                     suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
                     pig_latin_string
                 );
-            }
+                if global_index == english.len() { return; }
+            }*/
         }
-        if global_index == english.len() { return; }
 
         //Copies contraction suffixes, if present
-        if english[global_index] == b'\'' {
+        if english[global_index] == b'\'' {//TODO if this is true we can also skip the regular inter-word loop on the next iteration
             let mut start_of_contraction_suffix_index: usize = global_index;//Inclusive
             global_index += 1;
             loop {
