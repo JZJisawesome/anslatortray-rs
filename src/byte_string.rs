@@ -7,7 +7,11 @@
  *
 */
 
-//!TODO module description for rust doc
+//!anslatortray Functions Operating on Byte-Strings
+//!
+//!As oppopsed to functions provided in the anslatortray crate's root, which operate on [`&str`] and [`String`], these functions operate on `&[u8]` and [`Vec<u8>`].
+//!
+//!TODO the rest
 
 /* Constants */
 
@@ -78,6 +82,8 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
     if english.is_empty() {
         return;
     }
+
+    //TODO merge the word and the generic text function into one function to allow for optimizations with certain things
 
     //Flags used to remember if we're currently processing a word, contraction, contraction suffix or neither
     //TODO can we avoid needing these flags and be more efficient?
@@ -249,10 +255,17 @@ fn is_y(letter: u8) -> bool {
 
 //Returns whether an entire word is upper case or not.
 #[inline(always)]//Only used by the one function in this module, so this makes sense
-fn word_is_uppercase(english_word_bytes: &[u8]) -> bool {
+fn word_is_uppercase(english_word: &[u8]) -> bool {
     //Asume length is non-zero
+    debug_assert!(english_word.len() != 0);
+    if english_word.len() == 0 {
+        unsafe {
+            std::hint::unreachable_unchecked();
+        }
+    }
+
     //Heuristic: If the last letter of the word is uppercase, likely the whole word is uppercase
-    return english_word_bytes[english_word_bytes.len() - 1].is_ascii_uppercase();
+    return english_word[english_word.len() - 1].is_ascii_uppercase();
 }
 
 /* Tests */
