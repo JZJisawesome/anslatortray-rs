@@ -259,41 +259,93 @@ pub fn translate_hay(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
 ///let mut buffer = Vec::<u8>::new();
 ///
 ///translate_ferb(b"Hello world from the coolest Pig Latin translator!", &mut buffer);
-///assert_eq!(&buffer, b"Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///assert_eq!(&buffer, b"Elloherb orldwerb omfrerb etherb oolestcerb Igperb Atinlerb anslatortrerb!");
 ///
 ///buffer.truncate(0);
 ///translate_ferb(b"This library can translate any English text. It can even handle multiple sentences!", &mut buffer);
-///assert_eq!(&buffer, b"Isthay ibrarylay ancay anslatetray anyhay Englishhay exttay. Ithay ancay evenhay andlehay ultiplemay entencessay!");
+///assert_eq!(&buffer, b"Istherb ibrarylerb ancerb anslatetrerb anyferb Englishferb extterb. Itferb ancerb evenferb andleherb ultiplemerb entencesserb!");
 ///
 ///buffer.truncate(0);
 ///translate_ferb(b"Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", &mut buffer);
-///assert_eq!(&buffer, b"Etlay's ytray omesay edgehay asescay. Atthay ishay ahay ontractioncay, ashay ellway ashay ahay ordway erewhay ethay onlyhay owelvay ishay yhay. Eatnay, allhay atthay orksway!");
+///assert_eq!(&buffer, b"Etlerb's ytrerb omeserb edgeferb asescerb. Attherb isferb aferb ontractioncerb, asferb ellwerb asferb aferb ordwerb erewherb etherb onlyferb owelverb isferb yferb. Eatnerb, allferb attherb orkswerb!");
 ///
 ///buffer.truncate(0);
 ///translate_ferb(b"What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", &mut buffer);
-///assert_eq!(&buffer, b"Atwhay ifhay ahay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay");
+///assert_eq!(&buffer, b"Atwherb ifferb aferb ordwerb asherb onerb owelsverb, ikelerb istherb: bcdfghjklmnpqrstvwxzerb");
 ///
 ///buffer.truncate(0);
 ///translate_ferb(b"Cool, so the heuristics make pretty good guesses with what they're fed!", &mut buffer);
-///assert_eq!(&buffer, b"Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!");
+///assert_eq!(&buffer, b"Oolcerb, oserb etherb euristicsherb akemerb ettyprerb oodgerb uessesgerb ithwerb atwherb eytherb're edferb!");
 ///
 ///buffer.truncate(0);
 ///translate_ferb(b"Hello-world", &mut buffer);
-///assert_eq!(&buffer, b"Ellohay-orldway");
+///assert_eq!(&buffer, b"Elloherb-orldwerb");
 ///
 ///buffer.truncate(0);
 ///translate_ferb(b"Hyphens-are-difficult-aren't-they?", &mut buffer);
-///assert_eq!(&buffer, b"Yphenshay-arehay-ifficultday-arenhay't-eythay?");
+///assert_eq!(&buffer, b"Yphensherb-areferb-ifficultderb-arenferb't-eytherb?");
 ///
 ///buffer.truncate(0);
 ///translate_ferb(b"The buffer isn't cleared by the translate function beforehand, ", &mut buffer);
 ///translate_ferb(b"so we can do something like this if we wish!", &mut buffer);
-///assert_eq!(&buffer, b"Ethay ufferbay isnhay't earedclay ybay ethay anslatetray unctionfay eforehandbay, osay eway ancay oday omethingsay ikelay isthay ifhay eway ishway!");
+///assert_eq!(&buffer, b"Etherb ufferberb isnferb't earedclerb yberb etherb anslatetrerb unctionferb eforehandberb, oserb ewerb ancerb oderb omethingserb ikelerb istherb ifferb ewerb ishwerb!");
 ///```
 pub fn translate_ferb(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_with_style_lower_and_upper_suffixes(english, b"erb", b"ferb", b"ERB", b"FERB", pig_latin_string);
 }
 
+
+///Translates a multi-word string (including punctuation) into a custom-styled play language!
+///
+///Pass the string you wish to translate, the suffix you wish to have appended to most words, and the suffix
+///you wish to have appended in various special-cases (such as when a word is only one letter or starts with a vowel).
+///
+///Note: The suffixes must be entirely lower-case or weird results may occur.
+///
+///Note: The resulting translation is appended to the provided buffer, so one may wish to ensure it is cleared before each use or not depending on the application.
+///
+///# Examples
+///
+///```
+///use anslatortray::byte_string::translate_with_style;
+///
+///let suffix = b"ancy";
+///let special_case_suffix = b"fancy";
+///
+///let mut buffer = Vec::<u8>::new();
+///
+///translate_with_style(b"Hello world from the coolest Pig Latin translator!", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Ellohancy orldwancy omfrancy ethancy oolestcancy Igpancy Atinlancy anslatortrancy!");
+///
+///buffer.truncate(0);
+///translate_with_style(b"This library can translate any English text. It can even handle multiple sentences!", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Isthancy ibrarylancy ancancy anslatetrancy anyfancy Englishfancy exttancy. Itfancy ancancy evenfancy andlehancy ultiplemancy entencessancy!");
+///
+///buffer.truncate(0);
+///translate_with_style(b"Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Etlancy's ytrancy omesancy edgefancy asescancy. Atthancy isfancy afancy ontractioncancy, asfancy ellwancy asfancy afancy ordwancy erewhancy ethancy onlyfancy owelvancy isfancy yfancy. Eatnancy, allfancy atthancy orkswancy!");
+///
+///buffer.truncate(0);
+///translate_with_style(b"What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Atwhancy iffancy afancy ordwancy ashancy onancy owelsvancy, ikelancy isthancy: bcdfghjklmnpqrstvwxzancy");
+///
+///buffer.truncate(0);
+///translate_with_style(b"Cool, so the heuristics make pretty good guesses with what they're fed!", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Oolcancy, osancy ethancy euristicshancy akemancy ettyprancy oodgancy uessesgancy ithwancy atwhancy eythancy're edfancy!");
+///
+///buffer.truncate(0);
+///translate_with_style(b"Hello-world", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Ellohancy-orldwancy");
+///
+///buffer.truncate(0);
+///translate_with_style(b"Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Yphenshancy-arefancy-ifficultdancy-arenfancy't-eythancy?");
+///
+///buffer.truncate(0);
+///translate_with_style(b"The buffer isn't cleared by the translate function beforehand, ", suffix, special_case_suffix, &mut buffer);
+///translate_with_style(b"so we can do something like this if we wish!", suffix, special_case_suffix, &mut buffer);
+///assert_eq!(&buffer, b"Ethancy ufferbancy isnfancy't earedclancy ybancy ethancy anslatetrancy unctionfancy eforehandbancy, osancy ewancy ancancy odancy omethingsancy ikelancy isthancy iffancy ewancy ishwancy!");
+///```
 pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_string: &mut Vec::<u8>) {
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = Vec::<u8>::with_capacity(suffix_lower.len());
@@ -503,26 +555,28 @@ fn word_is_uppercase(english_word: &[u8]) -> bool {
     return fast_is_ascii_uppercase(english_word[english_word.len() - 1]);
 }
 
+//NOTE the result is undefined if the character is not a letter
 #[inline(always)]//Only used by the one function in this module, so this makes sense
-fn fast_is_ascii_uppercase(character: u8) -> bool {
-    return character <= b'Z';
+fn fast_is_ascii_uppercase(letter: u8) -> bool {
+    return letter <= b'Z';
 }
 
+//NOTE the result is undefined if the character is not a letter
 #[inline(always)]//Only used by the one function in this module, so this makes sense
-fn fast_is_ascii_lowercase(character: u8) -> bool {
-    return character >= b'a';
-}
-
-//NOTE if the character is not an ascii letter, this may produce invalid UTF-8
-#[inline(always)]//Only used by the one function in this module, so this makes sense
-fn fast_to_ascii_uppercase(character: u8) -> u8 {
-    return if character >= b'a' { (Wrapping(character) - Wrapping(0x20)).0 } else { character };
+fn fast_is_ascii_lowercase(letter: u8) -> bool {
+    return letter >= b'a';
 }
 
 //NOTE if the character is not an ascii letter, this may produce invalid UTF-8
 #[inline(always)]//Only used by the one function in this module, so this makes sense
-fn fast_to_ascii_lowercase(character: u8) -> u8 {
-    return if character <= b'Z' { (Wrapping(character) + Wrapping(0x20)).0 } else { character };
+fn fast_to_ascii_uppercase(letter: u8) -> u8 {
+    return if letter >= b'a' { (Wrapping(letter) - Wrapping(0x20)).0 } else { letter };
+}
+
+//NOTE if the character is not an ascii letter, this may produce invalid UTF-8
+#[inline(always)]//Only used by the one function in this module, so this makes sense
+fn fast_to_ascii_lowercase(letter: u8) -> u8 {
+    return if letter <= b'Z' { (Wrapping(letter) + Wrapping(0x20)).0 } else { letter };
 }
 
 /* Tests */
@@ -634,6 +688,34 @@ mod tests {
 
         assert!(!word_is_uppercase(b"Sussus"));
         assert!(!word_is_uppercase(b"Amogus"));
+    }
+
+    #[test]
+    fn test_fast_is_ascii_uppercase() {
+        for letter in b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".iter() {
+            assert_eq!(fast_is_ascii_uppercase(*letter), letter.is_ascii_uppercase());
+        }
+    }
+
+    #[test]
+    fn test_fast_is_ascii_lowercase() {
+        for letter in b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".iter() {
+            assert_eq!(fast_is_ascii_lowercase(*letter), letter.is_ascii_lowercase());
+        }
+    }
+
+    #[test]
+    fn test_fast_to_ascii_uppercase() {
+        for letter in b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".iter() {
+            assert_eq!(fast_to_ascii_uppercase(*letter), letter.to_ascii_uppercase());
+        }
+    }
+
+    #[test]
+    fn test_fast_to_ascii_lowercase() {
+        for letter in b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".iter() {
+            assert_eq!(fast_to_ascii_lowercase(*letter), letter.to_ascii_lowercase());
+        }
     }
 }
 

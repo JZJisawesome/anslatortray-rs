@@ -188,7 +188,7 @@ pub fn translate_ferb(english: &str) -> String {
 ///Pass the string you wish to translate, the suffix you wish to have appended to most words, and the suffix
 ///you wish to have appended in various special-cases (such as when a word is only one letter or starts with a vowel).
 ///
-///NOTE: The suffixes must be entirely lower-case or weird results may occur.
+///Note: The suffixes must be entirely lower-case or weird results may occur.
 ///
 ///# Examples
 ///
@@ -197,6 +197,7 @@ pub fn translate_ferb(english: &str) -> String {
 ///
 ///let suffix = "ancy";
 ///let special_case_suffix = "fancy";
+///
 ///assert_eq!(translate_with_style("Hello world from the coolest Pig Latin translator!", suffix, special_case_suffix),
 ///    "Ellohancy orldwancy omfrancy ethancy oolestcancy Igpancy Atinlancy anslatortrancy!"
 ///);
@@ -206,25 +207,20 @@ pub fn translate_ferb(english: &str) -> String {
 ///);
 ///
 ///assert_eq!(translate_with_style("Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", suffix, special_case_suffix),
-///    "Etl".to_string() + suffix + "'s ytr" + suffix + " omes" + suffix + " edge" + special_case_suffix + " asesc" + suffix + ". Atth" + suffix + " is" + special_case_suffix + " a" +
-///    special_case_suffix + " ontractionc" + suffix + ", as" + special_case_suffix + " ellw" + suffix + " as" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix +
-///    " erewh" + suffix + " eth" + suffix + " only" + special_case_suffix + " owelv" + suffix + " is" + special_case_suffix + " y" + special_case_suffix + ". Eatn" + suffix + ", all" +
-///    special_case_suffix + " atth" + suffix + " orksw" + suffix + "!"
+///    "Etlancy's ytrancy omesancy edgefancy asescancy. Atthancy isfancy afancy ontractioncancy, asfancy ellwancy asfancy afancy ordwancy erewhancy ethancy onlyfancy owelvancy isfancy yfancy. Eatnancy, allfancy atthancy orkswancy!"
 ///);
 ///
 ///assert_eq!(translate_with_style("What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", suffix, special_case_suffix),
-///    "Atwh".to_string() + suffix + " if" + special_case_suffix + " a" + special_case_suffix + " ordw" + suffix + " ash" + suffix + " on" + suffix + " owelsv" + suffix + ", ikel" + suffix + " isth" + suffix + ": bcdfghjklmnpqrstvwxz" + suffix
+///    "Atwhancy iffancy afancy ordwancy ashancy onancy owelsvancy, ikelancy isthancy: bcdfghjklmnpqrstvwxzancy"
 ///);
 ///
 ///assert_eq!(translate_with_style("Cool, so the heuristics make pretty good guesses with what they're fed!", suffix, special_case_suffix),
-///    "Oolc".to_string() + suffix + ", os" + suffix + " eth" + suffix + " euristicsh" + suffix + " akem" + suffix + " ettypr" + suffix + " oodg" + suffix + " uessesg" + suffix + " ithw" + suffix + " atwh" + suffix + " eyth" + suffix + "'re edf" + suffix + "!"
+///    "Oolcancy, osancy ethancy euristicshancy akemancy ettyprancy oodgancy uessesgancy ithwancy atwhancy eythancy're edfancy!"
 ///);
 ///
-///assert_eq!(translate_with_style("Hello-world", suffix, special_case_suffix), "Elloh".to_string() + suffix + "-orldw" + suffix);
+///assert_eq!(translate_with_style("Hello-world", suffix, special_case_suffix), "Ellohancy-orldwancy");
 ///
-///assert_eq!(translate_with_style("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix),
-///    "Yphensh".to_string() + suffix + "-are" + special_case_suffix + "-ifficultd" + suffix + "-aren" + special_case_suffix + "'t-eyth" + suffix + "?"
-///);
+///assert_eq!(translate_with_style("Hyphens-are-difficult-aren't-they?", suffix, special_case_suffix), "Yphenshancy-arefancy-ifficultdancy-arenfancy't-eythancy?");
 ///```
 pub fn translate_with_style(english: &str, suffix_lower: &str, special_case_suffix_lower: &str) -> String {
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
