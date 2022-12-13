@@ -11,7 +11,15 @@
 //!
 //!As oppopsed to functions provided in the anslatortray crate's root, which operate on [`&str`] and [`String`], these functions operate on `&[u8]` and [`Vec<u8>`].
 //!
-//!TODO the rest
+//!In performance-sensitive applications, they can allow for some minor optimizations:
+//!* One can reuse buffers for getting the result of a translation (as the functions accept a mutable reference to a [`Vec<u8>`] rather than returning data)
+//!* One can avoid the penalty of converting to an [`&str`], translating to a [`String`], and having to convert back to raw bytes if one is working solely with byte-strings.
+//!
+//!Note that both ASCII and UTF-8 byte strings may be passed to these functions, and that valid ASCII/UTF-8 will be returned.
+//!In the past there were "ASCII-only" functions that operated on [`String`]s, but these were removed.
+//!These byte_string functions are NOT the sucessors of those functions.
+//!Without exception, ALL functions in anslatortray accept both ASCII and UTF-8 text, regardless of whether they operate on byte-strings or char-strings.
+//!The modern functions present are faster than the old ASCII ones anyways, even the ones in the crate's root that don't operate on byte-strings.
 
 /* Constants */
 
@@ -35,31 +43,166 @@
 
 /* Functions */
 
-//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+///Translates a multi-word string (including punctuation) into Pig Latin!
+///
+///Uses the default suffix and special_case_suffix, "ay" and "way" respectively when calling [`translate_with_style()`].
+///
+///Equivalent to [`translate_way()`].
+///
+///Note: The resulting translation is appended to the provided buffer, so one may wish to ensure it is cleared before each use or not depending on the application.
+///
+///# Examples
+///
+///```
+///use anslatortray::byte_string::translate;
+///
+///let mut buffer = Vec::<u8>::new();
+///
+///translate(b"Hello world from the coolest Pig Latin translator!", &mut buffer);
+///assert_eq!(&buffer, b"Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///buffer.truncate(0);
+///translate(b"This library can translate any English text. It can even handle multiple sentences!", &mut buffer);
+///assert_eq!(&buffer, b"Isthay ibrarylay ancay anslatetray anyway Englishway exttay. Itway ancay evenway andlehay ultiplemay entencessay!");
+///
+///buffer.truncate(0);
+///translate(b"Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", &mut buffer);
+///assert_eq!(&buffer, b"Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!");
+///
+///buffer.truncate(0);
+///translate(b"What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", &mut buffer);
+///assert_eq!(&buffer, b"Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay");
+///
+///buffer.truncate(0);
+///translate(b"Cool, so the heuristics make pretty good guesses with what they're fed!", &mut buffer);
+///assert_eq!(&buffer, b"Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!");
+///
+///buffer.truncate(0);
+///translate(b"Hello-world", &mut buffer);
+///assert_eq!(&buffer, b"Ellohay-orldway");
+///
+///buffer.truncate(0);
+///translate(b"Hyphens-are-difficult-aren't-they?", &mut buffer);
+///assert_eq!(&buffer, b"Yphenshay-areway-ifficultday-arenway't-eythay?");
+///
+///buffer.truncate(0);
+///translate(b"The buffer isn't cleared by the translate function beforehand, ", &mut buffer);
+///translate(b"so we can do something like this if we wish!", &mut buffer);
+///assert_eq!(&buffer, b"Ethay ufferbay isnway't earedclay ybay ethay anslatetray unctionfay eforehandbay, osay eway ancay oday omethingsay ikelay isthay ifway eway ishway!");
+///```
 pub fn translate(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_way(english, pig_latin_string);
 }
 
-//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+///Translates a multi-word string (including punctuation) into Pig Latin (way-style)!
+///
+///Uses the suffix and special_case_suffix "ay" and "way" respectively when calling [`translate_with_style()`].
+///
+///Note: The resulting translation is appended to the provided buffer, so one may wish to ensure it is cleared before each use or not depending on the application.
+///
+///# Examples
+///
+///```
+///use anslatortray::byte_string::translate_way;
+///
+///let mut buffer = Vec::<u8>::new();
+///
+///translate_way(b"Hello world from the coolest Pig Latin translator!", &mut buffer);
+///assert_eq!(&buffer, b"Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///buffer.truncate(0);
+///translate_way(b"This library can translate any English text. It can even handle multiple sentences!", &mut buffer);
+///assert_eq!(&buffer, b"Isthay ibrarylay ancay anslatetray anyway Englishway exttay. Itway ancay evenway andlehay ultiplemay entencessay!");
+///
+///buffer.truncate(0);
+///translate_way(b"Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", &mut buffer);
+///assert_eq!(&buffer, b"Etlay's ytray omesay edgeway asescay. Atthay isway away ontractioncay, asway ellway asway away ordway erewhay ethay onlyway owelvay isway yway. Eatnay, allway atthay orksway!");
+///
+///buffer.truncate(0);
+///translate_way(b"What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", &mut buffer);
+///assert_eq!(&buffer, b"Atwhay ifway away ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay");
+///
+///buffer.truncate(0);
+///translate_way(b"Cool, so the heuristics make pretty good guesses with what they're fed!", &mut buffer);
+///assert_eq!(&buffer, b"Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!");
+///
+///buffer.truncate(0);
+///translate_way(b"Hello-world", &mut buffer);
+///assert_eq!(&buffer, b"Ellohay-orldway");
+///
+///buffer.truncate(0);
+///translate_way(b"Hyphens-are-difficult-aren't-they?", &mut buffer);
+///assert_eq!(&buffer, b"Yphenshay-areway-ifficultday-arenway't-eythay?");
+///
+///buffer.truncate(0);
+///translate_way(b"The buffer isn't cleared by the translate function beforehand, ", &mut buffer);
+///translate_way(b"so we can do something like this if we wish!", &mut buffer);
+///assert_eq!(&buffer, b"Ethay ufferbay isnway't earedclay ybay ethay anslatetray unctionfay eforehandbay, osay eway ancay oday omethingsay ikelay isthay ifway eway ishway!");
+///```
 pub fn translate_way(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_with_style_lower_and_upper_suffixes(english, b"ay", b"way", b"AY", b"WAY", pig_latin_string);
 }
 
-//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+///Translates a multi-word string (including punctuation) into Pig Latin (yay-style)!
+///
+///Uses the suffix and special_case_suffix "ay" and "yay" respectively when calling [`translate_with_style()`].
+///
+///Note: The resulting translation is appended to the provided buffer, so one may wish to ensure it is cleared before each use or not depending on the application.
+///
+///# Examples
+///
+///```
+///use anslatortray::byte_string::translate_yay;
+///
+///let mut buffer = Vec::<u8>::new();
+///
+///translate_yay(b"Hello world from the coolest Pig Latin translator!", &mut buffer);
+///assert_eq!(&buffer, b"Ellohay orldway omfray ethay oolestcay Igpay Atinlay anslatortray!");
+///
+///buffer.truncate(0);
+///translate_yay(b"This library can translate any English text. It can even handle multiple sentences!", &mut buffer);
+///assert_eq!(&buffer, b"Isthay ibrarylay ancay anslatetray anyyay Englishyay exttay. Ityay ancay evenyay andlehay ultiplemay entencessay!");
+///
+///buffer.truncate(0);
+///translate_yay(b"Let's try some edge cases. That is a contraction, as well as a word where the only vowel is y. Neat, all that works!", &mut buffer);
+///assert_eq!(&buffer, b"Etlay's ytray omesay edgeyay asescay. Atthay isyay ayay ontractioncay, asyay ellway asyay ayay ordway erewhay ethay onlyyay owelvay isyay yyay. Eatnay, allyay atthay orksway!");
+///
+///buffer.truncate(0);
+///translate_yay(b"What if a word has no vowels, like this: bcdfghjklmnpqrstvwxz", &mut buffer);
+///assert_eq!(&buffer, b"Atwhay ifyay ayay ordway ashay onay owelsvay, ikelay isthay: bcdfghjklmnpqrstvwxzay");
+///
+///buffer.truncate(0);
+///translate_yay(b"Cool, so the heuristics make pretty good guesses with what they're fed!", &mut buffer);
+///assert_eq!(&buffer, b"Oolcay, osay ethay euristicshay akemay ettypray oodgay uessesgay ithway atwhay eythay're edfay!");
+///
+///buffer.truncate(0);
+///translate_yay(b"Hello-world", &mut buffer);
+///assert_eq!(&buffer, b"Ellohay-orldway");
+///
+///buffer.truncate(0);
+///translate_yay(b"Hyphens-are-difficult-aren't-they?", &mut buffer);
+///assert_eq!(&buffer, b"Yphenshay-areyay-ifficultday-arenyay't-eythay?");
+///
+///buffer.truncate(0);
+///translate_yay(b"The buffer isn't cleared by the translate function beforehand, ", &mut buffer);
+///translate_yay(b"so we can do something like this if we wish!", &mut buffer);
+///assert_eq!(&buffer, b"Ethay ufferbay isnyay't earedclay ybay ethay anslatetray unctionfay eforehandbay, osay eway ancay oday omethingsay ikelay isthay ifyay eway ishway!");
+///```
 pub fn translate_yay(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_with_style_lower_and_upper_suffixes(english, b"ay", b"yay", b"AY", b"WAY", pig_latin_string);
 }
 
-//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+//TODO
 pub fn translate_hay(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_with_style_lower_and_upper_suffixes(english, b"ay", b"hay", b"AY", b"HAY", pig_latin_string);
 }
 
-//TODO be sure to mention that if the strings are not ascii, the non-ascii bytes won't be affected
+//TODO
 pub fn translate_ferb(english: &[u8], pig_latin_string: &mut Vec::<u8>) {
     translate_with_style_lower_and_upper_suffixes(english, b"erb", b"ferb", b"ERB", b"FERB", pig_latin_string);
 }
 
+//TODO
 pub fn translate_with_style(english: &[u8], suffix_lower: &[u8], special_case_suffix_lower: &[u8], pig_latin_string: &mut Vec::<u8>) {
     //Convert the suffix and special_case_suffix we were provided to uppercase for words that are capitalized
     let mut suffix_upper = Vec::<u8>::with_capacity(suffix_lower.len());
@@ -160,7 +303,6 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
 }
 
 //Translate a word (english_word MUST ONLY CONTAIN ASCII LETTERS, not numbers/symbols/etc or anything UTF-8)
-#[inline(always)]//Only used by the one function in this module, so this makes sense
 fn translate_word_with_style_reuse_buffers (
     english_word: &[u8],//Assumes this word is not empty
     suffix_lower: &[u8], special_case_suffix_lower: &[u8], suffix_upper: &[u8], special_case_suffix_upper: &[u8],
