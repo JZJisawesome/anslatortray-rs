@@ -405,9 +405,139 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
 
         //Translates the current word and pushes the result
         {
-            //TODO initial code to deal with the first letter
-            let first_letter = english[global_index];
 
+            //TESTING just call the original function for now
+
+            let mut word_start_index: usize = global_index;//Inclusive
+            {
+                while global_index < english.len() {
+                    if !english[global_index].is_ascii_alphabetic() {
+                        break;
+                    }
+
+                    global_index += 1;
+                }
+                let word_slice: &[u8] = &english[word_start_index..global_index];
+                translate_word_with_style_reuse_buffers (
+                    word_slice,
+                    suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
+                    pig_latin_string
+                );
+                if global_index == english.len() { return; }
+            }
+
+            //New
+            /*let word_start_index = global_index;
+            let first_letter = english[word_start_index];
+
+            if (word_start_index + 1) == english.len() {//The word is only one letter long (special case)
+                //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
+                pig_latin_string.push(first_letter);
+                pig_latin_string.extend_from_slice(special_case_suffix_lower);
+                return;//The entire string is ending, so exit the function
+            } else if !english[word_start_index + 1].is_ascii_alphabetic() {//The next character exists but is not a letter (special case)
+                //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
+                pig_latin_string.push(first_letter);
+                pig_latin_string.extend_from_slice(special_case_suffix_lower);
+                global_index += 1;
+            } else if is_vowel(first_letter) {//The word is longer than a letter and starts with a vowel (special case)
+                //As a heuristic, we consider Y to be a vowel when it is not at the start of the word
+
+                //Find the end of the word
+                loop {
+                    if !english[global_index].is_ascii_alphabetic() {
+                        break;
+                    }
+
+                    global_index += 1;
+                    if global_index == english.len() {
+                        return;//todo!();//TODO//Word ended
+                    }
+                }
+                let word_end_index: usize = global_index;
+
+                if fast_is_ascii_uppercase(english[word_start_index + 1]) {//As a heuristic, we consider the word to be uppercase if the second letter is
+                    return;//todo!();//TODO
+                } else {//Word is entirely lowercase, or its first letter is uppercase only
+                    let word_slice = &english[word_start_index..word_end_index];
+                    pig_latin_string.extend_from_slice(word_slice);
+                    pig_latin_string.extend_from_slice(special_case_suffix_lower);
+                }
+            } else {//The word is longer than a letter and doesn't start with a vowel
+                //Find the first vowel's index
+                loop {
+                    if is_vowel(english[global_index]) || is_y(english[global_index]) {//As a heuristic, we consider Y to be a vowel when it is not at the start of the word
+                        break;
+                    }
+
+                    global_index += 1;
+                    if global_index == english.len() {
+                        return;//todo!();//TODO//No vowels in the word
+                    }
+                }
+                let first_vowel_index: usize = global_index;
+
+                //Find the end of the word
+                loop {
+                    if !english[global_index].is_ascii_alphabetic() {
+                        break;
+                    }
+
+                    global_index += 1;
+                    if global_index == english.len() {
+                        return;//todo!();//TODO//Word ended
+                    }
+                }
+                let word_end_index: usize = global_index;
+
+                //TODO improve code reuse here
+                if fast_is_ascii_uppercase(first_letter) {//Check if the first letter is uppercase
+                    if fast_is_ascii_uppercase(english[word_start_index + 1]) {//As a heuristic, we consider the word to be uppercase if the second letter is
+                        //Push the vowel and all letters after it
+                        let vowel_to_end_slice = &english[first_vowel_index..word_end_index];
+                        pig_latin_string.extend_from_slice(vowel_to_end_slice);
+
+                        //Push the starting consonants
+                        let start_to_vowel_slice = &english[word_start_index..first_vowel_index];
+                        pig_latin_string.extend_from_slice(start_to_vowel_slice);
+
+                        //Push the normal suffix (uppercase)
+                        pig_latin_string.extend_from_slice(suffix_upper);
+                    } else {//Word starts with an uppercase letter, but is otherwise lowercase
+                        //Push the vowel, matching the starting case of the original word
+                        pig_latin_string.push(fast_to_ascii_uppercase(english[first_vowel_index]));
+
+                        //Push all letters after the vowel
+                        let after_vowel_slice = &english[(first_vowel_index + 1)..word_end_index];
+                        pig_latin_string.extend_from_slice(after_vowel_slice);
+
+                        //Push the first starting consonant, which should be lowercase now
+                        pig_latin_string.push(fast_to_ascii_lowercase(english[word_start_index]));
+
+                        //Push the remaining starting consonants
+                        let after_start_to_vowel_slice = &english[(word_start_index + 1)..first_vowel_index];
+                        pig_latin_string.extend_from_slice(after_start_to_vowel_slice);
+
+                        //Push the normal suffix
+                        pig_latin_string.extend_from_slice(suffix_lower);
+                    }
+                } else {//Word is entirely lowercase
+                    //Push the vowel and all letters after it
+                    let vowel_to_end_slice = &english[first_vowel_index..word_end_index];
+                    pig_latin_string.extend_from_slice(vowel_to_end_slice);
+
+                    //Push the starting consonants
+                    let start_to_vowel_slice = &english[word_start_index..first_vowel_index];
+                    pig_latin_string.extend_from_slice(start_to_vowel_slice);
+
+                    //Push the normal suffix (lowercase)
+                    pig_latin_string.extend_from_slice(suffix_lower);
+                }
+            }
+            */
+
+            //OLD don't use
+            /*
             if (global_index + 1) == english.len() {//The word is only one letter long (special case)
                 //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
                 pig_latin_string.push(first_letter);
@@ -470,15 +600,24 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                     let word_end_index: usize = global_index;
 
                     //Translate the word
-                    //TODO
-                }
+                    //Push the vowel and all letters after it
+                    let vowel_to_end_slice = &english[first_vowel_index..word_end_index];
+                    pig_latin_string.extend_from_slice(vowel_to_end_slice);
+
+                    //Push the starting consonants
+                    let start_to_vowel_slice = &english[word_start_index..first_vowel_index];
+                    pig_latin_string.extend_from_slice(start_to_vowel_slice);
+
+                    //Push the normal suffix
+                    pig_latin_string.extend_from_slice(suffix_lower);
+                }*/
 
                 /*let mut word_start_index: usize = global_index;//Inclusive
                 loop {
 
                 }
                 */
-            }
+            //}
             /**/
             //let mut first_vowel_index: usize = 0xDEADBEEF;//Also exclusive end of starting consonants
             loop {
@@ -486,26 +625,6 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
             }
             /**/
             //TODO Wrap-up this section here
-
-            //TESTING just call the original function for now
-            /*
-            let mut word_start_index: usize = global_index;//Inclusive
-            {
-                while global_index < english.len() {
-                    if !english[global_index].is_ascii_alphabetic() {
-                        break;
-                    }
-
-                    global_index += 1;
-                }
-                let word_slice: &[u8] = &english[word_start_index..global_index];
-                translate_word_with_style_reuse_buffers (
-                    word_slice,
-                    suffix_lower, special_case_suffix_lower, suffix_upper, special_case_suffix_upper,
-                    pig_latin_string
-                );
-                if global_index == english.len() { return; }
-            }*/
         }
 
         //Copies contraction suffixes, if present
