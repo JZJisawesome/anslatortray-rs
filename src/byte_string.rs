@@ -407,7 +407,7 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
         {
 
             //TESTING just call the original function for now
-
+            /*
             let mut word_start_index: usize = global_index;//Inclusive
             {
                 while global_index < english.len() {
@@ -424,11 +424,12 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                     pig_latin_string
                 );
                 if global_index == english.len() { return; }
-            }
+            }*/
 
             //New
-            /*let word_start_index = global_index;
+            let word_start_index = global_index;
             let first_letter = english[word_start_index];
+            global_index += 1;
 
             if (word_start_index + 1) == english.len() {//The word is only one letter long (special case)
                 //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
@@ -439,33 +440,37 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                 //Push the letter and add the lowercase special suffix (even if the letter is uppercase)
                 pig_latin_string.push(first_letter);
                 pig_latin_string.extend_from_slice(special_case_suffix_lower);
-                global_index += 1;
             } else if is_vowel(first_letter) {//The word is longer than a letter and starts with a vowel (special case)
                 //As a heuristic, we consider Y to be a vowel when it is not at the start of the word
 
+                //TODO better code reuse
+
                 //Find the end of the word
-                loop {
-                    if !english[global_index].is_ascii_alphabetic() {
-                        break;
+                let word_end_index: usize;
+                let slice_to_search_for_end = &english[global_index..];
+                if let Some(found_end_of_word_index) = slice_to_search_for_end.iter().position(|&x| !x.is_ascii_alphabetic()) {//We found a non-letter that ends the word
+                    global_index += found_end_of_word_index;
+                    word_end_index = global_index;
+                } else {//The string ended
+                    pig_latin_string.extend_from_slice(slice_to_search_for_end);
+                    if fast_is_ascii_uppercase(english[word_start_index + 1]) {//As a heuristic, we consider the word to be uppercase if the second letter is
+                        pig_latin_string.extend_from_slice(special_case_suffix_upper);
+                    } else {//Word is entirely lowercase, or its first letter is uppercase only
+                        pig_latin_string.extend_from_slice(special_case_suffix_lower);
                     }
-
-                    global_index += 1;
-                    if global_index == english.len() {
-                        return;//todo!();//TODO//Word ended
-                    }
+                    return;
                 }
-                let word_end_index: usize = global_index;
 
+                let word_slice = &english[word_start_index..word_end_index];
+                pig_latin_string.extend_from_slice(word_slice);
                 if fast_is_ascii_uppercase(english[word_start_index + 1]) {//As a heuristic, we consider the word to be uppercase if the second letter is
-                    return;//todo!();//TODO
+                    pig_latin_string.extend_from_slice(special_case_suffix_upper);
                 } else {//Word is entirely lowercase, or its first letter is uppercase only
-                    let word_slice = &english[word_start_index..word_end_index];
-                    pig_latin_string.extend_from_slice(word_slice);
                     pig_latin_string.extend_from_slice(special_case_suffix_lower);
                 }
             } else {//The word is longer than a letter and doesn't start with a vowel
                 //Find the first vowel's index
-                loop {
+                /*loop {
                     if is_vowel(english[global_index]) || is_y(english[global_index]) {//As a heuristic, we consider Y to be a vowel when it is not at the start of the word
                         break;
                     }
@@ -476,9 +481,34 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                     }
                 }
                 let first_vowel_index: usize = global_index;
+                */
+
+
+                //TODO what if the word has no vowels?
+                let first_vowel_index: usize;
+                let slice_to_search_for_vowel = &english[global_index..];
+                if let Some(first_vowel_of_word_index) = slice_to_search_for_vowel.iter().position(|&x| { is_vowel(x) || is_y(x) }) {//As a heuristic, we consider Y to be a vowel when it is not at the start of the word
+                    global_index += first_vowel_of_word_index;
+                    first_vowel_index = global_index;
+                } else {//This word has no vowels
+                    if let Some(end_of_word_index) = slice_to_search_for_vowel.iter().position(|&x| !x.is_ascii_alphabetic()) {//We found a non-letter that ends the word
+                        let word_slice = &english[word_start_index..(global_index + end_of_word_index)];
+                        pig_latin_string.extend_from_slice(word_slice);
+                        pig_latin_string.extend_from_slice(suffix_lower);
+                        todo!();//Skip the next section
+                    } else {//The string ended
+                        /*let word_slice = &english[word_start_index..];
+                        pig_latin_string.extend_from_slice(word_slice);
+                        pig_latin_string.extend_from_slice(suffix_lower);
+                        return;
+                        */
+                        todo!();
+                    }
+                    //return;
+                }
 
                 //Find the end of the word
-                loop {
+                /*loop {
                     if !english[global_index].is_ascii_alphabetic() {
                         break;
                     }
@@ -489,6 +519,16 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                     }
                 }
                 let word_end_index: usize = global_index;
+                */
+                let word_end_index: usize;
+                let slice_to_search_for_end = &english[global_index..];
+                if let Some(end_of_word_index) = slice_to_search_for_end.iter().position(|&x| !x.is_ascii_alphabetic()) {//We found a non-letter that ends the word
+                    global_index += end_of_word_index;
+                    word_end_index = global_index;
+                } else {//The string ended
+                    global_index = english.len();
+                    word_end_index = global_index;
+                }
 
                 //TODO improve code reuse here
                 if fast_is_ascii_uppercase(first_letter) {//Check if the first letter is uppercase
@@ -534,7 +574,6 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
                     pig_latin_string.extend_from_slice(suffix_lower);
                 }
             }
-            */
 
             //OLD don't use
             /*
@@ -620,9 +659,9 @@ pub(crate) fn translate_with_style_lower_and_upper_suffixes (
             //}
             /**/
             //let mut first_vowel_index: usize = 0xDEADBEEF;//Also exclusive end of starting consonants
-            loop {
+            /*loop {
                 break;//TODO
-            }
+            }*/
             /**/
             //TODO Wrap-up this section here
         }
